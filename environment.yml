@@ -1,0 +1,9 @@
+name: asced
+channels:
+  - defaults
+dependencies:
+  - cxx-compiler
+  - c-compiler
+  - python==3.12
+  - conda-forge::uv
+  - cmake
