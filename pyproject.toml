@@ -9,4 +9,5 @@ dependencies = [
 ]
  
 [tool.uv.sources]
-channel-code-lib2 = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2" }
+channel-code-lib2 = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2",
+    branch = "my-feature-branch"}
