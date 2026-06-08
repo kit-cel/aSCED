@@ -50,7 +50,9 @@ cfg.cn_update_type = (
     "spa"  # Check node update rule (nmsa, spa, spa_phi); default is spa
 )
 cfg.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
-# cfg.norm_factor(0.75) #set normalization constant used for nmsa; default is 0.75;
+
+
+cfg.norm_factor(0.75) #set normalization constant used for normalized min sum or normalized sum product; **default is 1**;
 
 
 ## Affine offset used for aSCED; For an affine offset z_a, BP aims at solving H@x_hat=z_a

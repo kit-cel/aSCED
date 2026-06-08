@@ -92,6 +92,6 @@ show_results.plot_error_rates((FER, "BP"), (FER_avn, "BP with AVNs"))
 # cfg_wrong = channel_code_lib2.BP_config(H_avn)
 # ##use avns not set!
 
-# sim_wrong = channel_code_lib2.Simulation_Env(H, k, n, "all")
+# sim_wrong = channel_code_lib2.Simulation_Env(H, k, n, "all")w
 # sim_wrong.init(cfg_wrong)
 # sim_wrong.get_error_rates(np.linspace(1, 4, 7))
