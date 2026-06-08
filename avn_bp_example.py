@@ -86,11 +86,13 @@ FER_avn = sim_avn.error_rates["FER-SNR"]
 # print(FER)
 show_results.plot_error_rates((FER, "BP"), (FER_avn, "BP with AVNs"))
 
-# the following causes now causes an error
+# the following causes would cause an error
 
-cfg_wrong = channel_code_lib2.BP_config(H_avn)
-##use avns not set!
 
-sim_wrong = channel_code_lib2.Simulation_Env(H, k, n, "all")
-sim_wrong.init(cfg_wrong)
-sim_wrong.get_error_rates(np.linspace(1, 4, 7))
+
+# cfg_wrong = channel_code_lib2.BP_config(H_avn)
+# ##use avns not set!
+
+# sim_wrong = channel_code_lib2.Simulation_Env(H, k, n, "all")
+# sim_wrong.init(cfg_wrong)
+# sim_wrong.get_error_rates(np.linspace(1, 4, 7))
