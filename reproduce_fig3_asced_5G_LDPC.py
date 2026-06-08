@@ -81,7 +81,7 @@ if(flag_nmsa352):
     sim_nmsa_352.use_all_zero_codeword = True
     sim_nmsa_352.puncturing(p)
     sim_nmsa_352.shortening(s)
-    sim_nmsa_352.init(nmsa_config)
+    sim_nmsa_352.init(nmsa_config_352)
     sim_nmsa_352.get_error_rates(np.linspace(1, 4, 7))
 
     FER_nmsa_352 = sim_nmsa_352.error_rates["FER-SNR"]
@@ -98,7 +98,6 @@ if(flag_aed):
 
     undercomplete_bp_config = [channel_code_lib2.BP_config(H_del)]
 
-    undercomplete_bp_config[0]=channel_code_lib2.BP_config(H)
     undercomplete_bp_config[0].early_stopping = True  # Stop as soon as H@x_hat=0; default is true
     undercomplete_bp_config[0].max_iterations = 32  # set maximum number of BP iterations; default is 32
     undercomplete_bp_config[0].cn_update_type = "msa"  # Check node update rule (msa, spa, spa_phi); default is spa)
