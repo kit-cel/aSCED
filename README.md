@@ -7,10 +7,12 @@ Furthermore, it provides the relevant matrices and scripts for reproducing the r
 ## Setup
 
 conda env create -f environment.yml
+
 conda activate asced
 
 ## Install dependencies
 uv lock --upgrade
+
 uv sync
 
 ## Run exemplary scripts
