@@ -47,12 +47,12 @@ cfg = channel_code_lib2.BP_config(H)
 cfg.early_stopping = True  # Stop as soon as H@x_hat=0; default is true
 cfg.max_iterations = 32  # set maximum number of BP iterations; default is 32
 cfg.cn_update_type = (
-    "spa"  # Check node update rule (nmsa, spa, spa_phi); default is spa
+    "spa"  # Check node update rule (msa, spa, spa_phi); default is spa
 )
 cfg.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
 
-cfg.norm_factor(0.75) #set normalization constant used for normalized min sum or normalized sum product; **default is 1**;
+cfg.norm_factor=0.75 #set normalization constant used for normalized min sum or normalized sum product; **default is 1**;
 
 
 ## Affine offset used for aSCED; For an affine offset z_a, BP aims at solving H@x_hat=z_a
