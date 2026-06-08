@@ -36,7 +36,7 @@ H_avn = np.array(
 
 # Each BP decoder requires a PCM H, all other parameters have default values
 # The PCM can be overcomplete (i.e. rank(H)>n-k)
-# TODO: The PCM may use auxiliary variable nodes (see cfg.use_avns()
+# The PCM may use auxiliary variable nodes (see cfg.use_avns()
 # and for literature for instance "Iterative Decoding of Linear Block Codes: A Parity-Check Orthogonalization Approach")
 # In this case, num_columns(H)>H. Those auxilary variable nodes behave similarly to punctured nodes, i.e., the respective LLRs are set to 0
 #
