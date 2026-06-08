@@ -42,7 +42,6 @@ def quasi_cyclic_permutation_vector(length, block_size=11):
 G = gf2(H).null_space()
 k, n = G.shape
 
-print(quasi_cyclic_permutation_vector(n, Z))
 
 permutation = quasi_cyclic_permutation_vector(n, Z)
 

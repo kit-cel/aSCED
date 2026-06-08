@@ -83,7 +83,6 @@ sim_avn.get_error_rates(np.linspace(1, 4, 7))
 FER = sim.error_rates["FER-SNR"]
 FER_avn = sim_avn.error_rates["FER-SNR"]
 
-# print(FER)
 show_results.plot_error_rates((FER, "BP"), (FER_avn, "BP with AVNs"))
 
 # the following causes would cause an error
