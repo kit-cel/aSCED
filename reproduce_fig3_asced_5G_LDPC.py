@@ -24,7 +24,7 @@ n_ = 132
 k_ = 66
 H, p, s, Z, BG = generate_5G_LDPC(2, k_, n_, return_lifting_size=True)
 
-use_all_zero = False
+use_all_zero = False  # SCED requires false or will result in to good performance since az covered by all paths
 
 flag_aed = True  # if true simulates AED-11
 
@@ -35,6 +35,8 @@ flag_nmsa352 = True  # if true simulates NMSA-352
 flag_sced = True
 
 flag_asced = True  # if true simulate aSCED-11
+
+plot_using_tex = True
 
 
 ## First setup interprets AED as MBBP instanciated with shifted parity-check matrices obtained by cyclically permuting the columns of the original parity-check matrix.
@@ -225,10 +227,11 @@ if flag_asced:
     print(FER_aSCED)
 
 
-show_results.plot_error_rates(
-    (FER_aSCED, "aSCED"),
-    (FER_sced, "SCED"),
-    (FER_AED, "AED"),
-    (FER_nmsa, "NMSA 32"),
-    (FER_nmsa_352, "NMSA 352"),
-)
+if plot_using_tex:
+    show_results.plot_error_rates(
+        (FER_aSCED, "aSCED"),
+        (FER_sced, "SCED"),
+        (FER_AED, "AED"),
+        (FER_nmsa, "NMSA 32"),
+        (FER_nmsa_352, "NMSA 352"),
+    )
