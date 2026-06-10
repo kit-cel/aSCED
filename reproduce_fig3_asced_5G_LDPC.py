@@ -36,7 +36,7 @@ flag_sced = True
 
 flag_asced = True  # if true simulate aSCED-11
 
-plot_using_tex = True
+plot_using_tex = False
 
 
 ## First setup interprets AED as MBBP instanciated with shifted parity-check matrices obtained by cyclically permuting the columns of the original parity-check matrix.
