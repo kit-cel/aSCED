@@ -37,7 +37,7 @@ flag_asced_17 = True
 
 flag_asced_31 = True  # if true simulate aSCED-11
 
-plot_using_tex = False
+plot_using_tex = True
 # np.linspace(1, 4,7 )
 
 ## First setup interprets AED as MBBP instanciated with shifted parity-check matrices obtained by cyclically permuting the columns of the original parity-check matrix.
@@ -60,20 +60,19 @@ k, n = G.shape
 
 print(k, n)
 
+if flag_spa:
     spa_config = channel_code_lib2.BP_config(H)
     spa_config.early_stopping = True  # Stop as soon as H@x_hat=0; default is true
     spa_config.max_iterations = 32  # set maximum number of BP iterations; default is 32
     spa_config.cn_update_type = "spa"
     spa_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
-
     sim_spa = channel_code_lib2.Simulation_Env(H, k, n, "all")
     sim_spa.use_all_zero_codeword = use_all_zero
 
-
     sim_spa.init(spa_config)
 
-    sim_spa.get_error_rates(np.linspace(1, 4,7 ))
+    sim_spa.get_error_rates(np.linspace(1, 4, 7))
 
     FER_spa = sim_spa.error_rates["FER-SNR"]
     print(FER_spa)
@@ -110,7 +109,7 @@ if flag_aed:
     sim_aed.use_all_zero_codeword = use_all_zero
     sim_aed.init(ensemble_decoder_config)
 
-    sim_aed.get_error_rates(np.linspace(1, 4,7 ))
+    sim_aed.get_error_rates(np.linspace(1, 4, 7))
     FER_AED = sim_aed.error_rates["FER-SNR"]
 
     print(FER_AED)
@@ -154,7 +153,7 @@ if flag_asced_17:
 
     sim_asced_17.init(asced_17_config)
 
-    sim_asced_17.get_error_rates(np.linspace(1, 4,7 ))
+    sim_asced_17.get_error_rates(np.linspace(1, 4, 7))
     FER_aSCED_17 = sim_asced_17.error_rates["FER-SNR"]
     print("aSCED finished")
 
@@ -197,7 +196,7 @@ if flag_asced_17:
 
     sim_asced_31.init(asced_31_config)
 
-    sim_asced_31.get_error_rates(np.linspace(1, 4,7 ))
+    sim_asced_31.get_error_rates(np.linspace(1, 4, 7))
     FER_aSCED_31 = sim_asced_31.error_rates["FER-SNR"]
     print("aSCED finished")
 
