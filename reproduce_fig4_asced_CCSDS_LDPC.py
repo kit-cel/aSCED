@@ -23,20 +23,22 @@ import show_results
 n_ = 256
 k_ = 128
 Z = 32
-H = np.array(read_AList("Codes/CCSDS/256_128.txt"), dtype=int)
+n, k, H = read_AList("Codes/CCSDS/256_128.txt")
+
+print(n, k)
 
 use_all_zero = False  # SCED requires false or will result in to good performance since az covered by all paths
 
-flag_aed = True  # if true simulates AED-11
+flag_aed = False  # if true simulates AED-11
 
 flag_spa = True  # if true simulates spa-32
 
-flag_asced_17 = True
+flag_asced_17 = False
 
-flag_asced_31 = True  # if true simulate aSCED-11
+flag_asced_31 = False  # if true simulate aSCED-11
 
-plot_using_tex = True
-
+plot_using_tex = False
+# np.linspace(1, 4, 7)
 
 ## First setup interprets AED as MBBP instanciated with shifted parity-check matrices obtained by cyclically permuting the columns of the original parity-check matrix.
 ## Should yield the same performance as AED using same permutations
@@ -56,17 +58,24 @@ def quasi_cyclic_permutation_vector(length, block_size=11):
 G = gf2(H).null_space()
 k, n = G.shape
 
-if flag_spa:
+print(k, n)
 
+if flag_spa:
+    print("entering")
     spa_config = channel_code_lib2.BP_config(H)
     spa_config.early_stopping = True  # Stop as soon as H@x_hat=0; default is true
     spa_config.max_iterations = 32  # set maximum number of BP iterations; default is 32
     spa_config.cn_update_type = "spa"
     spa_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
+    print("setting up env")
     sim_spa = channel_code_lib2.Simulation_Env(H, k, n, "all")
     sim_spa.use_all_zero_codeword = use_all_zero
+
+    print("entering inti")
     sim_spa.init(spa_config)
+    print("finished inti")
+    print("simulating")
     sim_spa.get_error_rates(np.linspace(1, 4, 7))
 
     FER_spa = sim_spa.error_rates["FER-SNR"]
