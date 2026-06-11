@@ -17,7 +17,7 @@ from affine_helpers import get_affine_offset_structured_PCMs
 
 use_all_zero = False  # Currently only all-zero since bug in encode of ccsds 256,128
 
-sim_regime = np.linspace(2, 3.5, 4)
+sim_regime = np.linspace(2, 2.1, 1)
 
 norm_const = 0.5
 max_iter = 20
@@ -26,15 +26,21 @@ flag_1min = True  # if true simulates AED-11
 
 flag_ssPCM2 = True  # if true simulates spa-32
 
-flag_asced_8 = True
+
 flag_mbbp_8 = True
+flag_mbbp_64 = True
 
 mbbp_base_dir = Path("Codes/BCH63_30/bch_63_30_sspcm2_mbbp_64_matrices")
 
+flag_asced_8 = True
+flag_asced_64 = True  # nmsa
+flag_asced_spa_64 = True  # spa
 
-flag_asced_64 = True  # if true simulate aSCED-11
+asced_base_dir = Path(
+    "Codes/BCH63_30/multi_batch_Delta=1/bch_63_30_sspcm2_asced_64_matrices"
+)
 
-plot_using_tex = True
+plot_using_tex = False
 
 simulate_affine = False
 
@@ -121,97 +127,164 @@ if flag_mbbp_8:
         cfg.cn_update_type = "msa"
         cfg.norm_factor = norm_const
         cfg.scheduling_type = "flooding"
+    mbbp_8_config = channel_code_lib2.Ensemble_config(H, mbbp_8_paths_configs)
 
     sim_mbbp8 = channel_code_lib2.Simulation_Env(H, k, n, "all")
     sim_mbbp8.use_all_zero_codeword = use_all_zero
-    sim_mbbp8.init(mbbp_8_paths_configs)
+    sim_mbbp8.init(mbbp_8_config)
     sim_mbbp8.get_error_rates(sim_regime)
     FER_mbbp8 = sim_mbbp8.error_rates["FER-SNR"]
 
     print(FER_mbbp8)
-    print("asced8 finished")
+    print("mbbp8 finished")
 
 
-# if flag_asced_8:
-#     parent_folder = Path("Codes/BCH63_30/aSCED-6")
+if flag_mbbp_64:
+    mbbp_64_paths_configs = []
 
-#     asced_path_configs = []
-#     for subdir in parent_folder.iterdir():
-#         if subdir.is_dir():
-#             # get the single file inside the subdirectory to setup batch
-#             file_path = next(subdir.iterdir())
-#             subcode_ssPCM = np.load(file_path)
-#             asced_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
-#             if not use_all_zero or simulate_affine:
-#                 offsets = get_affine_offset_structured_PCMs(
-#                     G_original=G,
-#                     extended_H_subcode=gf2(subcode_ssPCM),
-#                     expect_rank=1,
-#                 )
-#                 asced_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
-#                 asced_path_configs[-1].affine_offset = offsets[0]
-#         for cfg in asced_path_configs:
-#             cfg.use_avns = True
-#             cfg.early_stopping = True
-#             cfg.max_iterations = max_iter
-#             cfg.cn_update_type = "msa"
-#             cfg.norm_factor = norm_const
-#             cfg.scheduling_type = "flooding"
+    for i in range(64):
+        file_path = mbbp_base_dir / f"sspcm2_{i}_mbbp_e2000.npy"
+        if file_path.exists():
+            ssPCM = np.load(file_path)
+        else:
+            raise FileNotFoundError(f"Missing file: {file_path}")
 
-#     asced_6_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
+        mbbp_64_paths_configs.append(channel_code_lib2.BP_config(ssPCM))
 
-#     sim_asced8 = channel_code_lib2.Simulation_Env(H, k, n, "all")
+    for cfg in mbbp_64_paths_configs:
+        cfg.use_avns = True
+        cfg.early_stopping = True
+        cfg.max_iterations = max_iter
+        cfg.cn_update_type = "msa"
+        cfg.norm_factor = norm_const
+        cfg.scheduling_type = "flooding"
 
-#     sim_asced8.use_all_zero_codeword = use_all_zero
-#     sim_asced8.init(asced_6_config)
+    mbbp_64_config = channel_code_lib2.Ensemble_config(H, mbbp_64_paths_configs)
 
-#     print("start sim")
+    sim_mbbp64 = channel_code_lib2.Simulation_Env(H, k, n, "all")
+    sim_mbbp64.use_all_zero_codeword = use_all_zero
+    sim_mbbp64.init(mbbp_64_config)
+    sim_mbbp64.get_error_rates(sim_regime)
+    FER_mbbp64 = sim_mbbp64.error_rates["FER-SNR"]
+
+    print(FER_mbbp64)
+    print("mbbp64 finished")
 
 
-# if flag_asced_64:
-#     parent_folders = [Path("Codes/BCH63_30/aSCED-6"), Path("Codes/BCH63_30/aSCED-24")]
+if flag_asced_8:
 
-#     asced_path_configs = []
-#     for fld in parent_folders:
-#         for subdir in fld.iterdir():
-#             if subdir.is_dir():
-#                 # get the single file inside the subdirectory to setup batch
-#                 file_path = next(subdir.iterdir())
-#                 subcode_ssPCM = np.load(file_path)
-#                 asced_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
-#                 if not use_all_zero or simulate_affine:
-#                     offsets = get_affine_offset_structured_PCMs(
-#                         G_original=G,
-#                         extended_H_subcode=gf2(subcode_ssPCM),
-#                         expect_rank=1,
-#                     )
-#                     asced_path_configs.append(
-#                         channel_code_lib2.BP_config(subcode_ssPCM)
-#                     )
-#                     asced_path_configs[-1].affine_offset = offsets[0]
+    asced8_path_configs = []
+    for i in range(4):
+        file_path = asced_base_dir / f"sspcm2_{i}.npy"
+        if file_path.exists():
+            subcode_ssPCM = np.load(file_path)
+        else:
+            raise FileNotFoundError(f"Missing file: {file_path}")
 
-#     for cfg in asced_path_configs:
-#         cfg.use_avns = True
-#         cfg.early_stopping = True
-#         cfg.max_iterations = max_iter
-#         cfg.cn_update_type = "msa"
-#         cfg.norm_factor = norm_const
-#         cfg.scheduling_type = "flooding"
+        subcode_ssPCM = np.load(file_path).astype(int)
+        asced8_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
 
-#     asced_30_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
+        if not use_all_zero or simulate_affine:
+            offsets = get_affine_offset_structured_PCMs(
+                G_original=G,
+                extended_H_subcode=gf2(subcode_ssPCM),
+                expect_rank=1,
+            )
+            asced8_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
+            asced8_path_configs[-1].affine_offset = offsets[0]
+    for cfg in asced8_path_configs:
+        cfg.use_avns = True
+        cfg.early_stopping = True
+        cfg.max_iterations = max_iter
+        cfg.cn_update_type = "msa"
+        cfg.norm_factor = norm_const
+        cfg.scheduling_type = "flooding"
 
-#     sim_asced64 = channel_code_lib2.Simulation_Env(H, k, n, "all")
+    asced_8_config = channel_code_lib2.Ensemble_config(H, asced8_path_configs)
 
-#     sim_asced64.use_all_zero_codeword = use_all_zero
-#     sim_asced64.init(asced_30_config)
+    sim_asced8 = channel_code_lib2.Simulation_Env(H, k, n, "all")
 
-#     print("start sim")
+    sim_asced8.use_all_zero_codeword = use_all_zero
+    sim_asced8.init(asced_8_config)
+    sim_asced8.get_error_rates(sim_regime)
+    FER_asced8 = sim_asced8.error_rates["FER-SNR"]
 
-#     sim_asced64.get_error_rates(sim_regime)
-#     FER_asced64 = sim_asced64.error_rates["FER-SNR"]
 
-#     print(FER_asced64)
-#     print("asced64 finished")
+if flag_asced_64:
+
+    asced64_path_configs = []
+    for i in range(32):
+        file_path = asced_base_dir / f"sspcm2_{i}.npy"
+        if file_path.exists():
+            subcode_ssPCM = np.load(file_path)
+        else:
+            raise FileNotFoundError(f"Missing file: {file_path}")
+
+        subcode_ssPCM = np.load(file_path).astype(int)
+        asced64_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
+
+        if not use_all_zero or simulate_affine:
+            offsets = get_affine_offset_structured_PCMs(
+                G_original=G,
+                extended_H_subcode=gf2(subcode_ssPCM),
+                expect_rank=1,
+            )
+            asced64_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
+            asced64_path_configs[-1].affine_offset = offsets[0]
+    for cfg in asced64_path_configs:
+        cfg.use_avns = True
+        cfg.early_stopping = True
+        cfg.max_iterations = max_iter
+        cfg.cn_update_type = "msa"
+        cfg.norm_factor = norm_const
+        cfg.scheduling_type = "flooding"
+
+    asced_64_config = channel_code_lib2.Ensemble_config(H, asced64_path_configs)
+
+    sim_asced64 = channel_code_lib2.Simulation_Env(H, k, n, "all")
+
+    sim_asced64.use_all_zero_codeword = use_all_zero
+    sim_asced64.init(asced_64_config)
+    sim_asced64.get_error_rates(sim_regime)
+    FER_asced64 = sim_asced64.error_rates["FER-SNR"]
+
+if flag_asced_spa_64:
+
+    asced64_spa_path_configs = []
+    for i in range(32):
+        file_path = asced_base_dir / f"sspcm2_{i}.npy"
+        if file_path.exists():
+            subcode_ssPCM = np.load(file_path)
+        else:
+            raise FileNotFoundError(f"Missing file: {file_path}")
+
+        subcode_ssPCM = np.load(file_path).astype(int)
+        asced64_spa_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
+
+        if not use_all_zero or simulate_affine:
+            offsets = get_affine_offset_structured_PCMs(
+                G_original=G,
+                extended_H_subcode=gf2(subcode_ssPCM),
+                expect_rank=1,
+            )
+            asced64_spa_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
+            asced64_spa_path_configs[-1].affine_offset = offsets[0]
+    for cfg in asced64_spa_path_configs:
+        cfg.use_avns = True
+        cfg.early_stopping = True
+        cfg.max_iterations = max_iter
+        cfg.cn_update_type = "spa"
+        cfg.norm_factor = norm_const
+        cfg.scheduling_type = "flooding"
+
+    asced_64_spa_config = channel_code_lib2.Ensemble_config(H, asced64_spa_path_configs)
+
+    sim_asced64_spa = channel_code_lib2.Simulation_Env(H, k, n, "all")
+
+    sim_asced64_spa.use_all_zero_codeword = use_all_zero
+    sim_asced64_spa.init(asced_64_spa_config)
+    sim_asced64_spa.get_error_rates(sim_regime)
+    FER_asced64_spa = sim_asced64_spa.error_rates["FER-SNR"]
 
 
 if plot_using_tex:
@@ -219,7 +292,9 @@ if plot_using_tex:
         (FER_1min, "H1min"),
         (FER_ssPCM2, "ssPCM2"),
         (FER_mbbp8, "MBBP-8"),
-        # (FER_asced8, "aSCED-8"),
-        # (FER_asced64, "aSCED-64"),
+        (FER_mbbp64, "MBBP-64"),
+        (FER_asced8, "aSCED-8"),
+        (FER_asced64, "aSCED-NMSA-64"),
+        (FER_asced64_spa, "aSCED-NSPA-64"),
         save_name="fig_9.png",
     )
