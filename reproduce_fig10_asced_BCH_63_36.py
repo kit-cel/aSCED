@@ -62,7 +62,7 @@ if flag_1min:
     msa_1min_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
     sim_msa_1min = channel_code_lib2.Simulation_Env(H, k, n, "all")
-    sim_msa_1min.use_all_zero_codeword = use_all_zero
+    sim_msa_1min.use_all_zero_codeword = True
 
     sim_msa_1min.init(msa_1min_config)
 
@@ -192,3 +192,15 @@ if plot_using_tex:
         (FER_aSCED30, "aSCED-30"),
         save_name="fig_10.png",
     )
+
+
+# once sim with AZ on cluster
+# Only equivalent! False
+# {2.0: 0.6788856304985337, 2.5: 0.5334867075664622, 3.0: 0.3929925952681958, 3.5: 0.25240299038803843, 4.0: 0.14297447128875504, 4.5: 0.07047862623310194, 5.0: 0.028546244606986564}
+# H1min finished
+# {2.0: 0.292732716385411, 2.5: 0.17021803766105054, 3.0: 0.0824332712600869, 3.5: 0.033874144237081495, 4.0: 0.01072957430781385, 4.5: 0.0028293900102481844, 5.0: 0.0005469865102629677}
+# HssPCM2 finished
+# {2.0: 0.1354262631989228, 2.5: 0.06696990902729182, 3.0: 0.02298078041592886, 3.5: 0.006532915266667165, 4.0: 0.0014370173505871577, 4.5: 0.00022166047015159042, 5.0: 2.5488542697182095e-05}
+# aSCED6 finished
+# {2.0: 0.08503594400302686, 2.5: 0.033207022168524725, 3.0: 0.010673167919076956, 3.5: 0.002506012198404778, 4.0: 0.0004214630479653339, 4.5: 5.1701137217200484e-05, 5.0: 4.614053929647694e-06}
+# aSCED30 finished

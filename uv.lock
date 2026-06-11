@@ -13,7 +13,7 @@ resolution-markers = [
 [[package]]
 name = "channel-code-lib2"
 version = "0.1.0"
-source = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2?branch=ensemble_diverity#1446744801328aaeb4560f618b4d5c4aa0afbc51" }
+source = { editable = "../channel-code-lib2" }
 dependencies = [
     { name = "galois" },
     { name = "matplotlib" },
@@ -22,6 +22,21 @@ dependencies = [
     { name = "scipy" },
     { name = "xlrd" },
 ]
+
+[package.metadata]
+requires-dist = [
+    { name = "galois" },
+    { name = "matplotlib" },
+    { name = "numpy" },
+    { name = "pandas" },
+    { name = "pytest", marker = "extra == 'test'" },
+    { name = "scipy" },
+    { name = "xlrd" },
+]
+provides-extras = ["test"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "ipython", specifier = ">=8.38.0" }]
 
 [[package]]
 name = "contourpy"
@@ -627,7 +642,7 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "channel-code-lib2", git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2?branch=ensemble_diverity" }]
+requires-dist = [{ name = "channel-code-lib2", editable = "../channel-code-lib2" }]
 
 [[package]]
 name = "six"
