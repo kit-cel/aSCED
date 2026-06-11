@@ -17,7 +17,7 @@ from affine_helpers import get_affine_offset_structured_PCMs
 
 use_all_zero = False  # Currently only all-zero since bug in encode of ccsds 256,128
 
-sim_regime = np.linspace(2, 2.1, 1)
+sim_regime = np.linspace(2, 4., 5)
 
 norm_const = 0.5
 max_iter = 20
@@ -208,6 +208,8 @@ if flag_asced_8:
     sim_asced8.init(asced_8_config)
     sim_asced8.get_error_rates(sim_regime)
     FER_asced8 = sim_asced8.error_rates["FER-SNR"]
+    print(FER_asced8)
+    print("asced8 finished")
 
 
 if flag_asced_64:
@@ -247,6 +249,8 @@ if flag_asced_64:
     sim_asced64.init(asced_64_config)
     sim_asced64.get_error_rates(sim_regime)
     FER_asced64 = sim_asced64.error_rates["FER-SNR"]
+    print(FER_asced64)
+    print("asced64 finished")
 
 if flag_asced_spa_64:
 
@@ -285,6 +289,9 @@ if flag_asced_spa_64:
     sim_asced64_spa.init(asced_64_spa_config)
     sim_asced64_spa.get_error_rates(sim_regime)
     FER_asced64_spa = sim_asced64_spa.error_rates["FER-SNR"]
+    print(FER_asced64_spa)
+    print("asced64spa finished")
+
 
 
 if plot_using_tex:
