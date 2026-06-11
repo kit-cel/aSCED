@@ -15,7 +15,7 @@ import show_results
 
 from affine_helpers import get_affine_offset_structured_PCMs
 
-use_all_zero = True  # Currently only all-zero since bug in encode of ccsds 256,128
+use_all_zero = False  # Currently only all-zero since bug in encode of ccsds 256,128
 
 sim_regime = np.linspace(2, 4, 5)
 
