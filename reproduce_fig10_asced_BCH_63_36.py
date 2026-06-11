@@ -17,7 +17,7 @@ from affine_helpers import get_affine_offset_structured_PCMs
 
 use_all_zero = False  # Currently only all-zero since bug in encode of ccsds 256,128
 
-sim_regime = np.linspace(2, 4, 5)
+sim_regime = np.linspace(2, 2.5, 2)
 
 norm_const = 0.5
 max_iter = 20
@@ -129,6 +129,8 @@ if flag_asced_6:
     sim_asced6.use_all_zero_codeword = use_all_zero
     sim_asced6.init(asced_6_config)
 
+    print("start sim")
+
     sim_asced6.get_error_rates(sim_regime)
     FER_aSCED6 = sim_asced6.error_rates["FER-SNR"]
 
@@ -136,7 +138,57 @@ if flag_asced_6:
     print("aSCED6 finished")
 
 
+if flag_asced_30:
+    parent_folders = [Path("Codes/BCH63_36/aSCED-6"), Path("Codes/BCH63_36/aSCED-24")]
+
+    asced_path_configs = []
+    for fld in parent_folders:
+        for subdir in fld.iterdir():
+            if subdir.is_dir():
+                # get the single file inside the subdirectory to setup batch
+                file_path = next(subdir.iterdir())
+                subcode_ssPCM = np.load(file_path)
+                asced_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
+                if not use_all_zero or simulate_affine:
+                    offsets = get_affine_offset_structured_PCMs(
+                        G_original=G,
+                        extended_H_subcode=gf2(subcode_ssPCM),
+                        expect_rank=1,
+                    )
+                    asced_path_configs.append(
+                        channel_code_lib2.BP_config(subcode_ssPCM)
+                    )
+                    asced_path_configs[-1].affine_offset = offsets[0]
+
+    for cfg in asced_path_configs:
+        cfg.use_avns = True
+        cfg.early_stopping = True
+        cfg.max_iterations = max_iter
+        cfg.cn_update_type = "msa"
+        cfg.norm_factor = norm_const
+        cfg.scheduling_type = "flooding"
+
+    asced_30_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
+
+    sim_asced30 = channel_code_lib2.Simulation_Env(H, k, n, "all")
+
+    sim_asced30.use_all_zero_codeword = use_all_zero
+    sim_asced30.init(asced_30_config)
+
+    print("start sim")
+
+    sim_asced30.get_error_rates(sim_regime)
+    FER_aSCED30 = sim_asced30.error_rates["FER-SNR"]
+
+    print(FER_aSCED30)
+    print("aSCED30 finished")
+
+
 if plot_using_tex:
-    show_results.plot_error_rates(
-        (FER_1min, "H1min"), (FER_ssPCM2, "ssPCM2"), (FER_aSCED6, "aSCED-6")
+    show_results.save_error_rates(
+        (FER_1min, "H1min"),
+        (FER_ssPCM2, "ssPCM2"),
+        (FER_aSCED6, "aSCED-6"),
+        (FER_aSCED30, "aSCED-30"),
+        save_name="fig_10.png",
     )
