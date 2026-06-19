@@ -7,7 +7,10 @@ gf2 = galois.GF2
 
 import channel_code_lib2
 
-from Codes.generate_5G_LDPC import generate_5G_LDPC
+from Codes.generate_5G_LDPC import (
+    generate_5G_LDPC,
+    get_final_matrices_and_message_bit_pucturing,
+)
 from Codes.generate_RM import generate_RM
 from Codes.overcomplete import overcomplete
 from Codes.read_AList import read_AList
@@ -22,6 +25,10 @@ import show_results
 n_ = 132
 k_ = 66
 H, p, s, Z, BG = generate_5G_LDPC(2, k_, n_, return_lifting_size=True)
+
+H, G, k, n, message_bit_pucturing = get_final_matrices_and_message_bit_pucturing(
+    H, s, p
+)
 
 
 ## First setup interprets AED as MBBP instanciated with shifted parity-check matrices obtained by cyclically permuting the columns of the original parity-check matrix.
