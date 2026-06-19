@@ -8,7 +8,10 @@ gf2 = galois.GF2
 
 import channel_code_lib2
 
-from Codes.generate_5G_LDPC import generate_5G_LDPC
+from Codes.generate_5G_LDPC import (
+    generate_5G_LDPC,
+    get_final_matrices_and_message_bit_pucturing,
+)
 from Codes.generate_RM import generate_RM
 from Codes.overcomplete import overcomplete
 from Codes.read_AList import read_AList
@@ -24,7 +27,14 @@ n_ = 132
 k_ = 66
 H, p, s, Z, BG = generate_5G_LDPC(2, k_, n_, return_lifting_size=True)
 
-use_all_zero = False  # SCED requires false or will result in to good performance since az covered by all paths
+H, G, k, n, message_bit_pucturing = get_final_matrices_and_message_bit_pucturing(
+    H, s, p
+)
+
+use_all_zero = True
+
+if not use_all_zero:
+    enc_cfg = channel_code_lib2.PCM_Encoder_config(H, k, n)
 
 flag_aed = True  # if true simulates AED-11
 
@@ -54,8 +64,6 @@ def quasi_cyclic_permutation_vector(length, block_size=11):
     return permuted_indices
 
 
-G = gf2(H).null_space()
-k, n = G.shape
 
 if flag_nmsa:
 
@@ -69,10 +77,12 @@ if flag_nmsa:
     nmsa_config.norm_factor = 0.75
 
     sim_nmsa = channel_code_lib2.Simulation_Env(H, k, n, "all")
-    sim_nmsa.use_all_zero_codeword = use_all_zero
-    sim_nmsa.puncturing(p)
-    sim_nmsa.shortening(s)
-    sim_nmsa.init(nmsa_config)
+    sim_nmsa.puncturing(message_bit_pucturing)
+    if not use_all_zero:
+        sim_nmsa.use_all_zero_codeword = use_all_zero
+        sim_nmsa.init(enc_cfg, nmsa_config)
+    else:
+        sim_nmsa.all_zero_init(nmsa_config)
     sim_nmsa.get_error_rates(np.linspace(1, 4, 7))
 
     FER_nmsa = sim_nmsa.error_rates["FER-SNR"]
@@ -91,10 +101,13 @@ if flag_nmsa352:
     nmsa_config_352.norm_factor = 0.75
 
     sim_nmsa_352 = channel_code_lib2.Simulation_Env(H, k, n, "all")
-    sim_nmsa_352.use_all_zero_codeword = use_all_zero
-    sim_nmsa_352.puncturing(p)
-    sim_nmsa_352.shortening(s)
-    sim_nmsa_352.init(nmsa_config_352)
+    sim_nmsa_352.puncturing(message_bit_pucturing)
+    if not use_all_zero:
+        sim_nmsa_352.use_all_zero_codeword = use_all_zero
+        sim_nmsa_352.init(enc_cfg, nmsa_config_352)
+    else:
+        sim_nmsa_352.all_zero_init(nmsa_config_352) 
+    
     sim_nmsa_352.get_error_rates(np.linspace(1, 4, 7))
 
     FER_nmsa_352 = sim_nmsa_352.error_rates["FER-SNR"]
@@ -130,10 +143,13 @@ if flag_aed:
 
     # cfg.H = H
 
-    sim_aed.use_all_zero_codeword = use_all_zero
-    sim_aed.puncturing(p)
-    sim_aed.shortening(s)
-    sim_aed.init(ensemble_decoder_config)
+
+    sim_aed.puncturing(message_bit_pucturing)
+    if not use_all_zero:
+        sim_aed.use_all_zero_codeword = use_all_zero
+        sim_aed.init(enc_cfg, ensemble_decoder_config)
+    else:
+        sim_aed.all_zero_init(ensemble_decoder_config) 
 
     sim_aed.get_error_rates(np.linspace(1, 4, 7))
     FER_AED = sim_aed.error_rates["FER-SNR"]
@@ -169,11 +185,12 @@ if flag_sced:
 
     # cfg.H = H
 
-    sim_sced.use_all_zero_codeword = use_all_zero
-    sim_sced.puncturing(p)
-    sim_sced.shortening(s)
-    sim_sced.init(sced_config)
-
+    sim_sced.puncturing(message_bit_pucturing)
+    if not use_all_zero:
+        sim_sced.use_all_zero_codeword = use_all_zero
+        sim_sced.init(enc_cfg, sced_config)
+    else:
+        sim_sced.all_zero_init(sced_config) 
     sim_sced.get_error_rates(np.linspace(1, 4, 7))
     FER_sced = sim_sced.error_rates["FER-SNR"]
     print("SCED finished")
@@ -215,11 +232,12 @@ if flag_asced:
 
     # cfg.H = H
 
-    sim_asced.use_all_zero_codeword = use_all_zero
-    sim_asced.puncturing(p)
-    sim_asced.shortening(s)
-    sim_asced.init(asced_config)
-
+    sim_asced.puncturing(message_bit_pucturing)
+    if not use_all_zero:
+        sim_asced.use_all_zero_codeword = use_all_zero
+        sim_asced.init(enc_cfg, asced_config)
+    else:
+        sim_asced.all_zero_init(asced_config) 
     sim_asced.get_error_rates(np.linspace(1, 4, 7))
     FER_aSCED = sim_asced.error_rates["FER-SNR"]
     print("aSCED finished")

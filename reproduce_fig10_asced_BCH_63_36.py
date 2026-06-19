@@ -24,13 +24,13 @@ max_iter = 20
 
 flag_1min = True  # if true simulates AED-11
 
-flag_ssPCM2 = True  # if true simulates spa-32
+flag_ssPCM2 = False  # if true simulates spa-32
 
-flag_asced_6 = True
+flag_asced_6 = False
 
-flag_asced_30 = True  # if true simulate aSCED-11
+flag_asced_30 = False  # if true simulate aSCED-11
 
-plot_using_tex = True
+plot_using_tex = False
 
 simulate_affine = False
 
@@ -47,6 +47,9 @@ k, n = G.shape
 
 print(k, n)
 
+if not use_all_zero:
+    g_enc_cfg = channel_code_lib2.G_Encoder_config(G, k, n)
+
 
 if flag_1min:
     _, _, H_1min = read_AList("Codes/BCH63_36/BCH_63_36_1min.alist")
@@ -62,9 +65,12 @@ if flag_1min:
     msa_1min_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
     sim_msa_1min = channel_code_lib2.Simulation_Env(H, k, n, "all")
-    sim_msa_1min.use_all_zero_codeword = True
 
-    sim_msa_1min.init(msa_1min_config)
+    if not use_all_zero:
+        print("Since only equivalent!")
+        sim_msa_1min.all_zero_init(msa_1min_config)
+    else:
+        sim_msa_1min.all_zero_init(msa_1min_config)
 
     sim_msa_1min.get_error_rates(sim_regime)
 
@@ -86,9 +92,11 @@ if flag_ssPCM2:
     msa_ssPCM2_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
     sim_msa_ssPCM2 = channel_code_lib2.Simulation_Env(H, k, n, "all")
-    sim_msa_ssPCM2.use_all_zero_codeword = use_all_zero
-
-    sim_msa_ssPCM2.init(msa_ssPCM2_config)
+    if not use_all_zero:
+        sim_msa_ssPCM2.use_all_zero_codeword = use_all_zero
+        sim_msa_ssPCM2.init(g_enc_cfg, msa_ssPCM2_config)
+    else:
+        sim_msa_ssPCM2.all_zero_init(msa_ssPCM2_config)
 
     sim_msa_ssPCM2.get_error_rates(sim_regime)
 
@@ -126,8 +134,12 @@ if flag_asced_6:
 
     sim_asced6 = channel_code_lib2.Simulation_Env(H, k, n, "all")
 
-    sim_asced6.use_all_zero_codeword = use_all_zero
-    sim_asced6.init(asced_6_config)
+    if not use_all_zero:
+        sim_asced6.use_all_zero_codeword = use_all_zero
+        sim_asced6.init(g_enc_cfg, asced_6_config)
+    else:
+        sim_asced6.all_zero_init(asced_6_config)
+
 
     print("start sim")
 
@@ -172,9 +184,11 @@ if flag_asced_30:
 
     sim_asced30 = channel_code_lib2.Simulation_Env(H, k, n, "all")
 
-    sim_asced30.use_all_zero_codeword = use_all_zero
-    sim_asced30.init(asced_30_config)
-
+    if not use_all_zero:
+        sim_asced30.use_all_zero_codeword = use_all_zero
+        sim_asced30.init(g_enc_cfg, asced_30_config)
+    else:
+        sim_asced30.all_zero_init(asced_30_config)
     print("start sim")
 
     sim_asced30.get_error_rates(sim_regime)

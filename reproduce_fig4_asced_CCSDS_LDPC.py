@@ -25,9 +25,18 @@ k_ = 128
 Z = 32
 n, k, H = read_AList("Codes/CCSDS/256_128.txt")
 
+G = gf2(H).null_space()
+
+k, n = G.shape
+
 print(n, k)
 
-use_all_zero = True  # Currently only all-zero since bug in encode of ccsds 256,128
+use_all_zero = False  # Currently only all-zero since bug in encode of ccsds 256,128
+
+
+
+if not use_all_zero:
+    g_enc_cfg = channel_code_lib2.G_Encoder_config(G, k, n)
 
 flag_aed = True  # if true simulates AED-11
 
@@ -68,9 +77,12 @@ if flag_spa:
     spa_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
     sim_spa = channel_code_lib2.Simulation_Env(H, k, n, "all")
-    sim_spa.use_all_zero_codeword = use_all_zero
 
-    sim_spa.init(spa_config)
+    if not use_all_zero:
+        sim_spa.use_all_zero_codeword = use_all_zero
+        sim_spa.init(g_enc_cfg, spa_config)
+    else:
+        sim_spa.all_zero_init(spa_config)
 
     sim_spa.get_error_rates(np.linspace(1, 4, 7))
 
@@ -106,8 +118,13 @@ if flag_aed:
 
     # cfg.H = H
 
-    sim_aed.use_all_zero_codeword = use_all_zero
-    sim_aed.init(ensemble_decoder_config)
+
+    if not use_all_zero:
+        sim_aed.use_all_zero_codeword = use_all_zero
+        sim_aed.init(g_enc_cfg, ensemble_decoder_config)
+    else:
+        sim_aed.all_zero_init(ensemble_decoder_config)
+
 
     sim_aed.get_error_rates(np.linspace(1, 4, 7))
     FER_AED = sim_aed.error_rates["FER-SNR"]
@@ -149,9 +166,12 @@ if flag_asced_17:
 
     # cfg.H = H
 
-    sim_asced_17.use_all_zero_codeword = use_all_zero
+    if not use_all_zero:
+        sim_asced_17.use_all_zero_codeword = use_all_zero
+        sim_asced_17.init(g_enc_cfg, asced_17_config)
+    else:
+        sim_asced_17.all_zero_init(asced_17_config)
 
-    sim_asced_17.init(asced_17_config)
 
     sim_asced_17.get_error_rates(np.linspace(1, 4, 7))
     FER_aSCED_17 = sim_asced_17.error_rates["FER-SNR"]
@@ -159,7 +179,7 @@ if flag_asced_17:
 
     print(FER_aSCED_17)
 
-if flag_asced_17:
+if flag_asced_31:
     # load pcms
 
     asced_31_path_configs = []
@@ -192,10 +212,11 @@ if flag_asced_17:
 
     # cfg.H = H
 
-    sim_asced_31.use_all_zero_codeword = use_all_zero
-
-    sim_asced_31.init(asced_31_config)
-
+    if not use_all_zero:
+        sim_asced_31.use_all_zero_codeword = use_all_zero
+        sim_asced_31.init(g_enc_cfg, asced_31_config)
+    else:
+        sim_asced_31.all_zero_init(asced_31_config)
     sim_asced_31.get_error_rates(np.linspace(1, 4, 7))
     FER_aSCED_31 = sim_asced_31.error_rates["FER-SNR"]
     print("aSCED finished")

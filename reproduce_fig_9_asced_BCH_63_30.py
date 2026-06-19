@@ -44,7 +44,7 @@ plot_using_tex = False
 
 simulate_affine = True
 
-use_all_zero = False  # Currently only all-zero since bug in encode
+
 
 n, k, H = read_AList("Codes/BCH63_30/BCH_63_30.alist")
 

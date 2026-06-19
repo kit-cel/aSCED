@@ -30,6 +30,11 @@ H, G, k, n, message_bit_pucturing = get_final_matrices_and_message_bit_pucturing
     H, s, p
 )
 
+use_all_zero = True
+
+if not use_all_zero:
+    enc_cfg = channel_code_lib2.PCM_Encoder_config(H, k, n)
+
 
 ## First setup interprets AED as MBBP instanciated with shifted parity-check matrices obtained by cyclically permuting the columns of the original parity-check matrix.
 ## Should yield the same performance as AED using same permutations
@@ -46,8 +51,6 @@ def quasi_cyclic_permutation_vector(length, block_size=11):
     return permuted_indices
 
 
-G = gf2(H).null_space()
-k, n = G.shape
 
 
 print(quasi_cyclic_permutation_vector(n, Z))
@@ -89,9 +92,13 @@ sim = channel_code_lib2.Simulation_Env(H, k, n, "all")
 
 # cfg.H = H
 
-sim.puncturing(p)
-sim.shortening(s)
-sim.all_zero_init(ensemble_decoder_config)
+sim.puncturing(message_bit_pucturing)
+if not use_all_zero:
+    sim.use_all_zero_codeword = use_all_zero
+
+    sim.init(enc_cfg, ensemble_decoder_config)
+else:
+    sim.all_zero_init(ensemble_decoder_config)
 
 sim.get_error_rates(np.linspace(1, 3, 7))
 FER_AED = sim.error_rates["FER-SNR"]
@@ -100,9 +107,12 @@ bp_config = channel_code_lib2.BP_config(H)
 
 sim_bp = channel_code_lib2.Simulation_Env(H, k, n, "all")
 
-sim_bp.puncturing(p)
-sim_bp.shortening(s)
-sim_bp.all_zero_init(bp_config)
+sim_bp.puncturing(message_bit_pucturing)
+if not use_all_zero:
+    sim_bp.use_all_zero_codeword = use_all_zero
+    sim_bp.init(enc_cfg, bp_config)
+else:
+    sim_bp.all_zero_init(bp_config)
 
 sim_bp.get_error_rates(np.linspace(1, 3, 7))
 FER_bp = sim_bp.error_rates["FER-SNR"]
