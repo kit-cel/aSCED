@@ -17,7 +17,7 @@ from affine_helpers import get_affine_offset_structured_PCMs
 
 use_all_zero = False  # Currently only all-zero since bug in encode of ccsds 256,128
 
-sim_regime = np.linspace(2, 4., 5)
+sim_regime = np.linspace(2, 4.0, 5)
 
 norm_const = 0.5
 max_iter = 20
@@ -28,13 +28,13 @@ flag_ssPCM2 = True  # if true simulates spa-32
 
 
 flag_mbbp_8 = True
-flag_mbbp_64 = True
+flag_mbbp_64 = False
 
 mbbp_base_dir = Path("Codes/BCH63_30/bch_63_30_sspcm2_mbbp_64_matrices")
 
 flag_asced_8 = True
-flag_asced_64 = True  # nmsa
-flag_asced_spa_64 = True  # spa
+flag_asced_64 = False  # nmsa
+flag_asced_spa_64 = False  # spa
 
 asced_base_dir = Path(
     "Codes/BCH63_30/multi_batch_Delta=1/bch_63_30_sspcm2_asced_64_matrices"
@@ -42,20 +42,21 @@ asced_base_dir = Path(
 
 plot_using_tex = False
 
-simulate_affine = False
+simulate_affine = True
+
+use_all_zero = False  # Currently only all-zero since bug in encode
 
 n, k, H = read_AList("Codes/BCH63_30/BCH_63_30.alist")
 
 G = gf2(H).null_space()
 
-
-use_all_zero = True  # Currently only all-zero since bug in encode
-
-
 k, n = G.shape
 
-
 print(k, n)
+
+
+if not use_all_zero:
+    g_enc_cfg = channel_code_lib2.G_Encoder_config(G, k, n)
 
 
 if flag_1min:
@@ -72,9 +73,12 @@ if flag_1min:
     msa_1min_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
     sim_msa_1min = channel_code_lib2.Simulation_Env(H, k, n, "all")
-    sim_msa_1min.use_all_zero_codeword = True
 
-    sim_msa_1min.init(msa_1min_config)
+    if not use_all_zero:
+        sim_msa_1min.use_all_zero_codeword = use_all_zero
+        sim_msa_1min.init(g_enc_cfg, msa_1min_config)
+    else:
+        sim_msa_1min.all_zero_init(msa_1min_config)
 
     sim_msa_1min.get_error_rates(sim_regime)
 
@@ -98,9 +102,11 @@ if flag_ssPCM2:
     msa_ssPCM2_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
     sim_msa_ssPCM2 = channel_code_lib2.Simulation_Env(H, k, n, "all")
-    sim_msa_ssPCM2.use_all_zero_codeword = use_all_zero
-
-    sim_msa_ssPCM2.init(msa_ssPCM2_config)
+    if not use_all_zero:
+        sim_msa_ssPCM2.use_all_zero_codeword = use_all_zero
+        sim_msa_ssPCM2.init(g_enc_cfg, msa_ssPCM2_config)
+    else:
+        sim_msa_ssPCM2.all_zero_init(msa_ssPCM2_config)
 
     sim_msa_ssPCM2.get_error_rates(sim_regime)
 
@@ -130,8 +136,11 @@ if flag_mbbp_8:
     mbbp_8_config = channel_code_lib2.Ensemble_config(H, mbbp_8_paths_configs)
 
     sim_mbbp8 = channel_code_lib2.Simulation_Env(H, k, n, "all")
-    sim_mbbp8.use_all_zero_codeword = use_all_zero
-    sim_mbbp8.init(mbbp_8_config)
+    if not use_all_zero:
+        sim_mbbp8.use_all_zero_codeword = use_all_zero
+        sim_mbbp8.init(g_enc_cfg, mbbp_8_config)
+    else:
+        sim_mbbp8.all_zero_init(mbbp_8_config)
     sim_mbbp8.get_error_rates(sim_regime)
     FER_mbbp8 = sim_mbbp8.error_rates["FER-SNR"]
 
@@ -162,8 +171,11 @@ if flag_mbbp_64:
     mbbp_64_config = channel_code_lib2.Ensemble_config(H, mbbp_64_paths_configs)
 
     sim_mbbp64 = channel_code_lib2.Simulation_Env(H, k, n, "all")
-    sim_mbbp64.use_all_zero_codeword = use_all_zero
-    sim_mbbp64.init(mbbp_64_config)
+    if not use_all_zero:
+        sim_mbbp64.use_all_zero_codeword = use_all_zero
+        sim_mbbp64.init(g_enc_cfg, mbbp_64_config)
+    else:
+        sim_mbbp64.all_zero_init(mbbp_64_config)
     sim_mbbp64.get_error_rates(sim_regime)
     FER_mbbp64 = sim_mbbp64.error_rates["FER-SNR"]
 
@@ -204,8 +216,12 @@ if flag_asced_8:
 
     sim_asced8 = channel_code_lib2.Simulation_Env(H, k, n, "all")
 
-    sim_asced8.use_all_zero_codeword = use_all_zero
-    sim_asced8.init(asced_8_config)
+    if not use_all_zero:
+        sim_asced8.use_all_zero_codeword = use_all_zero
+        sim_asced8.init(g_enc_cfg, asced_8_config)
+    else:
+        sim_asced8.all_zero_init(asced_8_config)
+
     sim_asced8.get_error_rates(sim_regime)
     FER_asced8 = sim_asced8.error_rates["FER-SNR"]
     print(FER_asced8)
@@ -245,8 +261,11 @@ if flag_asced_64:
 
     sim_asced64 = channel_code_lib2.Simulation_Env(H, k, n, "all")
 
-    sim_asced64.use_all_zero_codeword = use_all_zero
-    sim_asced64.init(asced_64_config)
+    if not use_all_zero:
+        sim_asced64.use_all_zero_codeword = use_all_zero
+        sim_asced64.init(g_enc_cfg, asced_64_config)
+    else:
+        sim_asced64.all_zero_init(asced_64_config)
     sim_asced64.get_error_rates(sim_regime)
     FER_asced64 = sim_asced64.error_rates["FER-SNR"]
     print(FER_asced64)
@@ -284,14 +303,15 @@ if flag_asced_spa_64:
     asced_64_spa_config = channel_code_lib2.Ensemble_config(H, asced64_spa_path_configs)
 
     sim_asced64_spa = channel_code_lib2.Simulation_Env(H, k, n, "all")
-
-    sim_asced64_spa.use_all_zero_codeword = use_all_zero
-    sim_asced64_spa.init(asced_64_spa_config)
+    if not use_all_zero:
+        sim_asced64_spa.use_all_zero_codeword = use_all_zero
+        sim_asced64_spa.init(g_enc_cfg, asced_64_spa_config)
+    else:
+        sim_asced64_spa.all_zero_init(asced_64_spa_config)
     sim_asced64_spa.get_error_rates(sim_regime)
     FER_asced64_spa = sim_asced64_spa.error_rates["FER-SNR"]
     print(FER_asced64_spa)
     print("asced64spa finished")
-
 
 
 if plot_using_tex:
@@ -299,9 +319,9 @@ if plot_using_tex:
         (FER_1min, "H1min"),
         (FER_ssPCM2, "ssPCM2"),
         (FER_mbbp8, "MBBP-8"),
-        (FER_mbbp64, "MBBP-64"),
+        # (FER_mbbp64, "MBBP-64"),
         (FER_asced8, "aSCED-8"),
-        (FER_asced64, "aSCED-NMSA-64"),
-        (FER_asced64_spa, "aSCED-NSPA-64"),
+        # (FER_asced64, "aSCED-NMSA-64"),
+        # (FER_asced64_spa, "aSCED-NSPA-64"),
         save_name="fig_9.png",
     )

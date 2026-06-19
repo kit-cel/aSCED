@@ -7,7 +7,10 @@ gf2 = galois.GF2
 
 import channel_code_lib2
 
-from Codes.generate_5G_LDPC import generate_5G_LDPC
+from Codes.generate_5G_LDPC import (
+    generate_5G_LDPC,
+    get_final_matrices_and_message_bit_pucturing,
+)
 from Codes.generate_RM import generate_RM
 from Codes.overcomplete import overcomplete
 from Codes.read_AList import read_AList
@@ -23,7 +26,16 @@ n_ = 132
 k_ = 66
 H, p, s, Z, BG = generate_5G_LDPC(2, k_, n_, return_lifting_size=True)
 
+H, G, k, n, message_bit_pucturing = get_final_matrices_and_message_bit_pucturing(
+    H, s, p
+)
 
+use_all_zero = True
+
+if not use_all_zero:
+    enc_cfg = channel_code_lib2.PCM_Encoder_config(H, k, n)
+
+print(k, n)
 ## First setup interprets AED as MBBP instanciated with shifted parity-check matrices obtained by cyclically permuting the columns of the original parity-check matrix.
 ## Should yield the same performance as AED using same permutations
 ## Thereby nice check if both work
@@ -72,12 +84,16 @@ sim = channel_code_lib2.Simulation_Env(H, k, n, "all")
 
 # cfg.H = H
 
-sim.use_all_zero_codeword = True
-sim.puncturing(p)
-sim.shortening(s)
+sim.puncturing(message_bit_pucturing)
 # sim.Z = Z
 # sim.set_ensemble_decoding('SED', 8)
-sim.init(ensemble_decoder_config)
+
+if not use_all_zero:
+    sim.use_all_zero_codeword = use_all_zero
+
+    sim.init(enc_cfg, ensemble_decoder_config)
+else:
+    sim.all_zero_init(ensemble_decoder_config)
 
 sim.get_error_rates(np.linspace(1, 3, 7))
 
@@ -90,10 +106,12 @@ bp_config = channel_code_lib2.BP_config(H)
 
 sim_bp = channel_code_lib2.Simulation_Env(H, k, n, "all")
 
-sim_bp.use_all_zero_codeword = True
-sim_bp.puncturing(p)
-sim_bp.shortening(s)
-sim_bp.init(bp_config)
+sim_bp.puncturing(message_bit_pucturing)
+if not use_all_zero:
+    sim_bp.use_all_zero_codeword = use_all_zero
+    sim_bp.init(enc_cfg, bp_config)
+else:
+    sim_bp.all_zero_init(bp_config)
 sim_bp.get_error_rates(np.linspace(1, 3, 7))
 
 

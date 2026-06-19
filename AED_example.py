@@ -82,10 +82,9 @@ sim = channel_code_lib2.Simulation_Env(H, k, n, "all")
 
 # cfg.H = H
 
-sim.use_all_zero_codeword = True
 sim.puncturing(p)
 sim.shortening(s)
-sim.init(ensemble_decoder_config)
+sim.all_zero_init(ensemble_decoder_config)
 
 sim.get_error_rates(np.linspace(1, 3, 7))
 FER_AED = sim.error_rates["FER-SNR"]
@@ -94,10 +93,9 @@ bp_config = channel_code_lib2.BP_config(H)
 
 sim_bp = channel_code_lib2.Simulation_Env(H, k, n, "all")
 
-sim_bp.use_all_zero_codeword = True
 sim_bp.puncturing(p)
 sim_bp.shortening(s)
-sim_bp.init(bp_config)
+sim_bp.all_zero_init(bp_config)
 
 sim_bp.get_error_rates(np.linspace(1, 3, 7))
 FER_bp = sim_bp.error_rates["FER-SNR"]
