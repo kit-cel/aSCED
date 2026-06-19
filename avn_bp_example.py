@@ -68,13 +68,12 @@ sim = channel_code_lib2.Simulation_Env(H, k, n, "all")
 sim_avn = channel_code_lib2.Simulation_Env(H, k, n, "all")
 
 
-sim.use_all_zero_codeword = True
-sim_avn.use_all_zero_codeword = True
+# since no encoder provided; inherently assumes all-zero!
 
 # sim.Z = Z
 # sim.set_ensemble_decoding('SED', 8)
-sim.init(cfg)
-sim_avn.init(cfg)
+sim.all_zero_init(cfg)
+sim_avn.all_zero_init(cfg)
 
 sim.get_error_rates(np.linspace(1, 4, 7))
 sim_avn.get_error_rates(np.linspace(1, 4, 7))
