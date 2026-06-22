@@ -80,7 +80,7 @@ ensemble_decoder_config = channel_code_lib2.Ensemble_config(H, configs)
 # ensemble_decoder_config = channel_code_lib2.Ensemble_config(
 #     H, configs
 # ) since Identity_config is default
-sim = channel_code_lib2.Simulation_Env(H, k, n, "all")
+sim = channel_code_lib2.Simulation_Env( k, n, "all")
 
 # cfg.H = H
 
@@ -89,9 +89,7 @@ sim.puncturing(message_bit_pucturing)
 # sim.set_ensemble_decoding('SED', 8)
 
 if not use_all_zero:
-    sim.use_all_zero_codeword = use_all_zero
-
-    sim.init(enc_cfg, ensemble_decoder_config)
+    sim.init(enc_cfg, ensemble_decoder_config, use_all_zero)
 else:
     sim.all_zero_init(ensemble_decoder_config)
 
@@ -104,12 +102,11 @@ print(FER)
 
 bp_config = channel_code_lib2.BP_config(H)
 
-sim_bp = channel_code_lib2.Simulation_Env(H, k, n, "all")
+sim_bp = channel_code_lib2.Simulation_Env( k, n, "all")
 
 sim_bp.puncturing(message_bit_pucturing)
 if not use_all_zero:
-    sim_bp.use_all_zero_codeword = use_all_zero
-    sim_bp.init(enc_cfg, bp_config)
+    sim_bp.init(enc_cfg, bp_config,use_all_zero)
 else:
     sim_bp.all_zero_init(bp_config)
 sim_bp.get_error_rates(np.linspace(1, 3, 7))

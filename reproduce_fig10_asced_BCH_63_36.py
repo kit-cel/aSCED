@@ -64,7 +64,7 @@ if flag_1min:
     msa_1min_config.norm_factor = norm_const
     msa_1min_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
-    sim_msa_1min = channel_code_lib2.Simulation_Env(H, k, n, "all")
+    sim_msa_1min = channel_code_lib2.Simulation_Env( k, n, "all")
 
     if not use_all_zero:
         print("Since only equivalent!")
@@ -91,10 +91,9 @@ if flag_ssPCM2:
     msa_ssPCM2_config.norm_factor = norm_const
     msa_ssPCM2_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
-    sim_msa_ssPCM2 = channel_code_lib2.Simulation_Env(H, k, n, "all")
+    sim_msa_ssPCM2 = channel_code_lib2.Simulation_Env( k, n, "all")
     if not use_all_zero:
-        sim_msa_ssPCM2.use_all_zero_codeword = use_all_zero
-        sim_msa_ssPCM2.init(g_enc_cfg, msa_ssPCM2_config)
+        sim_msa_ssPCM2.init(g_enc_cfg, msa_ssPCM2_config, use_all_zero)
     else:
         sim_msa_ssPCM2.all_zero_init(msa_ssPCM2_config)
 
@@ -132,14 +131,12 @@ if flag_asced_6:
 
     asced_6_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
 
-    sim_asced6 = channel_code_lib2.Simulation_Env(H, k, n, "all")
+    sim_asced6 = channel_code_lib2.Simulation_Env( k, n, "all")
 
     if not use_all_zero:
-        sim_asced6.use_all_zero_codeword = use_all_zero
-        sim_asced6.init(g_enc_cfg, asced_6_config)
+        sim_asced6.init(g_enc_cfg, asced_6_config, use_all_zero)
     else:
         sim_asced6.all_zero_init(asced_6_config)
-
 
     print("start sim")
 
@@ -182,11 +179,10 @@ if flag_asced_30:
 
     asced_30_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
 
-    sim_asced30 = channel_code_lib2.Simulation_Env(H, k, n, "all")
+    sim_asced30 = channel_code_lib2.Simulation_Env( k, n, "all")
 
     if not use_all_zero:
-        sim_asced30.use_all_zero_codeword = use_all_zero
-        sim_asced30.init(g_enc_cfg, asced_30_config)
+        sim_asced30.init(g_enc_cfg, asced_30_config, use_all_zero)
     else:
         sim_asced30.all_zero_init(asced_30_config)
     print("start sim")

@@ -71,7 +71,7 @@ cfg.affine_offset = np.zeros(H.shape[0], dtype=int)
 # cfg.Z(int) #Lifting factor of QC LDPC Code; enables on-the-fly generation of QC automorphism or usable for scheduling
 
 
-sim = channel_code_lib2.Simulation_Env(H, k, n, "all")
+sim = channel_code_lib2.Simulation_Env( k, n, "all")
 
 
 sim.puncturing(message_puncturing)
@@ -89,14 +89,14 @@ print(FER_az)
 
 ##PCM BASED
 
-sim_pcm_enc = channel_code_lib2.Simulation_Env(H, k, n, "all")
+sim_pcm_enc = channel_code_lib2.Simulation_Env( k, n, "all")
 
 enc_cfg = channel_code_lib2.PCM_Encoder_config(H, k, n)
 
 sim_pcm_enc.puncturing(message_puncturing)
 
-sim_pcm_enc.use_all_zero_codeword = False
-sim_pcm_enc.init(enc_cfg, cfg)
+
+sim_pcm_enc.init(enc_cfg, cfg,False)
 
 
 sim_pcm_enc.get_error_rates(np.linspace(1, 4, 7))
@@ -106,14 +106,14 @@ FER_pcm = sim_pcm_enc.error_rates["FER-SNR"]
 print(FER_pcm)
 
 ##G BASED
-sim_g_enc = channel_code_lib2.Simulation_Env(H, k, n, "all")
+sim_g_enc = channel_code_lib2.Simulation_Env( k, n, "all")
 
 g_enc_cfg = channel_code_lib2.G_Encoder_config(G, k, n)
 
 sim_g_enc.puncturing(message_puncturing)
 
-sim_g_enc.use_all_zero_codeword = False
-sim_g_enc.init(g_enc_cfg, cfg)
+
+sim_g_enc.init(g_enc_cfg, cfg,False)
 
 
 sim_g_enc.get_error_rates(np.linspace(1, 4, 7))

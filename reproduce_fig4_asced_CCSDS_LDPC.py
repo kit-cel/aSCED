@@ -76,11 +76,10 @@ if flag_spa:
     spa_config.cn_update_type = "spa"
     spa_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
-    sim_spa = channel_code_lib2.Simulation_Env(H, k, n, "all")
+    sim_spa = channel_code_lib2.Simulation_Env( k, n, "all")
 
     if not use_all_zero:
-        sim_spa.use_all_zero_codeword = use_all_zero
-        sim_spa.init(g_enc_cfg, spa_config)
+        sim_spa.init(g_enc_cfg, spa_config,use_all_zero)
     else:
         sim_spa.all_zero_init(spa_config)
 
@@ -114,14 +113,13 @@ if flag_aed:
     ensemble_decoder_config = channel_code_lib2.Ensemble_config(
         H, undercomplete_bp_config, processing_config
     )
-    sim_aed = channel_code_lib2.Simulation_Env(H, k, n, "all")
+    sim_aed = channel_code_lib2.Simulation_Env( k, n, "all")
 
     # cfg.H = H
 
 
     if not use_all_zero:
-        sim_aed.use_all_zero_codeword = use_all_zero
-        sim_aed.init(g_enc_cfg, ensemble_decoder_config)
+        sim_aed.init(g_enc_cfg, ensemble_decoder_config,use_all_zero)
     else:
         sim_aed.all_zero_init(ensemble_decoder_config)
 
@@ -162,13 +160,12 @@ if flag_asced_17:
             asced_17_path_configs[-1].affine_offset = affine_offset
     print("Simulated num. aSCED paths:", len(asced_17_path_configs))
     asced_17_config = channel_code_lib2.Ensemble_config(H, asced_17_path_configs)
-    sim_asced_17 = channel_code_lib2.Simulation_Env(H, k, n, "all")
+    sim_asced_17 = channel_code_lib2.Simulation_Env( k, n, "all")
 
     # cfg.H = H
 
     if not use_all_zero:
-        sim_asced_17.use_all_zero_codeword = use_all_zero
-        sim_asced_17.init(g_enc_cfg, asced_17_config)
+        sim_asced_17.init(g_enc_cfg, asced_17_config,use_all_zero)
     else:
         sim_asced_17.all_zero_init(asced_17_config)
 
@@ -208,13 +205,12 @@ if flag_asced_31:
             asced_31_path_configs[-1].affine_offset = affine_offset
     print("Simulated num. aSCED paths:", len(asced_31_path_configs))
     asced_31_config = channel_code_lib2.Ensemble_config(H, asced_31_path_configs)
-    sim_asced_31 = channel_code_lib2.Simulation_Env(H, k, n, "all")
+    sim_asced_31 = channel_code_lib2.Simulation_Env( k, n, "all")
 
     # cfg.H = H
 
     if not use_all_zero:
-        sim_asced_31.use_all_zero_codeword = use_all_zero
-        sim_asced_31.init(g_enc_cfg, asced_31_config)
+        sim_asced_31.init(g_enc_cfg, asced_31_config,use_all_zero)
     else:
         sim_asced_31.all_zero_init(asced_31_config)
     sim_asced_31.get_error_rates(np.linspace(1, 4, 7))

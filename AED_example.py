@@ -51,8 +51,6 @@ def quasi_cyclic_permutation_vector(length, block_size=11):
     return permuted_indices
 
 
-
-
 print(quasi_cyclic_permutation_vector(n, Z))
 
 permutation = quasi_cyclic_permutation_vector(n, Z)
@@ -87,16 +85,14 @@ ensemble_decoder_config = channel_code_lib2.Ensemble_config(
 # ensemble_decoder_config = channel_code_lib2.Ensemble_config(
 #     H, configs
 # ) since Identity_config is default
-sim = channel_code_lib2.Simulation_Env(H, k, n, "all")
+sim = channel_code_lib2.Simulation_Env( k, n, "all")
 
 
 # cfg.H = H
 
 sim.puncturing(message_bit_pucturing)
 if not use_all_zero:
-    sim.use_all_zero_codeword = use_all_zero
-
-    sim.init(enc_cfg, ensemble_decoder_config)
+    sim.init(enc_cfg, ensemble_decoder_config, use_all_zero)
 else:
     sim.all_zero_init(ensemble_decoder_config)
 
@@ -105,12 +101,11 @@ FER_AED = sim.error_rates["FER-SNR"]
 
 bp_config = channel_code_lib2.BP_config(H)
 
-sim_bp = channel_code_lib2.Simulation_Env(H, k, n, "all")
+sim_bp = channel_code_lib2.Simulation_Env( k, n, "all")
 
 sim_bp.puncturing(message_bit_pucturing)
 if not use_all_zero:
-    sim_bp.use_all_zero_codeword = use_all_zero
-    sim_bp.init(enc_cfg, bp_config)
+    sim_bp.init(enc_cfg, bp_config, use_all_zero)
 else:
     sim_bp.all_zero_init(bp_config)
 
