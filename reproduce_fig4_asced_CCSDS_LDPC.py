@@ -31,7 +31,7 @@ k, n = G.shape
 
 print(n, k)
 
-use_all_zero = False  # Currently only all-zero since bug in encode of ccsds 256,128
+use_all_zero = True  # Currently only all-zero since bug in encode of ccsds 256,128
 
 
 
@@ -46,7 +46,7 @@ flag_asced_17 = True
 
 flag_asced_31 = True  # if true simulate aSCED-11
 
-plot_using_tex = True
+plot_using_tex = False
 # np.linspace(1, 4,7 )
 
 ## First setup interprets AED as MBBP instanciated with shifted parity-check matrices obtained by cyclically permuting the columns of the original parity-check matrix.

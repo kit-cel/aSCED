@@ -17,29 +17,29 @@ from affine_helpers import get_affine_offset_structured_PCMs
 
 use_all_zero = False  # Currently only all-zero since bug in encode of ccsds 256,128
 
-sim_regime = np.linspace(2, 2.5, 2)
+sim_regime = np.linspace(2, 4, 5)
 
 norm_const = 0.5
 max_iter = 20
 
 flag_1min = True  # if true simulates AED-11
 
-flag_ssPCM2 = False  # if true simulates spa-32
+flag_ssPCM2 = True  # if true simulates spa-32
 
-flag_asced_6 = False
+flag_asced_6 = True
 
-flag_asced_30 = False  # if true simulate aSCED-11
+flag_asced_30 = True  # if true simulate aSCED-11
 
 plot_using_tex = False
 
-simulate_affine = False
+simulate_affine = True
 
 n, k, H = read_AList("Codes/BCH63_36/BCH_63_36.alist")
 
 G = gf2(H).null_space()
 
 
-use_all_zero = True  # Currently only all-zero since bug in encode
+use_all_zero = False  # Currently only all-zero since bug in encode
 
 
 k, n = G.shape

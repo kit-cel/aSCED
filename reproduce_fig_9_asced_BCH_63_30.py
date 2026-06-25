@@ -17,7 +17,7 @@ from affine_helpers import get_affine_offset_structured_PCMs
 
 use_all_zero = False  # Currently only all-zero since bug in encode of ccsds 256,128
 
-sim_regime = np.linspace(2, 4.0, 5)
+sim_regime = np.linspace(2, 3.5, 4)
 
 norm_const = 0.5
 max_iter = 20
@@ -33,8 +33,8 @@ flag_mbbp_64 = False
 mbbp_base_dir = Path("Codes/BCH63_30/bch_63_30_sspcm2_mbbp_64_matrices")
 
 flag_asced_8 = True
-flag_asced_64 = False  # nmsa
-flag_asced_spa_64 = False  # spa
+flag_asced_64 =True  # nmsa
+flag_asced_spa_64 = True  # spa
 
 asced_base_dir = Path(
     "Codes/BCH63_30/multi_batch_Delta=1/bch_63_30_sspcm2_asced_64_matrices"
