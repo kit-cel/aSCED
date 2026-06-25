@@ -13,7 +13,7 @@ resolution-markers = [
 [[package]]
 name = "channel-code-lib2"
 version = "0.1.0"
-source = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2?branch=ensemble_diverity#4a90eb2200dc4126e56b640d9e3a1bba801cbbca" }
+source = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2?branch=ensemble_diverity#e480c1e2f9ad8400de8fc581064381a304d21bf2" }
 dependencies = [
     { name = "galois" },
     { name = "matplotlib" },
