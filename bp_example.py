@@ -7,7 +7,10 @@ gf2 = galois.GF2
 
 import channel_code_lib2
 
-from Codes.generate_5G_LDPC import generate_5G_LDPC
+from Codes.generate_5G_LDPC import (
+    generate_5G_LDPC,
+    get_final_matrices_and_message_bit_pucturing,
+)
 from Codes.generate_RM import generate_RM
 from Codes.overcomplete import overcomplete
 from Codes.read_AList import read_AList
@@ -21,9 +24,11 @@ import show_results
 n_ = 132
 k_ = 66
 H, p, s, Z, BG = generate_5G_LDPC(2, k_, n_, return_lifting_size=True)
-G = gf2(H).null_space()
-k, n = G.shape
 
+
+# get_final_matrices_and_message_bit_pucturing takes care of parity-bit puncturing and message bit shortening
+# message bit puncturing must be done within sim env
+H, G, k, n, message_puncturing = get_final_matrices_and_message_bit_pucturing(H, s, p)
 
 ## This explains the possibilities of configuring BP decoding;
 
@@ -46,13 +51,11 @@ cfg = channel_code_lib2.BP_config(H)
 
 cfg.early_stopping = True  # Stop as soon as H@x_hat=0; default is true
 cfg.max_iterations = 32  # set maximum number of BP iterations; default is 32
-cfg.cn_update_type = (
-    "spa"  # Check node update rule (msa, spa, spa_phi); default is spa
-)
+cfg.cn_update_type = "spa"  # Check node update rule (msa, spa, spa_phi); default is spa
 cfg.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
 
-cfg.norm_factor=0.75 #set normalization constant used for normalized min sum or normalized sum product; **default is 1**;
+cfg.norm_factor = 0.75  # set normalization constant used for normalized min sum or normalized sum product; **default is 1**;
 
 
 ## Affine offset used for aSCED; For an affine offset z_a, BP aims at solving H@x_hat=z_a
@@ -63,25 +66,59 @@ cfg.norm_factor=0.75 #set normalization constant used for normalized min sum or 
 cfg.affine_offset = np.zeros(H.shape[0], dtype=int)
 
 
-
-
 # cfg.schedule(np.array)
 # cfg.nodes_in_layer
 # cfg.Z(int) #Lifting factor of QC LDPC Code; enables on-the-fly generation of QC automorphism or usable for scheduling
-sim = channel_code_lib2.Simulation_Env(H, k, n, "all")
 
-# cfg.H = H
 
-sim.use_all_zero_codeword = True
-sim.puncturing(p)
-sim.shortening(s)
+sim = channel_code_lib2.Simulation_Env( k, n, "all")
+
+
+sim.puncturing(message_puncturing)
 # sim.Z = Z
 # sim.set_ensemble_decoding('SED', 8)
-sim.init(cfg)
+
+# use all_zero_init to do az simulation
+sim.all_zero_init(cfg)
 
 sim.get_error_rates(np.linspace(1, 4, 7))
 
-FER = sim.error_rates["FER-SNR"]
+FER_az = sim.error_rates["FER-SNR"]
 
-print(FER)
-show_results.plot_error_rates((FER, "MBBP"))
+print(FER_az)
+
+##PCM BASED
+
+sim_pcm_enc = channel_code_lib2.Simulation_Env( k, n, "all")
+
+enc_cfg = channel_code_lib2.PCM_Encoder_config(H, k, n)
+
+sim_pcm_enc.puncturing(message_puncturing)
+
+
+sim_pcm_enc.init(enc_cfg, cfg,False)
+
+
+sim_pcm_enc.get_error_rates(np.linspace(1, 4, 7))
+
+FER_pcm = sim_pcm_enc.error_rates["FER-SNR"]
+
+print(FER_pcm)
+
+##G BASED
+sim_g_enc = channel_code_lib2.Simulation_Env( k, n, "all")
+
+g_enc_cfg = channel_code_lib2.G_Encoder_config(G, k, n)
+
+sim_g_enc.puncturing(message_puncturing)
+
+
+sim_g_enc.init(g_enc_cfg, cfg,False)
+
+
+sim_g_enc.get_error_rates(np.linspace(1, 4, 7))
+
+FER_g = sim_g_enc.error_rates["FER-SNR"]
+
+print(FER_g)
+show_results.plot_error_rates((FER_az, "FER AZ"), (FER_pcm, "FER PCM"),(FER_g, "FER G"))

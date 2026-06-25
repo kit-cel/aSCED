@@ -8,6 +8,7 @@ dependencies = [
     "channel-code-lib2",
 ]
 
+
 # use for sync with git 
 [tool.uv.sources]
 #channel-code-lib2 = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2",#    branch = "ensemble_diverity"}
