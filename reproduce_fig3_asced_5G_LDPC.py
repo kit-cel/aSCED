@@ -31,7 +31,7 @@ H, G, k, n, message_bit_pucturing = get_final_matrices_and_message_bit_pucturing
     H, s, p
 )
 
-use_all_zero = True
+use_all_zero = False
 
 if not use_all_zero:
     enc_cfg = channel_code_lib2.PCM_Encoder_config(H, k, n)
@@ -46,7 +46,7 @@ flag_sced = True
 
 flag_asced = True  # if true simulate aSCED-11
 
-plot_using_tex = False
+plot_using_tex = True
 
 
 ## First setup interprets AED as MBBP instanciated with shifted parity-check matrices obtained by cyclically permuting the columns of the original parity-check matrix.
@@ -129,7 +129,7 @@ if flag_aed:
         shifted_permutations.append(shifted_permutations[i - 1][permutation])
 
     for per in shifted_permutations:
-        assert np.all(gf2(H) @ G[:, per].T == 0)
+        assert np.all(gf2(H) @gf2( G[:, per]).T == 0)
 
     processing_config = channel_code_lib2.Automorphism_config(shifted_permutations)
 
@@ -222,6 +222,7 @@ if flag_asced:
             asced_path_configs[-1].affine_offset = affine_offset
     print("Simulated num. aSCED paths:", len(asced_path_configs))
     asced_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
+    asced_config.target_num_converged=5
     sim_asced = channel_code_lib2.Simulation_Env( k, n, "all")
 
     # cfg.H = H

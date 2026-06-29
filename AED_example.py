@@ -67,7 +67,7 @@ for i in range(1, 11):
 
 
 for per in shifted_permutations:
-    assert np.all(gf2(H) @ G[:, per].T == 0)
+    assert np.all(gf2(H) @ gf2(G)[:, per].T == 0)
 
 processing_config = channel_code_lib2.Automorphism_config(shifted_permutations)
 
@@ -79,13 +79,14 @@ processing_config = channel_code_lib2.Automorphism_config(shifted_permutations)
 ensemble_decoder_config = channel_code_lib2.Ensemble_config(
     H, undercomplete_bp_config, processing_config
 )
+ensemble_decoder_config.target_num_converged=5
 
 # identical to
 
 # ensemble_decoder_config = channel_code_lib2.Ensemble_config(
 #     H, configs
 # ) since Identity_config is default
-sim = channel_code_lib2.Simulation_Env( k, n, "all")
+sim = channel_code_lib2.Simulation_Env(k, n, "all")
 
 
 # cfg.H = H
@@ -101,7 +102,7 @@ FER_AED = sim.error_rates["FER-SNR"]
 
 bp_config = channel_code_lib2.BP_config(H)
 
-sim_bp = channel_code_lib2.Simulation_Env( k, n, "all")
+sim_bp = channel_code_lib2.Simulation_Env(k, n, "all")
 
 sim_bp.puncturing(message_bit_pucturing)
 if not use_all_zero:
