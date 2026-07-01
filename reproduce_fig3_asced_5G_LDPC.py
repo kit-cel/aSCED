@@ -32,6 +32,15 @@ H, G, k, n, message_bit_pucturing = get_final_matrices_and_message_bit_pucturing
 )
 
 G = gf2(G)
+
+
+auto_save = True
+
+# stopping after
+bool_emulate_stopping = False
+target_fraction_coverged_path = 0.5
+
+results_dir = "RESULTS/fig_3"
 use_all_zero = False
 
 if not use_all_zero:
@@ -47,7 +56,7 @@ flag_sced = True
 
 flag_asced = True  # if true simulate aSCED-11
 
-plot_using_tex = True
+plot_using_tex = False
 
 
 ## First setup interprets AED as MBBP instanciated with shifted parity-check matrices obtained by cyclically permuting the columns of the original parity-check matrix.
@@ -77,6 +86,8 @@ if flag_nmsa:
     nmsa_config.norm_factor = 0.75
 
     sim_nmsa = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_nmsa.auto_save = auto_save
+    sim_nmsa.save_dir = results_dir + "/nmsa"
     sim_nmsa.puncturing(message_bit_pucturing)
     if not use_all_zero:
         sim_nmsa.init(enc_cfg, nmsa_config, use_all_zero)
@@ -100,6 +111,8 @@ if flag_nmsa352:
     nmsa_config_352.norm_factor = 0.75
 
     sim_nmsa_352 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_nmsa_352.auto_save = auto_save
+    sim_nmsa_352.save_dir = results_dir + "/nmsa352"
     sim_nmsa_352.puncturing(message_bit_pucturing)
     if not use_all_zero:
         sim_nmsa_352.init(enc_cfg, nmsa_config_352, use_all_zero)
@@ -137,7 +150,13 @@ if flag_aed:
     ensemble_decoder_config = channel_code_lib2.Ensemble_config(
         H, undercomplete_bp_config, processing_config
     )
+    if bool_emulate_stopping:
+        ensemble_decoder_config.target_num_converged= np.ceil(target_fraction_coverged_path*11)
+
+
     sim_aed = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_aed.auto_save = auto_save
+    sim_aed.save_dir = results_dir + "/AED"
 
     # cfg.H = H
 
@@ -177,8 +196,13 @@ if flag_sced:
 
     print("Simulated num. sced paths:", len(sced_path_configs))
     sced_config = channel_code_lib2.Ensemble_config(H, sced_path_configs)
-    sim_sced = channel_code_lib2.Simulation_Env(k, n, "all")
 
+    if bool_emulate_stopping:
+        sced_config.target_num_converged= np.ceil(target_fraction_coverged_path*11)
+
+    sim_sced = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_sced.auto_save = auto_save
+    sim_sced.save_dir = results_dir + "/SCED"
     # cfg.H = H
 
     sim_sced.puncturing(message_bit_pucturing)
@@ -223,9 +247,12 @@ if flag_asced:
             asced_path_configs[-1].affine_offset = affine_offset
     print("Simulated num. aSCED paths:", len(asced_path_configs))
     asced_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
-    asced_config.target_num_converged = 5
-    sim_asced = channel_code_lib2.Simulation_Env(k, n, "all")
+    if bool_emulate_stopping:
+        asced_config.target_num_converged= np.ceil(target_fraction_coverged_path*11)
 
+    sim_asced = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_asced.auto_save = auto_save
+    sim_asced.save_dir = results_dir + "/aSCED"
     # cfg.H = H
 
     sim_asced.puncturing(message_bit_pucturing)

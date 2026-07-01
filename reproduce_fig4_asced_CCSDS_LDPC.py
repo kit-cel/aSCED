@@ -29,6 +29,15 @@ G = gf2(H).null_space()
 
 k, n = G.shape
 
+auto_save = True
+
+# stopping after
+bool_emulate_stopping = False
+target_fraction_coverged_path = 0.5
+
+results_dir = "RESULTS/fig_9"
+sim_regime = np.linspace(2, 3.5, 4)
+
 print(n, k)
 
 use_all_zero = True  # Currently only all-zero since bug in encode of ccsds 256,128
@@ -76,13 +85,14 @@ if flag_spa:
     spa_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
     sim_spa = channel_code_lib2.Simulation_Env(k, n, "all")
-
+    sim_spa.auto_save = auto_save
+    sim_spa.save_dir = results_dir + "/SPA"
     if not use_all_zero:
         sim_spa.init(g_enc_cfg, spa_config, use_all_zero)
     else:
         sim_spa.all_zero_init(spa_config)
 
-    sim_spa.get_error_rates(np.linspace(1, 4, 7))
+    sim_spa.get_error_rates(sim_regime)
 
     FER_spa = sim_spa.error_rates["FER-SNR"]
     print(FER_spa)
@@ -112,8 +122,14 @@ if flag_aed:
     ensemble_decoder_config = channel_code_lib2.Ensemble_config(
         H, undercomplete_bp_config, processing_config
     )
-    sim_aed = channel_code_lib2.Simulation_Env(k, n, "all")
+    if bool_emulate_stopping:
+        ensemble_decoder_config.target_num_converged = np.ceil(
+            target_fraction_coverged_path * Z
+        )
 
+    sim_aed = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_aed.auto_save = auto_save
+    sim_aed.save_dir = results_dir + "/AED"
     # cfg.H = H
 
     if not use_all_zero:
@@ -121,7 +137,7 @@ if flag_aed:
     else:
         sim_aed.all_zero_init(ensemble_decoder_config)
 
-    sim_aed.get_error_rates(np.linspace(1, 4, 7))
+    sim_aed.get_error_rates(sim_regime)
     FER_AED = sim_aed.error_rates["FER-SNR"]
 
     print(FER_AED)
@@ -157,8 +173,13 @@ if flag_asced_17:
             asced_17_path_configs[-1].affine_offset = affine_offset
     print("Simulated num. aSCED paths:", len(asced_17_path_configs))
     asced_17_config = channel_code_lib2.Ensemble_config(H, asced_17_path_configs)
+    if bool_emulate_stopping:
+        asced_17_config.target_num_converged = np.ceil(
+            target_fraction_coverged_path * 17
+        )
     sim_asced_17 = channel_code_lib2.Simulation_Env(k, n, "all")
-
+    sim_asced_17.auto_save = auto_save
+    sim_asced_17.save_dir = results_dir + "/aSCED17"
     # cfg.H = H
 
     if not use_all_zero:
@@ -166,7 +187,7 @@ if flag_asced_17:
     else:
         sim_asced_17.all_zero_init(asced_17_config)
 
-    sim_asced_17.get_error_rates(np.linspace(1, 4, 7))
+    sim_asced_17.get_error_rates(sim_regime)
     FER_aSCED_17 = sim_asced_17.error_rates["FER-SNR"]
     print("aSCED finished")
 
@@ -201,15 +222,19 @@ if flag_asced_31:
             asced_31_path_configs[-1].affine_offset = affine_offset
     print("Simulated num. aSCED paths:", len(asced_31_path_configs))
     asced_31_config = channel_code_lib2.Ensemble_config(H, asced_31_path_configs)
-    sim_asced_31 = channel_code_lib2.Simulation_Env(k, n, "all")
+    if bool_emulate_stopping:
+        asced_31_config.target_num_converged= np.ceil(target_fraction_coverged_path*31)
 
+    sim_asced_31 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_asced_31.auto_save = auto_save
+    sim_asced_31.save_dir = results_dir + "/aSCED31"
     # cfg.H = H
 
     if not use_all_zero:
         sim_asced_31.init(g_enc_cfg, asced_31_config, use_all_zero)
     else:
         sim_asced_31.all_zero_init(asced_31_config)
-    sim_asced_31.get_error_rates(np.linspace(1, 4, 7))
+    sim_asced_31.get_error_rates(sim_regime)
     FER_aSCED_31 = sim_asced_31.error_rates["FER-SNR"]
     print("aSCED finished")
 
