@@ -16,7 +16,13 @@ import show_results
 from affine_helpers import get_affine_offset_structured_PCMs
 
 use_all_zero = False  # Currently only all-zero since bug in encode of ccsds 256,128
+auto_save = True
 
+# stopping after
+bool_emulate_stopping = False
+target_fraction_coverged_path = 0.5
+
+results_dir = "RESULTS/fig_9"
 sim_regime = np.linspace(2, 3.5, 4)
 
 norm_const = 0.5
@@ -33,7 +39,7 @@ flag_mbbp_64 = False
 mbbp_base_dir = Path("Codes/BCH63_30/bch_63_30_sspcm2_mbbp_64_matrices")
 
 flag_asced_8 = True
-flag_asced_64 =True  # nmsa
+flag_asced_64 = True  # nmsa
 flag_asced_spa_64 = True  # spa
 
 asced_base_dir = Path(
@@ -71,7 +77,9 @@ if flag_1min:
     msa_1min_config.norm_factor = norm_const
     msa_1min_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
-    sim_msa_1min = channel_code_lib2.Simulation_Env( k, n, "all")
+    sim_msa_1min = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_msa_1min.auto_save = True
+    sim_msa_1min.save_dir = results_dir + "/1min"
 
     if not use_all_zero:
         sim_msa_1min.init(g_enc_cfg, msa_1min_config, use_all_zero)
@@ -99,7 +107,9 @@ if flag_ssPCM2:
     msa_ssPCM2_config.norm_factor = norm_const
     msa_ssPCM2_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
-    sim_msa_ssPCM2 = channel_code_lib2.Simulation_Env( k, n, "all")
+    sim_msa_ssPCM2 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_msa_ssPCM2.auto_save = True
+    sim_msa_ssPCM2.save_dir = results_dir + "/ssPCM"
     if not use_all_zero:
         sim_msa_ssPCM2.init(g_enc_cfg, msa_ssPCM2_config, use_all_zero)
     else:
@@ -132,7 +142,12 @@ if flag_mbbp_8:
         cfg.scheduling_type = "flooding"
     mbbp_8_config = channel_code_lib2.Ensemble_config(H, mbbp_8_paths_configs)
 
-    sim_mbbp8 = channel_code_lib2.Simulation_Env( k, n, "all")
+    if bool_emulate_stopping
+        mbbp_8_config.target_num_converged= np.ceil(target_fraction_coverged_path*8)
+
+    sim_mbbp8 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_mbbp8.auto_save = True
+    sim_mbbp8.save_dir = results_dir + "/MBBP8"
     if not use_all_zero:
         sim_mbbp8.init(g_enc_cfg, mbbp_8_config, use_all_zero)
     else:
@@ -166,7 +181,13 @@ if flag_mbbp_64:
 
     mbbp_64_config = channel_code_lib2.Ensemble_config(H, mbbp_64_paths_configs)
 
-    sim_mbbp64 = channel_code_lib2.Simulation_Env( k, n, "all")
+    if bool_emulate_stopping
+        mbbp_64_config.target_num_converged= np.ceil(target_fraction_coverged_path*64)
+
+    sim_mbbp64 = channel_code_lib2.Simulation_Env(k, n, "all")
+
+    sim_mbbp64.auto_save = True
+    sim_mbbp64.save_dir = results_dir + "/MBBP64"
     if not use_all_zero:
         sim_mbbp64.init(g_enc_cfg, mbbp_64_config, use_all_zero)
     else:
@@ -208,8 +229,12 @@ if flag_asced_8:
         cfg.scheduling_type = "flooding"
 
     asced_8_config = channel_code_lib2.Ensemble_config(H, asced8_path_configs)
+    if bool_emulate_stopping
+        asced_8_config.target_num_converged= np.ceil(target_fraction_coverged_path*8)
 
-    sim_asced8 = channel_code_lib2.Simulation_Env( k, n, "all")
+    sim_asced8 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_asced8.auto_save = True
+    sim_asced8.save_dir = results_dir + "/aSCED8"
 
     if not use_all_zero:
         sim_asced8.init(g_enc_cfg, asced_8_config, use_all_zero)
@@ -252,8 +277,12 @@ if flag_asced_64:
         cfg.scheduling_type = "flooding"
 
     asced_64_config = channel_code_lib2.Ensemble_config(H, asced64_path_configs)
+    if bool_emulate_stopping
+        asced_64_config.target_num_converged= np.ceil(target_fraction_coverged_path*64)
 
-    sim_asced64 = channel_code_lib2.Simulation_Env( k, n, "all")
+    sim_asced64 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_asced64.auto_save = True
+    sim_asced64.save_dir = results_dir + "/aSCED64"
 
     if not use_all_zero:
         sim_asced64.init(g_enc_cfg, asced_64_config, use_all_zero)
@@ -294,8 +323,14 @@ if flag_asced_spa_64:
         cfg.scheduling_type = "flooding"
 
     asced_64_spa_config = channel_code_lib2.Ensemble_config(H, asced64_spa_path_configs)
+    if bool_emulate_stopping
+        asced_64_spa_config.target_num_converged= np.ceil(target_fraction_coverged_path*64)
 
-    sim_asced64_spa = channel_code_lib2.Simulation_Env( k, n, "all")
+
+    sim_asced64_spa = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_asced64_spa.auto_save = True
+    sim_asced64_spa.save_dir = results_dir + "/aSCED64_SPA"
+
     if not use_all_zero:
         sim_asced64_spa.init(g_enc_cfg, asced_64_spa_config, use_all_zero)
     else:
