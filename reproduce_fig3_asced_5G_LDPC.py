@@ -41,6 +41,8 @@ bool_emulate_stopping = False
 target_fraction_coverged_path = 0.5
 
 results_dir = "RESULTS/fig_3"
+if bool_emulate_stopping:
+    results_dir += "stopping"
 use_all_zero = False
 
 if not use_all_zero:

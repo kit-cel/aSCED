@@ -17,6 +17,19 @@ from affine_helpers import get_affine_offset_structured_PCMs
 
 use_all_zero = False  # Currently only all-zero since bug in encode of ccsds 256,128
 
+
+auto_save = True
+
+# stopping after
+bool_emulate_stopping = False
+target_fraction_coverged_path = 0.5
+
+
+results_dir = "RESULTS/fig_10"
+
+if bool_emulate_stopping:
+    results_dir += "stopping"
+
 sim_regime = np.linspace(2, 4, 5)
 
 norm_const = 0.5
@@ -64,7 +77,9 @@ if flag_1min:
     msa_1min_config.norm_factor = norm_const
     msa_1min_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
-    sim_msa_1min = channel_code_lib2.Simulation_Env( k, n, "all")
+    sim_msa_1min = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_msa_1min.auto_save = auto_save
+    sim_msa_1min.save_dir = results_dir + "/1min"
 
     if not use_all_zero:
         print("Since only equivalent!")
@@ -91,7 +106,9 @@ if flag_ssPCM2:
     msa_ssPCM2_config.norm_factor = norm_const
     msa_ssPCM2_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
 
-    sim_msa_ssPCM2 = channel_code_lib2.Simulation_Env( k, n, "all")
+    sim_msa_ssPCM2 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_msa_ssPCM2.auto_save = auto_save
+    sim_msa_ssPCM2.save_dir = results_dir + "/ssPCM"
     if not use_all_zero:
         sim_msa_ssPCM2.init(g_enc_cfg, msa_ssPCM2_config, use_all_zero)
     else:
@@ -130,9 +147,11 @@ if flag_asced_6:
             cfg.scheduling_type = "flooding"
 
     asced_6_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
-
-    sim_asced6 = channel_code_lib2.Simulation_Env( k, n, "all")
-
+    if bool_emulate_stopping:
+        asced_6_config.target_num_converged = np.ceil(target_fraction_coverged_path * 6)
+    sim_asced6 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_asced6.auto_save = auto_save
+    sim_asced6.save_dir = results_dir + "/aSCED6"
     if not use_all_zero:
         sim_asced6.init(g_enc_cfg, asced_6_config, use_all_zero)
     else:
@@ -178,8 +197,14 @@ if flag_asced_30:
         cfg.scheduling_type = "flooding"
 
     asced_30_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
+    if bool_emulate_stopping:
+        asced_30_config.target_num_converged = np.ceil(
+            target_fraction_coverged_path * 30
+        )
 
-    sim_asced30 = channel_code_lib2.Simulation_Env( k, n, "all")
+    sim_asced30 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_asced30.auto_save = auto_save
+    sim_asced30.save_dir = results_dir + "/aSCED30"
 
     if not use_all_zero:
         sim_asced30.init(g_enc_cfg, asced_30_config, use_all_zero)

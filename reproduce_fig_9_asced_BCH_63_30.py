@@ -23,6 +23,8 @@ bool_emulate_stopping = False
 target_fraction_coverged_path = 0.5
 
 results_dir = "RESULTS/fig_9"
+if bool_emulate_stopping:
+    results_dir += "stopping"
 sim_regime = np.linspace(2, 3.5, 4)
 
 norm_const = 0.5
@@ -143,7 +145,7 @@ if flag_mbbp_8:
     mbbp_8_config = channel_code_lib2.Ensemble_config(H, mbbp_8_paths_configs)
 
     if bool_emulate_stopping:
-        mbbp_8_config.target_num_converged= np.ceil(target_fraction_coverged_path*8)
+        mbbp_8_config.target_num_converged = np.ceil(target_fraction_coverged_path * 8)
 
     sim_mbbp8 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_mbbp8.auto_save = auto_save
@@ -182,7 +184,9 @@ if flag_mbbp_64:
     mbbp_64_config = channel_code_lib2.Ensemble_config(H, mbbp_64_paths_configs)
 
     if bool_emulate_stopping:
-        mbbp_64_config.target_num_converged= np.ceil(target_fraction_coverged_path*64)
+        mbbp_64_config.target_num_converged = np.ceil(
+            target_fraction_coverged_path * 64
+        )
 
     sim_mbbp64 = channel_code_lib2.Simulation_Env(k, n, "all")
 
@@ -230,7 +234,7 @@ if flag_asced_8:
 
     asced_8_config = channel_code_lib2.Ensemble_config(H, asced8_path_configs)
     if bool_emulate_stopping:
-        asced_8_config.target_num_converged= np.ceil(target_fraction_coverged_path*8)
+        asced_8_config.target_num_converged = np.ceil(target_fraction_coverged_path * 8)
 
     sim_asced8 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced8.auto_save = auto_save
@@ -278,7 +282,9 @@ if flag_asced_64:
 
     asced_64_config = channel_code_lib2.Ensemble_config(H, asced64_path_configs)
     if bool_emulate_stopping:
-        asced_64_config.target_num_converged= np.ceil(target_fraction_coverged_path*64)
+        asced_64_config.target_num_converged = np.ceil(
+            target_fraction_coverged_path * 64
+        )
 
     sim_asced64 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced64.auto_save = auto_save
@@ -324,8 +330,9 @@ if flag_asced_spa_64:
 
     asced_64_spa_config = channel_code_lib2.Ensemble_config(H, asced64_spa_path_configs)
     if bool_emulate_stopping:
-        asced_64_spa_config.target_num_converged= np.ceil(target_fraction_coverged_path*64)
-
+        asced_64_spa_config.target_num_converged = np.ceil(
+            target_fraction_coverged_path * 64
+        )
 
     sim_asced64_spa = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced64_spa.auto_save = auto_save
