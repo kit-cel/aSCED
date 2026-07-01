@@ -20,6 +20,7 @@ import show_results
 
 # import data
 
+emulate_stopping_after = 2
 
 # - Generate 5G LDPC code
 n_ = 132
@@ -78,10 +79,12 @@ ensemble_decoder_config = channel_code_lib2.Ensemble_config(H, configs)
 # identical to
 
 # ensemble_decoder_config = channel_code_lib2.Ensemble_config(
-#     H, configs
+# H, configs
 # ) since Identity_config is default
-sim = channel_code_lib2.Simulation_Env( k, n, "all")
+sim = channel_code_lib2.Simulation_Env(k, n, "all")
 
+sim.auto_save = True
+sim.save_dir = "mbbp"
 # cfg.H = H
 
 sim.puncturing(message_bit_pucturing)
@@ -93,7 +96,7 @@ if not use_all_zero:
 else:
     sim.all_zero_init(ensemble_decoder_config)
 
-sim.get_error_rates(np.linspace(1, 3, 7))
+sim.get_error_rates(np.linspace(1, 3, 5))
 
 FER = sim.error_rates["FER-SNR"]
 
@@ -102,16 +105,56 @@ print(FER)
 
 bp_config = channel_code_lib2.BP_config(H)
 
-sim_bp = channel_code_lib2.Simulation_Env( k, n, "all")
+sim_bp = channel_code_lib2.Simulation_Env(k, n, "all")
+sim_bp.auto_save = True
+sim_bp.save_dir = "bp"
 
 sim_bp.puncturing(message_bit_pucturing)
 if not use_all_zero:
-    sim_bp.init(enc_cfg, bp_config,use_all_zero)
+    sim_bp.init(enc_cfg, bp_config, use_all_zero)
 else:
     sim_bp.all_zero_init(bp_config)
-sim_bp.get_error_rates(np.linspace(1, 3, 7))
+sim_bp.get_error_rates(np.linspace(1, 3, 5))
 
 
 FER_bp = sim_bp.error_rates["FER-SNR"]
 
-show_results.plot_error_rates((FER, "MBBP"), (FER_bp, "BP"))
+
+##PCM provided to ensemble config used for ML in the list
+# ensemble_decoder_config = channel_code_lib2.Ensemble_config(
+#     H, configs, processing_config
+# )
+
+stopping_ensemble_decoder_config = channel_code_lib2.Ensemble_config(H, configs)
+stopping_ensemble_decoder_config.target_num_converged = emulate_stopping_after
+
+# ) since Identity_config is default
+sim_stopping = channel_code_lib2.Simulation_Env(k, n, "all")
+
+sim_stopping.auto_save = True
+sim_stopping.save_dir = "stopping"
+
+
+# cfg.H = H
+
+sim_stopping.puncturing(message_bit_pucturing)
+
+if not use_all_zero:
+    sim_stopping.init(enc_cfg, stopping_ensemble_decoder_config, use_all_zero)
+else:
+    sim_stopping.all_zero_init(stopping_ensemble_decoder_config)
+
+sim_stopping.get_error_rates(np.linspace(1, 3, 5))
+
+
+FER_stopping = sim_stopping.error_rates["FER-SNR"]
+
+
+# identical to
+
+# ensemble_decoder_config = channel_code_lib2.Ensemble_config(
+#     H, configs
+
+show_results.plot_error_rates(
+    (FER, "MBBP"), (FER_bp, "BP"), (FER_stopping, f"MMBP-stop{emulate_stopping_after}")
+)

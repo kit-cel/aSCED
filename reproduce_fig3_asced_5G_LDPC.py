@@ -30,7 +30,8 @@ H, p, s, Z, BG = generate_5G_LDPC(2, k_, n_, return_lifting_size=True)
 H, G, k, n, message_bit_pucturing = get_final_matrices_and_message_bit_pucturing(
     H, s, p
 )
-G=gf2(G)
+
+G = gf2(G)
 use_all_zero = False
 
 if not use_all_zero:
@@ -46,7 +47,7 @@ flag_sced = True
 
 flag_asced = True  # if true simulate aSCED-11
 
-plot_using_tex = False
+plot_using_tex = True
 
 
 ## First setup interprets AED as MBBP instanciated with shifted parity-check matrices obtained by cyclically permuting the columns of the original parity-check matrix.
@@ -75,7 +76,7 @@ if flag_nmsa:
     nmsa_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
     nmsa_config.norm_factor = 0.75
 
-    sim_nmsa = channel_code_lib2.Simulation_Env( k, n, "all")
+    sim_nmsa = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_nmsa.puncturing(message_bit_pucturing)
     if not use_all_zero:
         sim_nmsa.init(enc_cfg, nmsa_config, use_all_zero)
@@ -98,10 +99,10 @@ if flag_nmsa352:
     nmsa_config_352.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
     nmsa_config_352.norm_factor = 0.75
 
-    sim_nmsa_352 = channel_code_lib2.Simulation_Env( k, n, "all")
+    sim_nmsa_352 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_nmsa_352.puncturing(message_bit_pucturing)
     if not use_all_zero:
-        sim_nmsa_352.init(enc_cfg, nmsa_config_352,use_all_zero)
+        sim_nmsa_352.init(enc_cfg, nmsa_config_352, use_all_zero)
     else:
         sim_nmsa_352.all_zero_init(nmsa_config_352)
 
@@ -129,20 +130,20 @@ if flag_aed:
         shifted_permutations.append(shifted_permutations[i - 1][permutation])
 
     for per in shifted_permutations:
-        assert np.all(gf2(H) @ G[:, per].T == 0)
+        assert np.all(gf2(H) @ gf2(G[:, per]).T == 0)
 
     processing_config = channel_code_lib2.Automorphism_config(shifted_permutations)
 
     ensemble_decoder_config = channel_code_lib2.Ensemble_config(
         H, undercomplete_bp_config, processing_config
     )
-    sim_aed = channel_code_lib2.Simulation_Env( k, n, "all")
+    sim_aed = channel_code_lib2.Simulation_Env(k, n, "all")
 
     # cfg.H = H
 
     sim_aed.puncturing(message_bit_pucturing)
     if not use_all_zero:
-        sim_aed.init(enc_cfg, ensemble_decoder_config,use_all_zero)
+        sim_aed.init(enc_cfg, ensemble_decoder_config, use_all_zero)
     else:
         sim_aed.all_zero_init(ensemble_decoder_config)
 
@@ -176,13 +177,13 @@ if flag_sced:
 
     print("Simulated num. sced paths:", len(sced_path_configs))
     sced_config = channel_code_lib2.Ensemble_config(H, sced_path_configs)
-    sim_sced = channel_code_lib2.Simulation_Env( k, n, "all")
+    sim_sced = channel_code_lib2.Simulation_Env(k, n, "all")
 
     # cfg.H = H
 
     sim_sced.puncturing(message_bit_pucturing)
     if not use_all_zero:
-        sim_sced.init(enc_cfg, sced_config,use_all_zero)
+        sim_sced.init(enc_cfg, sced_config, use_all_zero)
     else:
         sim_sced.all_zero_init(sced_config)
     sim_sced.get_error_rates(np.linspace(1, 4, 7))
@@ -222,13 +223,14 @@ if flag_asced:
             asced_path_configs[-1].affine_offset = affine_offset
     print("Simulated num. aSCED paths:", len(asced_path_configs))
     asced_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
-    sim_asced = channel_code_lib2.Simulation_Env( k, n, "all")
+    asced_config.target_num_converged = 5
+    sim_asced = channel_code_lib2.Simulation_Env(k, n, "all")
 
     # cfg.H = H
 
     sim_asced.puncturing(message_bit_pucturing)
     if not use_all_zero:
-        sim_asced.init(enc_cfg, asced_config,use_all_zero)
+        sim_asced.init(enc_cfg, asced_config, use_all_zero)
     else:
         sim_asced.all_zero_init(asced_config)
     sim_asced.get_error_rates(np.linspace(1, 4, 7))
