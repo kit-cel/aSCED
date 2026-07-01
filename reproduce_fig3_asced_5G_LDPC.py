@@ -45,6 +45,8 @@ if bool_emulate_stopping:
     results_dir += "stopping"
 use_all_zero = False
 
+sim_regime = np.linspace(2, 3.5, 4)
+
 if not use_all_zero:
     enc_cfg = channel_code_lib2.PCM_Encoder_config(H, k, n)
 
@@ -95,7 +97,7 @@ if flag_nmsa:
         sim_nmsa.init(enc_cfg, nmsa_config, use_all_zero)
     else:
         sim_nmsa.all_zero_init(nmsa_config)
-    sim_nmsa.get_error_rates(np.linspace(1, 4, 7))
+    sim_nmsa.get_error_rates(sim_regime)
 
     FER_nmsa = sim_nmsa.error_rates["FER-SNR"]
     print(FER_nmsa)
@@ -121,7 +123,7 @@ if flag_nmsa352:
     else:
         sim_nmsa_352.all_zero_init(nmsa_config_352)
 
-    sim_nmsa_352.get_error_rates(np.linspace(1, 4, 7))
+    sim_nmsa_352.get_error_rates(sim_regime)
 
     FER_nmsa_352 = sim_nmsa_352.error_rates["FER-SNR"]
     print(FER_nmsa_352)
@@ -168,7 +170,7 @@ if flag_aed:
     else:
         sim_aed.all_zero_init(ensemble_decoder_config)
 
-    sim_aed.get_error_rates(np.linspace(1, 4, 7))
+    sim_aed.get_error_rates(sim_regime)
     FER_AED = sim_aed.error_rates["FER-SNR"]
 
     print(FER_AED)
@@ -212,7 +214,7 @@ if flag_sced:
         sim_sced.init(enc_cfg, sced_config, use_all_zero)
     else:
         sim_sced.all_zero_init(sced_config)
-    sim_sced.get_error_rates(np.linspace(1, 4, 7))
+    sim_sced.get_error_rates(sim_regime)
     FER_sced = sim_sced.error_rates["FER-SNR"]
     print("SCED finished")
 
@@ -262,7 +264,7 @@ if flag_asced:
         sim_asced.init(enc_cfg, asced_config, use_all_zero)
     else:
         sim_asced.all_zero_init(asced_config)
-    sim_asced.get_error_rates(np.linspace(1, 4, 7))
+    sim_asced.get_error_rates(sim_regime)
     FER_aSCED = sim_asced.error_rates["FER-SNR"]
     print("aSCED finished")
 
