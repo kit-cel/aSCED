@@ -156,5 +156,5 @@ FER_stopping = sim_stopping.error_rates["FER-SNR"]
 #     H, configs
 
 show_results.plot_error_rates(
-    (FER, "MBBP"), (FER_bp, "BP"), (FER_stopping, "MMBP-stop{emulate_stopping_after}")
+    (FER, "MBBP"), (FER_bp, "BP"), (FER_stopping, f"MMBP-stop{emulate_stopping_after}")
 )
