@@ -1,3 +1,4 @@
+"""Reproduce Figure 9 results for ASCED on BCH 63_30 codes."""
 import numpy as np
 from time import time
 from pathlib import Path

@@ -24,7 +24,7 @@ import show_results
 # - Generate 5G LDPC code
 n_ = 132
 k_ = 66
-H, p, s, Z, BG = generate_5G_LDPC(2, k_, n_, return_lifting_size=True)
+H, p, s, Z, BG = generate_5G_LDPC(2, k_, n_)
 
 H, G, k, n, message_bit_pucturing = get_final_matrices_and_message_bit_pucturing(
     H, s, p

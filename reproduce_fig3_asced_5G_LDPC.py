@@ -1,3 +1,6 @@
+# pylint: disable=invalid-name
+"""Reproduce Figure 3 results for ASCED on 5G LDPC codes."""
+
 import numpy as np
 from time import time
 import os
@@ -25,7 +28,7 @@ import show_results
 # - Generate 5G LDPC code
 n_ = 132
 k_ = 66
-H, p, s, Z, BG = generate_5G_LDPC(2, k_, n_, return_lifting_size=True)
+H, p, s, Z, BG = generate_5G_LDPC(2, k_, n_)
 
 H, G, k, n, message_bit_pucturing = get_final_matrices_and_message_bit_pucturing(
     H, s, p
@@ -154,7 +157,6 @@ if flag_aed:
         H, undercomplete_bp_config, processing_config
     )
 
-
     sim_aed = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_aed.auto_save = auto_save
     sim_aed.save_dir = results_dir + "/AED"
@@ -197,7 +199,6 @@ if flag_sced:
 
     print("Simulated num. sced paths:", len(sced_path_configs))
     sced_config = channel_code_lib2.Ensemble_config(H, sced_path_configs)
-
 
     sim_sced = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_sced.auto_save = auto_save
@@ -246,7 +247,6 @@ if flag_asced:
             asced_path_configs[-1].affine_offset = affine_offset
     print("Simulated num. aSCED paths:", len(asced_path_configs))
     asced_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
-
 
     sim_asced = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced.auto_save = auto_save

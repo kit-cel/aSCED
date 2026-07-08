@@ -1,3 +1,4 @@
+"""Reproduce Figure 4 results for ASCED on CCSDS code."""
 import numpy as np
 from time import time
 import os

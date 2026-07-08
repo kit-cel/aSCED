@@ -1,15 +1,19 @@
-import numpy as np
+"""Reproduce Figure 4 results for ASCED on BCH 63_36 codes."""
+
 from time import time
+
+import matplotlib.pyplot as plt
 from pathlib import Path
+import channel_code_lib2
+from Codes.read_AList import read_AList
+
+
+import numpy as np
+
 import galois
 
 gf2 = galois.GF2
 
-import channel_code_lib2
-
-
-from Codes.read_AList import read_AList
-import matplotlib.pyplot as plt
 
 import show_results
 
@@ -194,7 +198,6 @@ if flag_asced_30:
         cfg.scheduling_type = "flooding"
 
     asced_30_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
-
 
     sim_asced30 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced30.auto_save = auto_save

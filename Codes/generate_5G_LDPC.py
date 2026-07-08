@@ -7,7 +7,7 @@ import pathlib
 codes_base_dir = pathlib.Path(__file__).parent.resolve()
 
 
-def generate_5G_LDPC(BG_no, K_target, N_target, return_lifting_size=False):
+def generate_5G_LDPC(BG_no, K_target, N_target):
 
     # Check input sizes
     K_max = 8448 if BG_no == 1 else 3840
@@ -119,10 +119,7 @@ def generate_5G_LDPC(BG_no, K_target, N_target, return_lifting_size=False):
     # Get parity check matrix
     H = H[: M_b * Z, : N_b * Z]
 
-    if return_lifting_size:
-        return H, P, S, Z, BG[:3, K_b]
-    else:
-        return H, P, S
+    return H, P, S, Z, BG[:3, K_b]
 
 
 def get_final_matrices_and_message_bit_pucturing(H, s, p):
