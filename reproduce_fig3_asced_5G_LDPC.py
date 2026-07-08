@@ -41,8 +41,7 @@ bool_emulate_stopping = False
 target_fraction_coverged_path = 0.5
 
 results_dir = "RESULTS/fig_3"
-if bool_emulate_stopping:
-    results_dir += "stopping"
+
 use_all_zero = False
 
 sim_regime = np.linspace(2, 3.5, 4)
@@ -154,8 +153,6 @@ if flag_aed:
     ensemble_decoder_config = channel_code_lib2.Ensemble_config(
         H, undercomplete_bp_config, processing_config
     )
-    if bool_emulate_stopping:
-        ensemble_decoder_config.target_num_converged= np.ceil(target_fraction_coverged_path*11)
 
 
     sim_aed = channel_code_lib2.Simulation_Env(k, n, "all")
@@ -201,8 +198,6 @@ if flag_sced:
     print("Simulated num. sced paths:", len(sced_path_configs))
     sced_config = channel_code_lib2.Ensemble_config(H, sced_path_configs)
 
-    if bool_emulate_stopping:
-        sced_config.target_num_converged= np.ceil(target_fraction_coverged_path*11)
 
     sim_sced = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_sced.auto_save = auto_save
@@ -251,8 +246,7 @@ if flag_asced:
             asced_path_configs[-1].affine_offset = affine_offset
     print("Simulated num. aSCED paths:", len(asced_path_configs))
     asced_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
-    if bool_emulate_stopping:
-        asced_config.target_num_converged= np.ceil(target_fraction_coverged_path*11)
+
 
     sim_asced = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced.auto_save = auto_save

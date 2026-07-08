@@ -27,8 +27,6 @@ target_fraction_coverged_path = 0.5
 
 results_dir = "RESULTS/fig_10"
 
-if bool_emulate_stopping:
-    results_dir += "stopping"
 
 sim_regime = np.linspace(2, 4, 5)
 
@@ -147,8 +145,7 @@ if flag_asced_6:
             cfg.scheduling_type = "flooding"
 
     asced_6_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
-    if bool_emulate_stopping:
-        asced_6_config.target_num_converged = np.ceil(target_fraction_coverged_path * 6)
+
     sim_asced6 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced6.auto_save = auto_save
     sim_asced6.save_dir = results_dir + "/aSCED6"
@@ -197,10 +194,7 @@ if flag_asced_30:
         cfg.scheduling_type = "flooding"
 
     asced_30_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
-    if bool_emulate_stopping:
-        asced_30_config.target_num_converged = np.ceil(
-            target_fraction_coverged_path * 30
-        )
+
 
     sim_asced30 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced30.auto_save = auto_save
