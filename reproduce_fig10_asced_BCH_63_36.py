@@ -1,4 +1,4 @@
-"""Reproduce Figure 4 results for ASCED on BCH 63_36 codes."""
+"""Reproduce Figure 10 results for ASCED on BCH 63_36 codes."""
 
 from time import time
 
@@ -37,13 +37,20 @@ sim_regime = np.linspace(2, 4, 5)
 norm_const = 0.5
 max_iter = 20
 
-flag_1min = True  # if true simulates AED-11
+flag_1min = True  #
 
-flag_ssPCM2 = True  # if true simulates spa-32
+flag_ssPCM2 = True  #
 
 flag_asced_6 = True
 
-flag_asced_30 = True  # if true simulate aSCED-11
+flag_mbbp_6 = True
+flag_mbbp_30 = True
+
+mbbp_base_dir = Path("Codes/BCH63_36/bch_63_36_sspcm2_mbbp_32_matrices")
+
+
+flag_asced_30 = True  #
+
 
 plot_using_tex = False
 
@@ -122,6 +129,41 @@ if flag_ssPCM2:
     print(FER_ssPCM2)
     print("HssPCM2 finished")
 
+
+if flag_mbbp_6:
+    mbbp_6_paths_configs = []
+
+    for i in range(6):
+        file_path = mbbp_base_dir / f"bch_36_63_ssPCM2_e2000_{i}.npy"
+        if file_path.exists():
+            ssPCM = np.load(file_path)
+        else:
+            raise FileNotFoundError(f"Missing file: {file_path}")
+
+        mbbp_6_paths_configs.append(channel_code_lib2.BP_config(ssPCM))
+
+    for cfg in mbbp_6_paths_configs:
+        cfg.use_avns = True
+        cfg.early_stopping = True
+        cfg.max_iterations = max_iter
+        cfg.cn_update_type = "msa"
+        cfg.norm_factor = norm_const
+        cfg.scheduling_type = "flooding"
+    mbbp_6_config = channel_code_lib2.Ensemble_config(H, mbbp_6_paths_configs)
+
+    sim_mbbp6 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_mbbp6.auto_save = auto_save
+    sim_mbbp6.save_dir = results_dir + "/mbbp6"
+    if not use_all_zero:
+        sim_mbbp6.init(g_enc_cfg, mbbp_6_config, use_all_zero)
+    else:
+        sim_mbbp6.all_zero_init(mbbp_6_config)
+    sim_mbbp6.get_error_rates(sim_regime)
+    FER_mbbp6 = sim_mbbp6.error_rates["FER-SNR"]
+
+    print(FER_mbbp6)
+    print("mbbp6 finished")
+
 if flag_asced_6:
     parent_folder = Path("Codes/BCH63_36/aSCED-6")
 
@@ -166,6 +208,39 @@ if flag_asced_6:
     print(FER_aSCED6)
     print("aSCED6 finished")
 
+if flag_mbbp_30:
+    mbbp_30_paths_configs = []
+
+    for i in range(30):
+        file_path = mbbp_base_dir / f"bch_36_63_ssPCM2_e2000_{i}.npy"
+        if file_path.exists():
+            ssPCM = np.load(file_path)
+        else:
+            raise FileNotFoundError(f"Missing file: {file_path}")
+
+        mbbp_30_paths_configs.append(channel_code_lib2.BP_config(ssPCM))
+
+    for cfg in mbbp_30_paths_configs:
+        cfg.use_avns = True
+        cfg.early_stopping = True
+        cfg.max_iterations = max_iter
+        cfg.cn_update_type = "msa"
+        cfg.norm_factor = norm_const
+        cfg.scheduling_type = "flooding"
+    mbbp_30_config = channel_code_lib2.Ensemble_config(H, mbbp_30_paths_configs)
+
+    sim_mbbp30 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_mbbp30.auto_save = auto_save
+    sim_mbbp30.save_dir = results_dir + "/mbbp30"
+    if not use_all_zero:
+        sim_mbbp30.init(g_enc_cfg, mbbp_30_config, use_all_zero)
+    else:
+        sim_mbbp30.all_zero_init(mbbp_30_config)
+    sim_mbbp30.get_error_rates(sim_regime)
+    FER_mbbp30 = sim_mbbp30.error_rates["FER-SNR"]
+
+    print(FER_mbbp30)
+    print("mbbp30 finished")
 
 if flag_asced_30:
     parent_folders = [Path("Codes/BCH63_36/aSCED-6"), Path("Codes/BCH63_36/aSCED-24")]
