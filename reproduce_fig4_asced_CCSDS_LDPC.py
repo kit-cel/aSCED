@@ -48,13 +48,13 @@ use_all_zero = True  # Currently only all-zero since bug in encode of ccsds 256,
 if not use_all_zero:
     g_enc_cfg = channel_code_lib2.G_Encoder_config(G, k, n)
 
-flag_aed = True  # if true simulates AED-11
+flag_aed = True  # 
 
-flag_spa = True  # if true simulates spa-32
+flag_spa = True  # 
 
 flag_asced_17 = True
 
-flag_asced_31 = True  # if true simulate aSCED-11
+flag_asced_31 = True  # 
 
 plot_using_tex = False
 # np.linspace(1, 4,7 )
