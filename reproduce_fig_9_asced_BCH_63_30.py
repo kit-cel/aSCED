@@ -1,8 +1,10 @@
 """Reproduce Figure 9 results for ASCED on BCH 63_30 codes."""
+
 import numpy as np
 from time import time
 from pathlib import Path
 import galois
+import gc
 
 gf2 = galois.GF2
 
@@ -36,7 +38,7 @@ flag_ssPCM2 = True  # if true simulates spa-32
 
 
 flag_mbbp_8 = True
-flag_mbbp_64 = False
+flag_mbbp_64 = True
 
 mbbp_base_dir = Path("Codes/BCH63_30/bch_63_30_sspcm2_mbbp_64_matrices")
 
@@ -93,6 +95,9 @@ if flag_1min:
     FER_1min = sim_msa_1min.error_rates["FER-SNR"]
     print(FER_1min)
     print("H1min finished")
+    del sim_msa_1min
+    del msa_1min_config
+    gc.collect()
 
 
 if flag_ssPCM2:
@@ -122,6 +127,9 @@ if flag_ssPCM2:
     FER_ssPCM2 = sim_msa_ssPCM2.error_rates["FER-SNR"]
     print(FER_ssPCM2)
     print("HssPCM2 finished")
+    del sim_msa_ssPCM2
+    del msa_ssPCM2_config
+    gc.collect()
 
 if flag_mbbp_8:
     mbbp_8_paths_configs = []
@@ -144,8 +152,6 @@ if flag_mbbp_8:
         cfg.scheduling_type = "flooding"
     mbbp_8_config = channel_code_lib2.Ensemble_config(H, mbbp_8_paths_configs)
 
-
-
     sim_mbbp8 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_mbbp8.auto_save = auto_save
     sim_mbbp8.save_dir = results_dir + "/MBBP8"
@@ -158,6 +164,10 @@ if flag_mbbp_8:
 
     print(FER_mbbp8)
     print("mbbp8 finished")
+    del sim_mbbp8
+    del mbbp_8_config
+    del mbbp_8_paths_configs
+    gc.collect()
 
 
 if flag_mbbp_64:
@@ -182,7 +192,6 @@ if flag_mbbp_64:
 
     mbbp_64_config = channel_code_lib2.Ensemble_config(H, mbbp_64_paths_configs)
 
-
     sim_mbbp64 = channel_code_lib2.Simulation_Env(k, n, "all")
 
     sim_mbbp64.auto_save = auto_save
@@ -196,6 +205,11 @@ if flag_mbbp_64:
 
     print(FER_mbbp64)
     print("mbbp64 finished")
+
+    del sim_mbbp64
+    del mbbp_64_config
+    del mbbp_64_paths_configs
+    gc.collect()
 
 
 if flag_asced_8:
@@ -229,7 +243,6 @@ if flag_asced_8:
 
     asced_8_config = channel_code_lib2.Ensemble_config(H, asced8_path_configs)
 
-
     sim_asced8 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced8.auto_save = auto_save
     sim_asced8.save_dir = results_dir + "/aSCED8"
@@ -243,7 +256,10 @@ if flag_asced_8:
     FER_asced8 = sim_asced8.error_rates["FER-SNR"]
     print(FER_asced8)
     print("asced8 finished")
-
+    del sim_asced8
+    del asced_8_config
+    del asced8_path_configs
+    gc.collect()
 
 if flag_asced_64:
 
@@ -289,6 +305,11 @@ if flag_asced_64:
     print(FER_asced64)
     print("asced64 finished")
 
+    del sim_asced64
+    del asced_64_config
+    del asced64_path_configs
+    gc.collect()
+
 if flag_asced_spa_64:
 
     asced64_spa_path_configs = []
@@ -320,7 +341,6 @@ if flag_asced_spa_64:
 
     asced_64_spa_config = channel_code_lib2.Ensemble_config(H, asced64_spa_path_configs)
 
-
     sim_asced64_spa = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced64_spa.auto_save = auto_save
     sim_asced64_spa.save_dir = results_dir + "/aSCED64_SPA"
@@ -333,7 +353,10 @@ if flag_asced_spa_64:
     FER_asced64_spa = sim_asced64_spa.error_rates["FER-SNR"]
     print(FER_asced64_spa)
     print("asced64spa finished")
-
+    del sim_asced64_spa
+    del asced_64_spa_config
+    del asced64_spa_path_configs
+    gc.collect()
 
 if plot_using_tex:
     show_results.save_error_rates(
