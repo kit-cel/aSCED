@@ -44,7 +44,9 @@ bool_emulate_stopping = True
 target_fraction_coverged_path = 0.25
 
 results_dir = "RESULTS/fig_3"
-
+if bool_emulate_stopping:
+    results_dir += f"_stopping{target_fraction_coverged_path}"
+    
 use_all_zero = False
 
 sim_regime = np.linspace(2, 3.5, 4)

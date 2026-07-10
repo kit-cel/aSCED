@@ -26,11 +26,12 @@ auto_save = True
 
 # stopping after
 bool_emulate_stopping = False
-target_fraction_coverged_path = 0.5
+target_fraction_coverged_path = 0.25
 
 
 results_dir = "RESULTS/fig_10"
-
+if bool_emulate_stopping:
+    results_dir += f"_stopping{target_fraction_coverged_path}"
 
 sim_regime = np.linspace(2, 4, 5)
 
@@ -149,7 +150,12 @@ if flag_mbbp_6:
         cfg.cn_update_type = "msa"
         cfg.norm_factor = norm_const
         cfg.scheduling_type = "flooding"
+
     mbbp_6_config = channel_code_lib2.Ensemble_config(H, mbbp_6_paths_configs)
+    if bool_emulate_stopping:
+        mbbp_6_config.set_mConvergedConfig(
+            int(np.ceil(target_fraction_coverged_path * 6))
+        )
 
     sim_mbbp6 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_mbbp6.auto_save = auto_save
@@ -191,12 +197,10 @@ if flag_asced_6:
             cfg.scheduling_type = "flooding"
 
     asced_6_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
-<<<<<<< HEAD
     if bool_emulate_stopping:
-        asced_6_config.set_stopping_config(int(np.ceil(target_fraction_coverged_path * 6)))
-=======
-
->>>>>>> v1.0.0
+        asced_6_config.set_stopping_config(
+            int(np.ceil(target_fraction_coverged_path * 6))
+        )
     sim_asced6 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced6.auto_save = auto_save
     sim_asced6.save_dir = results_dir + "/aSCED6"
@@ -234,6 +238,10 @@ if flag_mbbp_30:
         cfg.scheduling_type = "flooding"
     mbbp_30_config = channel_code_lib2.Ensemble_config(H, mbbp_30_paths_configs)
 
+    if bool_emulate_stopping:
+        mbbp_30_config.set_mConvergedConfig(
+            int(np.ceil(target_fraction_coverged_path * 30))
+        )
     sim_mbbp30 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_mbbp30.auto_save = auto_save
     sim_mbbp30.save_dir = results_dir + "/mbbp30"

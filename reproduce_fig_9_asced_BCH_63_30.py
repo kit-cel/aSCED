@@ -23,9 +23,12 @@ auto_save = True
 
 # stopping after
 bool_emulate_stopping = False
-target_fraction_coverged_path = 0.5
+target_fraction_coverged_path = 0.25
 
 results_dir = "RESULTS/fig_9"
+
+if bool_emulate_stopping:
+    results_dir += f"_stopping{target_fraction_coverged_path}"
 
 sim_regime = np.linspace(2, 3.5, 4)
 
