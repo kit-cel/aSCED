@@ -335,7 +335,7 @@ if flag_asced_spa_64:
         cfg.use_avns = True
         cfg.early_stopping = True
         cfg.max_iterations = max_iter
-        cfg.cn_update_type = "spa"
+        cfg.cn_update_type = "spa_phi"
         cfg.norm_factor = norm_const
         cfg.scheduling_type = "flooding"
 
