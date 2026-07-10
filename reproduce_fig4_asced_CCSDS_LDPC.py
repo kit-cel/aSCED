@@ -1,3 +1,4 @@
+"""Reproduce Figure 4 results for ASCED on CCSDS code."""
 import numpy as np
 from time import time
 import os
@@ -35,26 +36,25 @@ auto_save = True
 bool_emulate_stopping = False
 target_fraction_coverged_path = 0.5
 
-results_dir = "RESULTS/fig_4"
-if bool_emulate_stopping:
-    results_dir += "stopping"
+results_dir = "RESULTS/fig_4_random_cw"
+
 sim_regime = np.linspace(2, 3.5, 4)
 
 print(n, k)
 
-use_all_zero = True  # Currently only all-zero since bug in encode of ccsds 256,128
+use_all_zero =False# True  # Currently only all-zero since bug in encode of ccsds 256,128
 
 
 if not use_all_zero:
     g_enc_cfg = channel_code_lib2.G_Encoder_config(G, k, n)
 
-flag_aed = True  # if true simulates AED-11
+flag_aed = True  # 
 
-flag_spa = True  # if true simulates spa-32
+flag_spa = True  # 
 
 flag_asced_17 = True
 
-flag_asced_31 = True  # if true simulate aSCED-11
+flag_asced_31 = True  # 
 
 plot_using_tex = False
 # np.linspace(1, 4,7 )
@@ -124,10 +124,6 @@ if flag_aed:
     ensemble_decoder_config = channel_code_lib2.Ensemble_config(
         H, undercomplete_bp_config, processing_config
     )
-    if bool_emulate_stopping:
-        ensemble_decoder_config.target_num_converged = np.ceil(
-            target_fraction_coverged_path * Z
-        )
 
     sim_aed = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_aed.auto_save = auto_save
@@ -175,10 +171,7 @@ if flag_asced_17:
             asced_17_path_configs[-1].affine_offset = affine_offset
     print("Simulated num. aSCED paths:", len(asced_17_path_configs))
     asced_17_config = channel_code_lib2.Ensemble_config(H, asced_17_path_configs)
-    if bool_emulate_stopping:
-        asced_17_config.target_num_converged = np.ceil(
-            target_fraction_coverged_path * 17
-        )
+
     sim_asced_17 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced_17.auto_save = auto_save
     sim_asced_17.save_dir = results_dir + "/aSCED17"
@@ -224,8 +217,6 @@ if flag_asced_31:
             asced_31_path_configs[-1].affine_offset = affine_offset
     print("Simulated num. aSCED paths:", len(asced_31_path_configs))
     asced_31_config = channel_code_lib2.Ensemble_config(H, asced_31_path_configs)
-    if bool_emulate_stopping:
-        asced_31_config.target_num_converged= np.ceil(target_fraction_coverged_path*31)
 
     sim_asced_31 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced_31.auto_save = auto_save

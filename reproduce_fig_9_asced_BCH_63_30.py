@@ -1,7 +1,10 @@
+"""Reproduce Figure 9 results for ASCED on BCH 63_30 codes."""
+
 import numpy as np
 from time import time
 from pathlib import Path
 import galois
+import gc
 
 gf2 = galois.GF2
 
@@ -23,8 +26,7 @@ bool_emulate_stopping = False
 target_fraction_coverged_path = 0.5
 
 results_dir = "RESULTS/fig_9"
-if bool_emulate_stopping:
-    results_dir += "stopping"
+
 sim_regime = np.linspace(2, 3.5, 4)
 
 norm_const = 0.5
@@ -36,7 +38,7 @@ flag_ssPCM2 = True  # if true simulates spa-32
 
 
 flag_mbbp_8 = True
-flag_mbbp_64 = False
+flag_mbbp_64 = True
 
 mbbp_base_dir = Path("Codes/BCH63_30/bch_63_30_sspcm2_mbbp_64_matrices")
 
@@ -93,6 +95,9 @@ if flag_1min:
     FER_1min = sim_msa_1min.error_rates["FER-SNR"]
     print(FER_1min)
     print("H1min finished")
+    del sim_msa_1min
+    del msa_1min_config
+    gc.collect()
 
 
 if flag_ssPCM2:
@@ -122,6 +127,9 @@ if flag_ssPCM2:
     FER_ssPCM2 = sim_msa_ssPCM2.error_rates["FER-SNR"]
     print(FER_ssPCM2)
     print("HssPCM2 finished")
+    del sim_msa_ssPCM2
+    del msa_ssPCM2_config
+    gc.collect()
 
 if flag_mbbp_8:
     mbbp_8_paths_configs = []
@@ -161,6 +169,10 @@ if flag_mbbp_8:
 
     print(FER_mbbp8)
     print("mbbp8 finished")
+    del sim_mbbp8
+    del mbbp_8_config
+    del mbbp_8_paths_configs
+    gc.collect()
 
 
 if flag_mbbp_64:
@@ -203,6 +215,11 @@ if flag_mbbp_64:
 
     print(FER_mbbp64)
     print("mbbp64 finished")
+
+    del sim_mbbp64
+    del mbbp_64_config
+    del mbbp_64_paths_configs
+    gc.collect()
 
 
 if flag_asced_8:
@@ -253,7 +270,10 @@ if flag_asced_8:
     FER_asced8 = sim_asced8.error_rates["FER-SNR"]
     print(FER_asced8)
     print("asced8 finished")
-
+    del sim_asced8
+    del asced_8_config
+    del asced8_path_configs
+    gc.collect()
 
 if flag_asced_64:
 
@@ -303,6 +323,11 @@ if flag_asced_64:
     print(FER_asced64)
     print("asced64 finished")
 
+    del sim_asced64
+    del asced_64_config
+    del asced64_path_configs
+    gc.collect()
+
 if flag_asced_spa_64:
 
     asced64_spa_path_configs = []
@@ -328,7 +353,7 @@ if flag_asced_spa_64:
         cfg.use_avns = True
         cfg.early_stopping = True
         cfg.max_iterations = max_iter
-        cfg.cn_update_type = "spa"
+        cfg.cn_update_type = "spa_phi"
         cfg.norm_factor = norm_const
         cfg.scheduling_type = "flooding"
 
@@ -350,7 +375,10 @@ if flag_asced_spa_64:
     FER_asced64_spa = sim_asced64_spa.error_rates["FER-SNR"]
     print(FER_asced64_spa)
     print("asced64spa finished")
-
+    del sim_asced64_spa
+    del asced_64_spa_config
+    del asced64_spa_path_configs
+    gc.collect()
 
 if plot_using_tex:
     show_results.save_error_rates(

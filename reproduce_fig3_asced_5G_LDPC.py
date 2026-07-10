@@ -1,3 +1,6 @@
+# pylint: disable=invalid-name
+"""Reproduce Figure 3 results for ASCED on 5G LDPC codes."""
+
 import numpy as np
 from time import time
 import os
@@ -25,7 +28,7 @@ import show_results
 # - Generate 5G LDPC code
 n_ = 132
 k_ = 66
-H, p, s, Z, BG = generate_5G_LDPC(2, k_, n_, return_lifting_size=True)
+H, p, s, Z, BG = generate_5G_LDPC(2, k_, n_)
 
 H, G, k, n, message_bit_pucturing = get_final_matrices_and_message_bit_pucturing(
     H, s, p
@@ -41,8 +44,7 @@ bool_emulate_stopping = True
 target_fraction_coverged_path = 0.25
 
 results_dir = "RESULTS/fig_3"
-if bool_emulate_stopping:
-    results_dir += "stopping"
+
 use_all_zero = False
 
 sim_regime = np.linspace(2, 3.5, 4)
