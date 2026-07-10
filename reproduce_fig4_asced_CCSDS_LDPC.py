@@ -36,13 +36,13 @@ auto_save = True
 bool_emulate_stopping = False
 target_fraction_coverged_path = 0.5
 
-results_dir = "RESULTS/fig_4"
+results_dir = "RESULTS/fig_4_random_cw"
 
 sim_regime = np.linspace(2, 3.5, 4)
 
 print(n, k)
 
-use_all_zero = True  # Currently only all-zero since bug in encode of ccsds 256,128
+use_all_zero =False# True  # Currently only all-zero since bug in encode of ccsds 256,128
 
 
 if not use_all_zero:
