@@ -37,8 +37,8 @@ G = gf2(G)
 auto_save = True
 
 # stopping after
-bool_emulate_stopping = False
-target_fraction_coverged_path = 0.5
+bool_emulate_stopping = True
+target_fraction_coverged_path = 0.25
 
 results_dir = "RESULTS/fig_3"
 if bool_emulate_stopping:
@@ -52,9 +52,9 @@ if not use_all_zero:
 
 flag_aed = True  # if true simulates AED-11
 
-flag_nmsa = True  # if true simulates NMSA-32
+flag_nmsa = False  # if true simulates NMSA-32
 
-flag_nmsa352 = True  # if true simulates NMSA-352
+flag_nmsa352 = False  # if true simulates NMSA-352
 
 flag_sced = True
 
@@ -155,8 +155,9 @@ if flag_aed:
         H, undercomplete_bp_config, processing_config
     )
     if bool_emulate_stopping:
-        ensemble_decoder_config.target_num_converged= np.ceil(target_fraction_coverged_path*11)
-
+        ensemble_decoder_config.set_mConvergedConfig(
+            int(np.ceil(target_fraction_coverged_path * 11))
+        )
 
     sim_aed = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_aed.auto_save = auto_save
@@ -202,7 +203,9 @@ if flag_sced:
     sced_config = channel_code_lib2.Ensemble_config(H, sced_path_configs)
 
     if bool_emulate_stopping:
-        sced_config.target_num_converged= np.ceil(target_fraction_coverged_path*11)
+        sced_config.set_mConvergedConfig(
+            int(np.ceil(target_fraction_coverged_path * 11))
+        )
 
     sim_sced = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_sced.auto_save = auto_save
@@ -252,7 +255,9 @@ if flag_asced:
     print("Simulated num. aSCED paths:", len(asced_path_configs))
     asced_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
     if bool_emulate_stopping:
-        asced_config.target_num_converged= np.ceil(target_fraction_coverged_path*11)
+        asced_config.set_mConvergedConfig(
+            int(np.ceil(target_fraction_coverged_path * 11))
+        )
 
     sim_asced = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced.auto_save = auto_save

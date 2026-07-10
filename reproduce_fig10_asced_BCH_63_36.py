@@ -148,7 +148,7 @@ if flag_asced_6:
 
     asced_6_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
     if bool_emulate_stopping:
-        asced_6_config.target_num_converged = np.ceil(target_fraction_coverged_path * 6)
+        asced_6_config.set_stopping_config(int(np.ceil(target_fraction_coverged_path * 6)))
     sim_asced6 = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced6.auto_save = auto_save
     sim_asced6.save_dir = results_dir + "/aSCED6"
