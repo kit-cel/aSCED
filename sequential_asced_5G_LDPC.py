@@ -52,11 +52,11 @@ results_dir =f""
 
 if bool_random_sequential:
     results_dir = (
-        "RESULTS/random_sequential/fig_3" + f"_stopping{target_fraction_coverged_path}"
+        f"RESULTS/random_sequential{members_per_group}/fig_3" + f"_stopping{target_fraction_coverged_path}"
     )
 else:
     results_dir = (
-        "RESULTS/sequential{members_per_group}/fig_3" + f"_stopping{target_fraction_coverged_path}"
+        f"RESULTS/sequential{members_per_group}/fig_3" + f"_stopping{target_fraction_coverged_path}"
     )
 
 
