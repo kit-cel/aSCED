@@ -25,9 +25,9 @@ auto_save = True
 bool_emulate_stopping = False
 target_fraction_coverged_path = 0.5
 
-results_dir = "RESULTS/fig_9"
+results_dir = "RESULTS/fig_9_full"
 
-sim_regime = np.linspace(2, 3.5, 4)
+sim_regime = np.linspace(2, 4, 5)
 
 norm_const = 0.5
 max_iter = 20

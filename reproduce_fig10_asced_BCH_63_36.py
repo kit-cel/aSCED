@@ -134,7 +134,7 @@ if flag_mbbp_6:
     mbbp_6_paths_configs = []
 
     for i in range(6):
-        file_path = mbbp_base_dir / f"bch_36_63_ssPCM2_e2000_{i}.npy"
+        file_path = mbbp_base_dir / f"bch_36_63_ssPCM2_e2000_{i+1}.npy"
         if file_path.exists():
             ssPCM = np.load(file_path)
         else:
@@ -212,7 +212,7 @@ if flag_mbbp_30:
     mbbp_30_paths_configs = []
 
     for i in range(30):
-        file_path = mbbp_base_dir / f"bch_36_63_ssPCM2_e2000_{i}.npy"
+        file_path = mbbp_base_dir / f"bch_36_63_ssPCM2_e2000_{i+1}.npy"
         if file_path.exists():
             ssPCM = np.load(file_path)
         else:
