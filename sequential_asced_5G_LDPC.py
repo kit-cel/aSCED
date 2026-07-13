@@ -41,17 +41,28 @@ G = gf2(G)
 auto_save = True
 
 # stopping after
-bool_emulate_stopping = True  # sequential only makes sense in a stopping env
+# bool_emulate_stopping = True  # sequential only makes sense in a stopping env
 
-members_per_group = 3  # start with extreme case!
+bool_random_sequential = True
+
+members_per_group = 2  # start with extreme case!
 target_fraction_coverged_path = 0.25
 
-results_dir =f"RESULTS/sequential{members_per_group}/fig_3" + f"_stopping{target_fraction_coverged_path}"
+results_dir =f""
+
+if bool_random_sequential:
+    results_dir = (
+        "RESULTS/random_sequential/fig_3" + f"_stopping{target_fraction_coverged_path}"
+    )
+else:
+    results_dir = (
+        "RESULTS/sequential{members_per_group}/fig_3" + f"_stopping{target_fraction_coverged_path}"
+    )
 
 
 use_all_zero = False
 
-sim_regime = np.linspace(2, 3.5, 4)
+sim_regime = np.linspace(2, 2.5, 2)
 
 if not use_all_zero:
     enc_cfg = channel_code_lib2.PCM_Encoder_config(H, k, n)
@@ -163,7 +174,11 @@ if flag_aed:
     ensemble_decoder_config.set_mConvergedConfig(
         int(np.ceil(target_fraction_coverged_path * 11))
     )
-    ensemble_decoder_config.set_fixed_sequential(members_per_group)
+
+    if bool_random_sequential:
+        ensemble_decoder_config.set_random_sequential(members_per_group)
+    else:
+        ensemble_decoder_config.set_fixed_sequential(members_per_group)
 
     sim_aed = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_aed.auto_save = auto_save
@@ -210,7 +225,10 @@ if flag_sced:
 
     sced_config.set_mConvergedConfig(int(np.ceil(target_fraction_coverged_path * 11)))
 
-    sced_config.set_fixed_sequential(members_per_group)
+    if bool_random_sequential:
+        sced_config.set_random_sequential(members_per_group)
+    else:
+        sced_config.set_fixed_sequential(members_per_group)
 
     sim_sced = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_sced.auto_save = auto_save
@@ -260,7 +278,11 @@ if flag_asced:
     print("Simulated num. aSCED paths:", len(asced_path_configs))
     asced_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
     asced_config.set_mConvergedConfig(int(np.ceil(target_fraction_coverged_path * 11)))
-    asced_config.set_fixed_sequential(members_per_group)
+
+    if bool_random_sequential:
+        asced_config.set_random_sequential(members_per_group)
+    else:
+        asced_config.set_fixed_sequential(members_per_group)
 
     sim_asced = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_asced.auto_save = auto_save
