@@ -43,10 +43,10 @@ auto_save = True
 # stopping after
 bool_emulate_stopping = True  # sequential only makes sense in a stopping env
 
-members_per_group = 1  # start with extreme case!
+members_per_group = 3  # start with extreme case!
 target_fraction_coverged_path = 0.25
 
-results_dir = "RESULTS/sequential/fig_3" + f"_stopping{target_fraction_coverged_path}"
+results_dir =f"RESULTS/sequential{members_per_group}/fig_3" + f"_stopping{target_fraction_coverged_path}"
 
 
 use_all_zero = False
