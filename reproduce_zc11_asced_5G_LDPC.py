@@ -4,6 +4,7 @@
 import numpy as np
 from time import time
 import os
+import sys
 
 import galois
 
@@ -13,6 +14,11 @@ import channel_code_lib2
 
 
 import matplotlib.pyplot as plt
+
+if len(sys.argv) != 2:
+    raise ValueError("Usage: python simulate.py <decoder_variant>")
+
+decoder_variant = sys.argv[1].lower()
 
 results_dir = "RESULTS/fig_x_zc11"
 
@@ -27,29 +33,41 @@ n_simul = 143  # or increase in stepzsizes of 11 e.g. 165
 splitting_pattern = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [5], [2, 4, 6, 8]]
 
 
-flag_nmsa = True  # if true simulates NMSA-32
+def create_bp_config(H_aux):
+    """Create a BP configuration with the default decoder settings."""
+    cfg = channel_code_lib2.BP_config(H_aux)
+    cfg.early_stopping = True
+    cfg.max_iterations = 32
+    cfg.cn_update_type = "msa"
+    cfg.scheduling_type = "flooding"
+    cfg.norm_factor = 0.75
+    return cfg
 
-flag_aed = True  # if true simulates AED-11
+
+flag_nmsa = False  # if true simulates NMSA-32
+
+flag_aed = False  # if true simulates AED-11
 
 ##splitting_pattern [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-flag_aed_asced_22 = True  # 1 batch of 11*2**1
-flag_aed_asced_44 = True  # 2 batches of 11*2**1
-flag_aed_asced_88 = True  # 4 batches of 11*2**1
+flag_aed_asced_22 = False  # 1 batch of 11*2**1
+flag_aed_asced_44 = False  # 2 batches of 11*2**1
+flag_aed_asced_88 = False  # 4 batches of 11*2**1
 
 ##splitting pattern [2, 4, 6, 8]
-flag_asced_24 = True  # 2**2*4+2**3
-flag_asced_48 = True  # 2 batches of 2**2*4+2**3
-flag_asced_96_4batch = True  # 4 batches of 2**2*4+2**3
+flag_asced_24 = False  # 2**2*4+2**3
+flag_asced_48 = False  # 2 batches of 2**2*4+2**3
+flag_asced_96_4batch = False  # 4 batches of 2**2*4+2**3
 
 ##splitting_pattern [5]
-flag_asced_96 = True  # 2**5+2**6
-flag_asced_192 = True  # 2batches of 2**5+2**6
+flag_asced_96 = False  # 2**5+2**6
+flag_asced_192 = False  # 2batches of 2**5+2**6
 
-flag_asced_2048 = True  #  2**11
+flag_asced_2048 = False  #  2**11
 
 message_bit_pucturing = np.arange(2 * Zc, dtype=int)
-auto_save = True
+auto_save = False
 bool_emulate_stopping = False
+
 target_fraction_coverged_path = 0.5
 
 
@@ -114,149 +132,182 @@ if not use_all_zero:
     enc_cfg = channel_code_lib2.PCM_Encoder_config(H, k, n)
 
 
-if flag_nmsa:
+def create_asced_config(
+    H,
+    candidate_rows,
+    block_offset,
+    Zc,
+    split_pattern,
+    num_used_blocks,
+    use_all_zero,
+):
+    """Construct all decoder paths for one ASCED configuration."""
 
-    nmsa_config = channel_code_lib2.BP_config(H)
-    nmsa_config.early_stopping = True  # Stop as soon as H@x_hat=0; default is true
-    nmsa_config.max_iterations = (
-        32  # set maximum number of BP iterations; default is 32
+    path_configs = []
+
+    for block in range(num_used_blocks):
+
+        assert block + block_offset <= number_additional_cyclic_blocks
+
+        row_block = candidate_rows[
+            (block + block_offset) * Zc : (block + block_offset + 1) * Zc
+        ]
+
+        # no split -> use the whole block
+        if len(split_pattern) == 0:
+            row_segments = [row_block]
+        else:
+            row_segments = np.split(row_block, split_pattern)
+
+        for rows in row_segments:
+
+            H_aux = gf2(np.vstack((H, rows)))
+            m_aux = H_aux.shape[0]
+
+            # zero affine offset
+            path_configs.append(create_bp_config(H_aux))
+
+            if not use_all_zero:
+
+                rank_difference = rows.shape[0]
+
+                for offset in binary_vectors_in_suffix(
+                    m_aux,
+                    rank_difference,
+                ):
+                    cfg = create_bp_config(H_aux)
+                    cfg.affine_offset = offset
+                    path_configs.append(cfg)
+
+    print("Simulated num. aSCED paths:", len(path_configs))
+
+    return channel_code_lib2.Ensemble_config(H, path_configs)
+
+
+def run_asced(
+    save_dir_name,
+    split_pattern,
+    num_used_blocks,
+):
+    ensemble_cfg = create_asced_config(
+        H=H,
+        candidate_rows=candidate_rows,
+        block_offset=block_offset,
+        Zc=Zc,
+        split_pattern=split_pattern,
+        num_used_blocks=num_used_blocks,
+        use_all_zero=use_all_zero,
     )
-    nmsa_config.cn_update_type = "msa"
-    nmsa_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
-    nmsa_config.norm_factor = 0.75
+    print("starting", save_dir_name)
 
+    sim = channel_code_lib2.Simulation_Env(k, n, "all")
+
+    sim.auto_save = auto_save
+    sim.save_dir = results_dir + "/" + save_dir_name
+
+    sim.puncturing(message_bit_pucturing)
+
+    if use_all_zero:
+        sim.all_zero_init(ensemble_cfg)
+    else:
+        sim.init(enc_cfg, ensemble_cfg, use_all_zero)
+
+    sim.get_error_rates(sim_regime)
+
+    print(save_dir_name, "finished")
+    print(sim.error_rates["FER-SNR"])
+
+    return sim.error_rates["FER-SNR"]
+
+if flag_nmsa:
+    nmsa_config = channel_code_lib2.BP_config(H)
+    nmsa_config.early_stopping = True # Stop as soon as H@x_hat=0; default is true 
+    nmsa_config.max_iterations = 32 # set maximum number of BP iterations; default is 32  )
+    nmsa_config.cn_update_type = "msa"
+    nmsa_config.scheduling_type = "flooding" # Scheduling method (flooding, row_layered, column_layered); default is flooding
+    nmsa_config.norm_factor = 0.75
     sim_nmsa = channel_code_lib2.Simulation_Env(k, n, "all")
-    sim_nmsa.auto_save = auto_save
-    sim_nmsa.save_dir = results_dir + "/nmsa"
+    sim_nmsa.auto_save = auto_save sim_nmsa.save_dir = results_dir + "/nmsa"
     sim_nmsa.puncturing(message_bit_pucturing)
     if not use_all_zero:
         sim_nmsa.init(enc_cfg, nmsa_config, use_all_zero)
-    else:
+    else: 
         sim_nmsa.all_zero_init(nmsa_config)
-    sim_nmsa.get_error_rates(sim_regime)
-
+    sim_nmsa.get_error_rates(sim_regime) 
     FER_nmsa = sim_nmsa.error_rates["FER-SNR"]
-    print(FER_nmsa)
+    print(FER_nmsa)#
     print("NMSA 32 finished")
 
+experiments = [
+    # splitting pattern [1,2,3,...,10]
+    (
+        flag_aed_asced_22,
+        "aSCED_22_split0_batch1",
+        splitting_pattern[0],
+        1,
+    ),
+    (
+        flag_aed_asced_44,
+        "aSCED_44_split0_batch2",
+        splitting_pattern[0],
+        2,
+    ),
+    (
+        flag_aed_asced_88,
+        "aSCED_88_split0_batch4",
+        splitting_pattern[0],
+        4,
+    ),
+    # splitting pattern [2,4,6,8]
+    (
+        flag_asced_24,
+        "aSCED_24_split2_batch1",
+        splitting_pattern[2],
+        1,
+    ),
+    (
+        flag_asced_48,
+        "aSCED_48_split2_batch2",
+        splitting_pattern[2],
+        2,
+    ),
+    (
+        flag_asced_96_4batch,
+        "aSCED_96_split2_batch4",
+        splitting_pattern[2],
+        4,
+    ),
+    # splitting pattern [5]
+    (
+        flag_asced_96,
+        "aSCED_96_split1_batch1",
+        splitting_pattern[1],
+        1,
+    ),
+    (
+        flag_asced_192,
+        "aSCED_192_split1_batch2",
+        splitting_pattern[1],
+        2,
+    ),
+    # no split
+    (
+        flag_asced_2048,
+        "aSCED_2048",
+        [],
+        1,
+    ),
+]
 
-if flag_aed_asced_22:
-    pattern = splitting_pattern[0]
+FER_results = {}
 
-    num_used_blocks = 1
+for enabled, save_name, split_pattern, num_blocks in experiments:
 
-    ##TODO: append all used blocks once to H and assert that increased rank == number appended rows
+    if not enabled:
+        continue
 
-    # construct pcms
-    asced_22_path_configs = []
-    asced_22_pcms = []
-    for i in range(num_used_blocks):
-        assert i + block_offset <= number_additional_cyclic_blocks
-        row_block = candidate_rows[
-            (i + block_offset) * Zc : (i + block_offset + 1) * Zc
-        ]
-        # load pcms
-        row_segments = np.split(row_block, pattern)
-        print(len(row_segments))
-
-        for rows in row_segments:
-            ##due to previous assert,
-            rank_difference = rows.shape[0]
-            H_aux = gf2(np.vstack((H, rows)))
-            m_aux, _ = H_aux.shape
-            asced_22_path_configs.append(channel_code_lib2.BP_config(H_aux))
-            asced_22_path_configs[-1].early_stopping = True
-            asced_22_path_configs[-1].max_iterations = 32
-            asced_22_path_configs[-1].cn_update_type = "msa"
-            asced_22_path_configs[-1].scheduling_type = "flooding"
-            asced_22_path_configs[-1].norm_factor = 0.75
-            if not use_all_zero:
-                ##TODO offset takes on all binary vectors of length rank_difference
-                all_affine_offsets = binary_vectors_in_suffix(m_aux, rank_difference)
-
-                for offset in all_affine_offsets:
-                    asced_22_path_configs.append(channel_code_lib2.BP_config(H_aux))
-                    asced_22_path_configs[-1].early_stopping = True
-                    asced_22_path_configs[-1].max_iterations = 32
-                    asced_22_path_configs[-1].cn_update_type = "msa"
-                    asced_22_path_configs[-1].scheduling_type = "flooding"
-                    asced_22_path_configs[-1].norm_factor = 0.75
-                    asced_22_path_configs[-1].affine_offset = offset
-
-    print("Simulated num. aSCED paths:", len(asced_22_path_configs))
-    asced_22_config = channel_code_lib2.Ensemble_config(H, asced_22_path_configs)
-
-    sim_22_asced = channel_code_lib2.Simulation_Env(k, n, "all")
-    sim_22_asced.auto_save = auto_save
-    sim_22_asced.save_dir = results_dir + "/aSCED_22_split0_batch1"
-    # cfg.H = H
-
-    sim_22_asced.puncturing(message_bit_pucturing)
-    if not use_all_zero:
-        sim_22_asced.init(enc_cfg, asced_22_config, use_all_zero)
-    else:
-        sim_22_asced.all_zero_init(asced_22_config)
-    sim_22_asced.get_error_rates(sim_regime)
-    FER_aSCED_22 = sim_22_asced.error_rates["FER-SNR"]
-    print("aSCED finished")
-
-    print(FER_aSCED_22)
-
-
-if flag_aed_asced_44:
-    pattern = splitting_pattern[0]
-    num_used_blocks = 2
-
-    ##TODO: append all used blocks once to H and assert that increased rank == number appended rows
-
-    # construct pcms
-    asced_44_path_configs = []
-    asced_44_pcms = []
-    for i in range(num_used_blocks):
-        assert i + block_offset <= number_additional_cyclic_blocks
-        row_block = candidate_rows[
-            (i + block_offset) * Zc : (i + block_offset + 1) * Zc
-        ]
-        # load pcms
-        row_segments = np.split(row_block, pattern)
-        for rows in row_segments:
-            ##due to previous assert,
-            rank_difference = rows.shape[0]
-            H_aux = gf2(np.vstack((H, rows)))
-            m_aux, _ = H_aux.shape
-            asced_44_path_configs.append(channel_code_lib2.BP_config(H_aux))
-            asced_44_path_configs[-1].early_stopping = True
-            asced_44_path_configs[-1].max_iterations = 32
-            asced_44_path_configs[-1].cn_update_type = "msa"
-            asced_44_path_configs[-1].scheduling_type = "flooding"
-            asced_44_path_configs[-1].norm_factor = 0.75
-            if not use_all_zero:
-                ##TODO offset takes on all binary vectors of length rank_difference
-                all_affine_offsets = binary_vectors_in_suffix(m_aux, rank_difference)
-                for offset in all_affine_offsets:
-                    asced_44_path_configs.append(channel_code_lib2.BP_config(H_aux))
-                    asced_44_path_configs[-1].early_stopping = True
-                    asced_44_path_configs[-1].max_iterations = 32
-                    asced_44_path_configs[-1].cn_update_type = "msa"
-                    asced_44_path_configs[-1].scheduling_type = "flooding"
-                    asced_44_path_configs[-1].norm_factor = 0.75
-                    asced_44_path_configs[-1].affine_offset = offset
-
-    print("Simulated num. aSCED paths:", len(asced_44_path_configs))
-    asced_44_config = channel_code_lib2.Ensemble_config(H, asced_44_path_configs)
-
-    sim_44_asced = channel_code_lib2.Simulation_Env(k, n, "all")
-    sim_44_asced.auto_save = auto_save
-    sim_44_asced.save_dir = results_dir + "/aSCED_44_split0_batch1"
-    # cfg.H = H
-
-    sim_44_asced.puncturing(message_bit_pucturing)
-    if not use_all_zero:
-        sim_44_asced.init(enc_cfg, asced_44_config, use_all_zero)
-    else:
-        sim_44_asced.all_zero_init(asced_44_config)
-    sim_44_asced.get_error_rates(sim_regime)
-    FER_aSCED_44 = sim_44_asced.error_rates["FER-SNR"]
-    print("aSCED finished")
-
-    print(FER_aSCED_44)
+    FER_results[save_name] = run_asced(
+        save_dir_name=save_name,
+        split_pattern=split_pattern,
+        num_used_blocks=num_blocks,
+    )
