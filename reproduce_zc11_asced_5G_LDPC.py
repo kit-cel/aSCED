@@ -20,41 +20,7 @@ if len(sys.argv) != 2:
 
 decoder_variant = sys.argv[1].lower()
 
-if decoder_variant == "nmsa":
-    flag_nmsa = True
 
-elif decoder_variant == "aed":
-    flag_aed = True
-
-elif decoder_variant == "asced22":
-    flag_aed_asced_22 = True
-
-elif decoder_variant == "asced44":
-    flag_aed_asced_44 = True
-
-elif decoder_variant == "asced88":
-    flag_aed_asced_88 = True
-
-elif decoder_variant == "asced24":
-    flag_asced_24 = True
-
-elif decoder_variant == "asced48":
-    flag_asced_48 = True
-
-elif decoder_variant == "asced96_4batch":
-    flag_asced_96_4batch = True
-
-elif decoder_variant == "asced96":
-    flag_asced_96 = True
-
-elif decoder_variant == "asced192":
-    flag_asced_192 = True
-
-elif decoder_variant == "asced2048":
-    flag_asced_2048 = True
-
-else:
-    raise ValueError(f"Unknown decoder variant '{decoder_variant}'")
 
 results_dir = "RESULTS/fig_x_zc11"
 
@@ -99,6 +65,44 @@ flag_asced_96 = False  # 2**5+2**6
 flag_asced_192 = False  # 2batches of 2**5+2**6
 
 flag_asced_2048 = False  #  2**11
+
+
+
+if decoder_variant == "nmsa":
+    flag_nmsa = True
+
+elif decoder_variant == "aed":
+    flag_aed = True
+
+elif decoder_variant == "asced22":
+    flag_aed_asced_22 = True
+
+elif decoder_variant == "asced44":
+    flag_aed_asced_44 = True
+
+elif decoder_variant == "asced88":
+    flag_aed_asced_88 = True
+
+elif decoder_variant == "asced24":
+    flag_asced_24 = True
+
+elif decoder_variant == "asced48":
+    flag_asced_48 = True
+
+elif decoder_variant == "asced96_4batch":
+    flag_asced_96_4batch = True
+
+elif decoder_variant == "asced96":
+    flag_asced_96 = True
+
+elif decoder_variant == "asced192":
+    flag_asced_192 = True
+
+elif decoder_variant == "asced2048":
+    flag_asced_2048 = True
+
+else:
+    raise ValueError(f"Unknown decoder variant '{decoder_variant}'")
 
 message_bit_pucturing = np.arange(2 * Zc, dtype=int)
 auto_save = False
