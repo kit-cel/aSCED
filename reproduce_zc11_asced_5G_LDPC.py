@@ -20,6 +20,42 @@ if len(sys.argv) != 2:
 
 decoder_variant = sys.argv[1].lower()
 
+if decoder_variant == "nmsa":
+    flag_nmsa = True
+
+elif decoder_variant == "aed":
+    flag_aed = True
+
+elif decoder_variant == "asced22":
+    flag_aed_asced_22 = True
+
+elif decoder_variant == "asced44":
+    flag_aed_asced_44 = True
+
+elif decoder_variant == "asced88":
+    flag_aed_asced_88 = True
+
+elif decoder_variant == "asced24":
+    flag_asced_24 = True
+
+elif decoder_variant == "asced48":
+    flag_asced_48 = True
+
+elif decoder_variant == "asced96_4batch":
+    flag_asced_96_4batch = True
+
+elif decoder_variant == "asced96":
+    flag_asced_96 = True
+
+elif decoder_variant == "asced192":
+    flag_asced_192 = True
+
+elif decoder_variant == "asced2048":
+    flag_asced_2048 = True
+
+else:
+    raise ValueError(f"Unknown decoder variant '{decoder_variant}'")
+
 results_dir = "RESULTS/fig_x_zc11"
 
 bg_vn = 12  ##bg2
@@ -219,12 +255,15 @@ def run_asced(
 
     return sim.error_rates["FER-SNR"]
 
+
 if flag_nmsa:
     nmsa_config = channel_code_lib2.BP_config(H)
-    nmsa_config.early_stopping = True # Stop as soon as H@x_hat=0; default is true 
-    nmsa_config.max_iterations = 32 # set maximum number of BP iterations; default is 32  )
+    nmsa_config.early_stopping = True  # Stop as soon as H@x_hat=0; default is true
+    nmsa_config.max_iterations = (
+        32  # set maximum number of BP iterations; default is 32  )
+    )
     nmsa_config.cn_update_type = "msa"
-    nmsa_config.scheduling_type = "flooding" # Scheduling method (flooding, row_layered, column_layered); default is flooding
+    nmsa_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
     nmsa_config.norm_factor = 0.75
     sim_nmsa = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_nmsa.auto_save = auto_save
@@ -232,11 +271,11 @@ if flag_nmsa:
     sim_nmsa.puncturing(message_bit_pucturing)
     if not use_all_zero:
         sim_nmsa.init(enc_cfg, nmsa_config, use_all_zero)
-    else: 
+    else:
         sim_nmsa.all_zero_init(nmsa_config)
-    sim_nmsa.get_error_rates(sim_regime) 
+    sim_nmsa.get_error_rates(sim_regime)
     FER_nmsa = sim_nmsa.error_rates["FER-SNR"]
-    print(FER_nmsa)#
+    print(FER_nmsa)  #
     print("NMSA 32 finished")
 
 experiments = [
