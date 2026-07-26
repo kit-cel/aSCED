@@ -227,7 +227,8 @@ if flag_nmsa:
     nmsa_config.scheduling_type = "flooding" # Scheduling method (flooding, row_layered, column_layered); default is flooding
     nmsa_config.norm_factor = 0.75
     sim_nmsa = channel_code_lib2.Simulation_Env(k, n, "all")
-    sim_nmsa.auto_save = auto_save sim_nmsa.save_dir = results_dir + "/nmsa"
+    sim_nmsa.auto_save = auto_save
+    sim_nmsa.save_dir = results_dir + "/nmsa"
     sim_nmsa.puncturing(message_bit_pucturing)
     if not use_all_zero:
         sim_nmsa.init(enc_cfg, nmsa_config, use_all_zero)
