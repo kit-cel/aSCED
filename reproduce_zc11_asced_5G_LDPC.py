@@ -32,6 +32,8 @@ sim_regime = np.linspace(4, 4.5,2)
 
 n_simul = 143  # or increase in stepzsizes of 11 e.g. 165
 
+results_dir+=f"{n_simul}"
+
 splitting_pattern = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [5], [2, 4, 6, 8]]
 
 
@@ -113,6 +115,9 @@ target_fraction_coverged_path = 0.5
 
 use_all_zero = False
 
+if use_all_zero:
+    results_dir+="_AZ"
+
 
 # we start first with code max_rank_5G_zc=11
 code = np.load("Codes/TCOM_aSCED/5G_zc=11/max_rank_5G_zc=11.npz")
@@ -126,7 +131,7 @@ block_offset = 0  # first batch, uses block 0, 2nd batch, uses block and so on
 number_vn_simul = n_simul + 2 * Zc
 
 number_vns_start = (
-    bg_vn * 11
+    bg_vn * Zc
     + 2 * Zc  # is +11 not standardized? #+22 to have highest rate one from standard
 )  # this here is only starting n; the code we transmit will be extendend by harq_part*Zc bits,
 
