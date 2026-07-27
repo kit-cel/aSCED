@@ -3,9 +3,11 @@
 #!/bin/bash
 #SBATCH --job-name=asced
 #SBATCH --time=48:00:00
-#SBATCH --mem=300G
-#SBATCH --cpus-per-task=
+#SBATCH --cpus-per-task=256
 
+
+
+source /home/pj9034/miniconda3/etc/profile.d/conda.sh    # adjust path if needed
 conda activate asced
 
 

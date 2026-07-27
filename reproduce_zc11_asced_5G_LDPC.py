@@ -28,7 +28,7 @@ bg_vn = 12  ##bg2
 bg_cn = 4  ##bg2
 Zc = 11
 
-sim_regime = np.linspace(2, 3.5, 4)
+sim_regime = np.linspace(4, 4.5,2)
 
 n_simul = 143  # or increase in stepzsizes of 11 e.g. 165
 
@@ -105,7 +105,7 @@ else:
     raise ValueError(f"Unknown decoder variant '{decoder_variant}'")
 
 message_bit_pucturing = np.arange(2 * Zc, dtype=int)
-auto_save = False
+auto_save = True
 bool_emulate_stopping = False
 
 target_fraction_coverged_path = 0.5
