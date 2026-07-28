@@ -1,4 +1,5 @@
 """Reproduce Figure 4 results for ASCED on CCSDS code."""
+
 import numpy as np
 from time import time
 import os
@@ -42,19 +43,23 @@ sim_regime = np.linspace(2, 3.5, 4)
 
 print(n, k)
 
-use_all_zero =False# True  # Currently only all-zero since bug in encode of ccsds 256,128
+use_all_zero = (
+    False  # True  # Currently only all-zero since bug in encode of ccsds 256,128
+)
 
 
 if not use_all_zero:
     g_enc_cfg = channel_code_lib2.G_Encoder_config(G, k, n)
 
-flag_aed = True  # 
+flag_aed = False  #
 
-flag_spa = True  # 
+flag_spa = False  #
 
-flag_asced_17 = True
+flag_sced_17 = True
 
-flag_asced_31 = True  # 
+flag_asced_17 = False
+
+flag_asced_31 = False  #
 
 plot_using_tex = False
 # np.linspace(1, 4,7 )
@@ -187,6 +192,43 @@ if flag_asced_17:
     print("aSCED finished")
 
     print(FER_aSCED_17)
+
+
+if flag_sced_17:
+    # load pcms
+
+    sced_17_path_configs = []
+    asced_31_pcms = []
+    for i in range(16):
+        asced_31_pcms.append(
+            np.load(f"Codes/TCOM_aSCED/CCSDS_affine_ensemble/CCSDS_path_{i}" + ".npy")
+        )
+        # path 0 is in fact the original pcm and has shape 88,154
+        # all others generate two paths, one with affine_offset and one without
+        sced_17_path_configs.append(channel_code_lib2.BP_config(asced_31_pcms[-1]))
+        sced_17_path_configs[-1].early_stopping = True
+        sced_17_path_configs[-1].max_iterations = 32
+        sced_17_path_configs[-1].cn_update_type = "spa"
+        sced_17_path_configs[-1].scheduling_type = "flooding"
+
+    print("Simulated num. sced paths:", len(sced_17_path_configs))
+    sced_17_config = channel_code_lib2.Ensemble_config(H, sced_17_path_configs)
+
+    sim_sced_17 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_sced_17.auto_save = auto_save
+    sim_sced_17.save_dir = results_dir + "/SCED17"
+    # cfg.H = H
+
+    if not use_all_zero:
+        sim_sced_17.init(g_enc_cfg, sced_17_config, use_all_zero)
+    else:
+        print("SCED requires random codewords, i.e., not executed!")
+
+    sim_sced_17.get_error_rates(sim_regime)
+    FER_SCED_17 = sim_sced_17.error_rates["FER-SNR"]
+    print("SCED finished")
+
+    print(FER_SCED_17)
 
 if flag_asced_31:
     # load pcms

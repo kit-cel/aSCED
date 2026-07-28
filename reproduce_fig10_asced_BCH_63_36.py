@@ -37,19 +37,21 @@ sim_regime = np.linspace(2, 4, 5)
 norm_const = 0.5
 max_iter = 20
 
-flag_1min = True  #
+flag_1min = False  #
 
-flag_ssPCM2 = True  #
+flag_ssPCM2 = False  #
 
-flag_asced_6 = True
+flag_asced_6 = False
 
-flag_mbbp_6 = True
-flag_mbbp_30 = True
+flag_mbbp_6 = False
+flag_mbbp_30 = False
+
+flag_sced_6 = True
 
 mbbp_base_dir = Path("Codes/BCH63_36/bch_63_36_sspcm2_mbbp_32_matrices")
 
 
-flag_asced_30 = True  #
+flag_asced_30 = False  #
 
 
 plot_using_tex = False
@@ -163,6 +165,46 @@ if flag_mbbp_6:
 
     print(FER_mbbp6)
     print("mbbp6 finished")
+
+
+if flag_sced_6:
+    parent_folders = [Path("Codes/BCH63_36/aSCED-6"), Path("Codes/BCH63_36/aSCED-24")]
+
+    sced_path_configs = []
+    for fld in parent_folders:
+        for subdir in fld.iterdir():
+            if subdir.is_dir():
+                # get the single file inside the subdirectory to setup batch
+                file_path = next(subdir.iterdir())
+                subcode_ssPCM = np.load(file_path)
+                sced_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
+
+    sced_path_configs = sced_path_configs[:6]#only take 6 subcode ssPCMs
+    for cfg in sced_path_configs:
+        cfg.use_avns = True
+        cfg.early_stopping = True
+        cfg.max_iterations = max_iter
+        cfg.cn_update_type = "msa"
+        cfg.norm_factor = norm_const
+        cfg.scheduling_type = "flooding"
+
+    sced_6_config = channel_code_lib2.Ensemble_config(H, sced_path_configs)
+
+    sim_sced6 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_sced6.auto_save = auto_save
+    sim_sced6.save_dir = results_dir + "/SCED6"
+
+    if not use_all_zero:
+        sim_sced6.init(g_enc_cfg, sced_6_config, use_all_zero)
+    else:
+        print("SCED reqiuires random codewords! so skip")
+    print("start sim")
+
+    sim_sced6.get_error_rates(sim_regime)
+    FER_SCED6 = sim_sced6.error_rates["FER-SNR"]
+
+    print(FER_SCED6)
+    print("SCED6 finished")
 
 if flag_asced_6:
     parent_folder = Path("Codes/BCH63_36/aSCED-6")

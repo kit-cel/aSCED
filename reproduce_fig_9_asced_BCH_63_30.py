@@ -32,19 +32,22 @@ sim_regime = np.linspace(2, 4, 5)
 norm_const = 0.5
 max_iter = 20
 
-flag_1min = True  # if true simulates AED-11
+flag_1min = False  # if true simulates AED-11
 
-flag_ssPCM2 = True  # if true simulates spa-32
+flag_ssPCM2 = False  # if true simulates spa-32
 
 
-flag_mbbp_8 = True
-flag_mbbp_64 = True
+flag_mbbp_8 = False
+flag_mbbp_64 = False
 
 mbbp_base_dir = Path("Codes/BCH63_30/bch_63_30_sspcm2_mbbp_64_matrices")
 
-flag_asced_8 = True
-flag_asced_64 = True  # nmsa
-flag_asced_spa_64 = True  # spa
+flag_asced_8 = False
+flag_asced_64 = False  # nmsa
+flag_asced_spa_64 = False  # spa
+
+
+flag_sced_8 = True
 
 asced_base_dir = Path(
     "Codes/BCH63_30/multi_batch_Delta=1/bch_63_30_sspcm2_asced_64_matrices"
@@ -211,6 +214,47 @@ if flag_mbbp_64:
     del mbbp_64_paths_configs
     gc.collect()
 
+
+if flag_sced_8:
+
+    sced8_path_configs = []
+    for i in range(8):
+        file_path = asced_base_dir / f"sspcm2_{i}.npy"
+        if file_path.exists():
+            subcode_ssPCM = np.load(file_path)
+        else:
+            raise FileNotFoundError(f"Missing file: {file_path}")
+
+        subcode_ssPCM = np.load(file_path).astype(int)
+        sced8_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
+
+    for cfg in sced8_path_configs:
+        cfg.use_avns = True
+        cfg.early_stopping = True
+        cfg.max_iterations = max_iter
+        cfg.cn_update_type = "msa"
+        cfg.norm_factor = norm_const
+        cfg.scheduling_type = "flooding"
+
+    sced_8_config = channel_code_lib2.Ensemble_config(H, sced8_path_configs)
+
+    sim_sced8 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_sced8.auto_save = auto_save
+    sim_sced8.save_dir = results_dir + "/SCED8"
+
+    if not use_all_zero:
+        sim_sced8.init(g_enc_cfg, sced_8_config, use_all_zero)
+    else:
+        print("SCED reqiuires random codewords! so skip")
+
+    sim_sced8.get_error_rates(sim_regime)
+    FER_asced8 = sim_sced8.error_rates["FER-SNR"]
+    print(FER_asced8)
+    print("asced8 finished")
+    del sim_sced8
+    del sced_8_config
+    del sced8_path_configs
+    gc.collect()
 
 if flag_asced_8:
 
