@@ -27,9 +27,9 @@ bg_vn = 12  ##bg2
 bg_cn = 4  ##bg2
 Zc = 6
 
-sim_regime = np.linspace(1, 3, 5)
+sim_regime = np.linspace(4, 4.5, 2)
 
-n_simul = 276  # min= 78 or increase in stepzsizes of 6 upto  276 (Max supported is 300, however, some asced require 4 block à 6 rows)
+n_simul = 180  # min= 78 or increase in stepzsizes of 6 upto  276 (Max supported is 300, however, some asced require 4 block à 6 rows)
 
 # for maj rev: n=78 sim_regime = np.linspace(1, 5, 9)
 # for maj rev: n=180 sim_regime = np.linspace(1, 3.5, 6)

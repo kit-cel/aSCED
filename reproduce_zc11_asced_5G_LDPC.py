@@ -28,11 +28,11 @@ bg_vn = 12  ##bg2
 bg_cn = 4  ##bg2
 Zc = 11
 
-sim_regime = np.linspace(4, 4.5,2)
+sim_regime = np.linspace(2, 4.5,6)
 
 n_simul = 143  # or increase in stepzsizes of 11 e.g. 165
 
-results_dir+=f"{n_simul}"
+results_dir+=f"n={n_simul}"
 
 splitting_pattern = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [5], [2, 4, 6, 8]]
 
@@ -113,7 +113,7 @@ bool_emulate_stopping = False
 target_fraction_coverged_path = 0.5
 
 
-use_all_zero = False
+use_all_zero = True
 
 if use_all_zero:
     results_dir+="_AZ"
