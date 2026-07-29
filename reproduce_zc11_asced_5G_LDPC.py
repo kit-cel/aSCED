@@ -15,11 +15,17 @@ import channel_code_lib2
 
 import matplotlib.pyplot as plt
 
-if len(sys.argv) != 2:
-    raise ValueError("Usage: python simulate.py <decoder_variant>")
+if len(sys.argv) != 3:
+    raise ValueError("Usage: python simulate.py <decoder_variant> <n_simul>")
 
 decoder_variant = sys.argv[1].lower()
+n_simul = int(sys.argv[2])
 
+snr_start = float(sys.argv[3])
+snr_end = float(sys.argv[4])
+
+# Include the end point
+sim_regime = np.arange(snr_start, snr_end + 0.25, 0.5)
 
 
 results_dir = "RESULTS/fig_x_zc11"
@@ -28,13 +34,13 @@ bg_vn = 12  ##bg2
 bg_cn = 4  ##bg2
 Zc = 11
 
-sim_regime = np.linspace(2, 4.5,6)
+# sim_regime = np.linspace(2, 4.5, 6)
 
-n_simul = 143  # or increase in stepzsizes of 11 e.g. 165
+# n_simul = 143  # or increase in stepzsizes of 11 e.g. 165
 
-results_dir+=f"n={n_simul}"
+results_dir += f"n={n_simul}"
 
-splitting_pattern = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [5], [2, 4, 6, 8]]
+splitting_pattern = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [2, 4, 6, 8], [5]]
 
 
 def create_bp_config(H_aux):
@@ -67,7 +73,6 @@ flag_asced_96 = False  # 2**5+2**6
 flag_asced_192 = False  # 2batches of 2**5+2**6
 
 flag_asced_2048 = False  #  2**11
-
 
 
 if decoder_variant == "nmsa":
@@ -116,7 +121,7 @@ target_fraction_coverged_path = 0.5
 use_all_zero = True
 
 if use_all_zero:
-    results_dir+="_AZ"
+    results_dir += "_AZ"
 
 
 # we start first with code max_rank_5G_zc=11

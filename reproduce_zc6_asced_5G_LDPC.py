@@ -15,10 +15,20 @@ import channel_code_lib2
 
 import matplotlib.pyplot as plt
 
-if len(sys.argv) != 2:
-    raise ValueError("Usage: python simulate.py <decoder_variant>")
+if len(sys.argv) != 3:
+    raise ValueError("Usage: python simulate.py <decoder_variant> <n_simul>")
 
 decoder_variant = sys.argv[1].lower()
+n_simul = int(sys.argv[2])
+
+snr_start = float(sys.argv[3])
+snr_end = float(sys.argv[4])
+
+# Include the end point
+sim_regime = np.arange(snr_start, snr_end + 0.25, 0.5)
+
+
+# n_simul = 180  # min= 78 or increase in stepzsizes of 6 upto  276 (Max supported is 300, however, some asced require 4 block à 6 rows)
 
 
 results_dir = "RESULTS/fig_x_zc6"
@@ -27,13 +37,12 @@ bg_vn = 12  ##bg2
 bg_cn = 4  ##bg2
 Zc = 6
 
-sim_regime = np.linspace(4, 4.5, 2)
+# sim_regime = np.linspace(4, 4.5, 2)
 
-n_simul = 180  # min= 78 or increase in stepzsizes of 6 upto  276 (Max supported is 300, however, some asced require 4 block à 6 rows)
 
 # for maj rev: n=78 sim_regime = np.linspace(1, 5, 9)
 # for maj rev: n=180 sim_regime = np.linspace(1, 3.5, 6)
-# for maj rev: n=276 
+# for maj rev: n=276
 
 results_dir += f"_n={n_simul}"
 
