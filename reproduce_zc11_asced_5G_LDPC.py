@@ -28,7 +28,7 @@ snr_end = float(sys.argv[4])
 sim_regime = np.arange(snr_start, snr_end + 0.25, 0.5)
 
 
-
+##now uses k=66 code rather than k=110
 remove = 4
 
 results_dir = f"RESULTS/fig_x_zc11_r{remove}"
@@ -124,7 +124,7 @@ bool_emulate_stopping = False
 target_fraction_coverged_path = 0.5
 
 
-use_all_zero = True
+use_all_zero = False
 
 if use_all_zero:
     results_dir += "_AZ"

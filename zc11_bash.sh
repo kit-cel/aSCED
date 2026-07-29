@@ -1,16 +1,18 @@
 #!/bin/bash
 
-#!/bin/bash
 #SBATCH --job-name=asced
-#SBATCH --time=48:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
 #SBATCH --cpus-per-task=256
+#SBATCH --time=2-00:00:00
 
-
+# Tell OpenMP how many threads to use
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
 source /home/pj9034/miniconda3/etc/profile.d/conda.sh    # adjust path if needed
 conda activate asced
 
-n_simul=143
+n_simul=132
 snr_start=2.0
 snr_end=4.5
 
