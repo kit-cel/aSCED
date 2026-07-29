@@ -28,11 +28,17 @@ snr_end = float(sys.argv[4])
 sim_regime = np.arange(snr_start, snr_end + 0.25, 0.5)
 
 
-results_dir = "RESULTS/fig_x_zc11"
 
+remove = 4
+
+results_dir = f"RESULTS/fig_x_zc11_r{remove}"
+# für k=66
+# wirf bg_vns 6-10 raus --> checke ob nmsa korrekt mit in paper
 bg_vn = 12  ##bg2
 bg_cn = 4  ##bg2
 Zc = 11
+
+bg_vn=bg_vn-remove
 
 # sim_regime = np.linspace(2, 4.5, 6)
 
@@ -130,6 +136,9 @@ code = np.load("Codes/TCOM_aSCED/5G_zc=11/max_rank_5G_zc=11.npz")
 H_full = code["h"].astype(int)
 
 
+
+H_full = np.delete(H_full, np.arange(6*Zc, 10*Zc), axis=1)
+
 block_offset = 0  # first batch, uses block 0, 2nd batch, uses block and so on
 
 
@@ -153,6 +162,7 @@ assert number_vn_simul == number_vns
 
 H = gf2(H_full[:m, :number_vns])  # take until current m
 
+
 G = np.array(gf2(H[:m, :number_vns]).null_space()).astype(int)
 
 k, n = G.shape
@@ -162,6 +172,7 @@ assert n == number_vns
 print(f"Simulating number vns={n}, n={number_vns-len(message_bit_pucturing)},k={k} ")
 
 candidate_rows = H_full[m:, : number_vns_start + harq_part * Zc]  # future possible rows
+
 
 number_additional_cyclic_blocks = candidate_rows.shape[0] // Zc
 
