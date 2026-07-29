@@ -32,7 +32,7 @@ target_fraction_coverged_path = 0.5
 results_dir = "RESULTS/fig_10"
 
 
-sim_regime = np.linspace(2, 4, 5)
+sim_regime = np.linspace(2, 5, 7)
 
 norm_const = 0.5
 max_iter = 20
@@ -47,6 +47,8 @@ flag_mbbp_6 = False
 flag_mbbp_30 = False
 
 flag_sced_6 = True
+flag_sced_6_w_original = True
+
 
 mbbp_base_dir = Path("Codes/BCH63_36/bch_63_36_sspcm2_mbbp_32_matrices")
 
@@ -167,6 +169,49 @@ if flag_mbbp_6:
     print("mbbp6 finished")
 
 
+if flag_sced_6_w_original:
+    parent_folders = [Path("Codes/BCH63_36/aSCED-6"), Path("Codes/BCH63_36/aSCED-24")]
+
+    sced_w_o_path_configs = [
+        channel_code_lib2.BP_config(
+            np.load("Codes/BCH63_36/ssPCM2_20250515_162503_228x139.npy").astype(int)
+        )
+    ]
+    for fld in parent_folders:
+        for subdir in fld.iterdir():
+            if subdir.is_dir():
+                # get the single file inside the subdirectory to setup batch
+                file_path = next(subdir.iterdir())
+                subcode_ssPCM = np.load(file_path)
+                sced_w_o_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
+
+    sced_w_o_path_configs = sced_w_o_path_configs[:6]  # only take 6 subcode ssPCMs
+    for cfg in sced_w_o_path_configs:
+        cfg.use_avns = True
+        cfg.early_stopping = True
+        cfg.max_iterations = max_iter
+        cfg.cn_update_type = "msa"
+        cfg.norm_factor = norm_const
+        cfg.scheduling_type = "flooding"
+
+    sced_6_w_o_config = channel_code_lib2.Ensemble_config(H, sced_w_o_path_configs)
+
+    sim_sced6_w_o = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_sced6_w_o.auto_save = auto_save
+    sim_sced6_w_o.save_dir = results_dir + "/SCED6_w_o"
+
+    if not use_all_zero:
+        sim_sced6_w_o.init(g_enc_cfg, sced_6_w_o_config, use_all_zero)
+    else:
+        print("SCED reqiuires random codewords! so skip")
+    print("start sim")
+
+    sim_sced6_w_o.get_error_rates(sim_regime)
+    FER_SCED6_w_o = sim_sced6_w_o.error_rates["FER-SNR"]
+
+    print(FER_SCED6_w_o)
+    print("SCED6 w o finished")
+
 if flag_sced_6:
     parent_folders = [Path("Codes/BCH63_36/aSCED-6"), Path("Codes/BCH63_36/aSCED-24")]
 
@@ -179,7 +224,7 @@ if flag_sced_6:
                 subcode_ssPCM = np.load(file_path)
                 sced_path_configs.append(channel_code_lib2.BP_config(subcode_ssPCM))
 
-    sced_path_configs = sced_path_configs[:6]#only take 6 subcode ssPCMs
+    sced_path_configs = sced_path_configs[:6]  # only take 6 subcode ssPCMs
     for cfg in sced_path_configs:
         cfg.use_avns = True
         cfg.early_stopping = True
