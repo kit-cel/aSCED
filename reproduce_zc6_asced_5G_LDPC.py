@@ -15,7 +15,7 @@ import channel_code_lib2
 
 import matplotlib.pyplot as plt
 
-if len(sys.argv) != 3:
+if len(sys.argv) !=5:
     raise ValueError("Usage: python simulate.py <decoder_variant> <n_simul>")
 
 decoder_variant = sys.argv[1].lower()
