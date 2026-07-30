@@ -559,9 +559,17 @@ df = pd.DataFrame(summary)
 
 summary_dir = os.path.join(results_dir, "summary")
 
-os.makedirs(summary_dir, exist_ok=True)
+summary_path = os.path.join(summary_dir, "paths_vs_required_snr.csv")
 
-df.to_csv(
-    os.path.join(summary_dir, "paths_vs_required_snr.csv"),
-    index=False,
-)
+new_df = pd.DataFrame(summary)
+
+if os.path.exists(summary_path):
+    old_df = pd.read_csv(summary_path)
+
+    # Remove decoders that are being rerun
+    old_df = old_df[~old_df["decoder"].isin(new_df["decoder"])]
+
+    # Append new results
+    new_df = pd.concat([old_df, new_df], ignore_index=True)
+
+new_df.to_csv(summary_path, index=False)
