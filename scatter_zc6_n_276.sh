@@ -35,7 +35,7 @@ variants=(
 
 for e in "${variants[@]}"; do
     echo "Running $e (n_simul=${n_simul}, SNR=${snr_start}:${target_fer})"
-    uv run reproduce_zc6_asced_5G_LDPC.py \
+    uv run reproduce_scatter_plot_zc6_5G_LDPC.py \
         "$e" \
         "$n_simul" \
         "$snr_start" \
