@@ -7,7 +7,7 @@
 #SBATCH --time=2-00:00:00
 
 # Tell OpenMP how many threads to use
-# export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
 
 source /home/pj9034/miniconda3/etc/profile.d/conda.sh    # adjust path if needed
