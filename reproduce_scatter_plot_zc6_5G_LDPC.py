@@ -559,6 +559,8 @@ df = pd.DataFrame(summary)
 
 summary_dir = os.path.join(results_dir, "summary")
 
+os.makedirs(summary_dir, exist_ok=True)
+
 summary_path = os.path.join(summary_dir, "paths_vs_required_snr.csv")
 
 new_df = pd.DataFrame(summary)
