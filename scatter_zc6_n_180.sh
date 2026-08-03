@@ -14,8 +14,8 @@ source /home/pj9034/miniconda3/etc/profile.d/conda.sh    # adjust path if needed
 conda activate asced
 
 
-n_simul=78
-snr_start=5.0
+n_simul=180
+snr_start=2.5
 target_fer=1e-3
 
 variants=(

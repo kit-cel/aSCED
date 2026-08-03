@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=256
-#SBATCH --time=2-00:00:00
+#SBATCH --time=1-00:00:00
 
 # Tell OpenMP how many threads to use
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
@@ -19,16 +19,19 @@ snr_end=4.5
 
 
 variants=(
-    nmsa
-    asced22
-    asced44
-    asced88
-    asced24
-    asced48
+    #nmsa
+    #asced22
+    #asced44
+    #asced88
+    #asced24
+    #asced48
     asced96_4batch
-    asced96
-    asced192
-    asced2048
+    asced192_8batch
+    #asced96
+    #asced192
+    asced288
+    asced384
+    #asced2048
 )
 
 for e in "${variants[@]}"; do

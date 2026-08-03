@@ -38,7 +38,7 @@ bg_vn = 12  ##bg2
 bg_cn = 4  ##bg2
 Zc = 11
 
-bg_vn=bg_vn-remove
+bg_vn = bg_vn - remove
 
 # sim_regime = np.linspace(2, 4.5, 6)
 
@@ -73,10 +73,14 @@ flag_aed_asced_88 = False  # 4 batches of 11*2**1
 flag_asced_24 = False  # 2**2*4+2**3
 flag_asced_48 = False  # 2 batches of 2**2*4+2**3
 flag_asced_96_4batch = False  # 4 batches of 2**2*4+2**3
+flag_asced_192_8batch = False  # 4 batches of 2**2*4+2**3
+
 
 ##splitting_pattern [5]
 flag_asced_96 = False  # 2**5+2**6
 flag_asced_192 = False  # 2batches of 2**5+2**6
+flag_asced_288 = False
+flag_asced_384 = False
 
 flag_asced_2048 = False  #  2**11
 
@@ -105,11 +109,20 @@ elif decoder_variant == "asced48":
 elif decoder_variant == "asced96_4batch":
     flag_asced_96_4batch = True
 
+elif decoder_variant == "asced192_8batch":
+    flag_asced_192_8batch = True
+
 elif decoder_variant == "asced96":
     flag_asced_96 = True
 
 elif decoder_variant == "asced192":
     flag_asced_192 = True
+
+elif decoder_variant == "asced288":
+    flag_asced_288 = True
+
+elif decoder_variant == "asced384":
+    flag_asced_384 = True
 
 elif decoder_variant == "asced2048":
     flag_asced_2048 = True
@@ -136,8 +149,7 @@ code = np.load("Codes/TCOM_aSCED/5G_zc=11/max_rank_5G_zc=11.npz")
 H_full = code["h"].astype(int)
 
 
-
-H_full = np.delete(H_full, np.arange(6*Zc, 10*Zc), axis=1)
+H_full = np.delete(H_full, np.arange(6 * Zc, 10 * Zc), axis=1)
 
 block_offset = 0  # first batch, uses block 0, 2nd batch, uses block and so on
 
@@ -326,34 +338,52 @@ experiments = [
     # splitting pattern [2,4,6,8]
     (
         flag_asced_24,
-        "aSCED_24_split2_batch1",
-        splitting_pattern[2],
+        "aSCED_24_split1_batch1",
+        splitting_pattern[1],
         1,
     ),
     (
         flag_asced_48,
-        "aSCED_48_split2_batch2",
-        splitting_pattern[2],
+        "aSCED_48_split1_batch2",
+        splitting_pattern[1],
         2,
     ),
     (
         flag_asced_96_4batch,
-        "aSCED_96_split2_batch4",
-        splitting_pattern[2],
+        "aSCED_96_split1_batch4",
+        splitting_pattern[1],
         4,
+    ),
+    (
+        flag_asced_192_8batch,
+        "aSCED_96_split1_batch8",
+        splitting_pattern[1],
+        8,
     ),
     # splitting pattern [5]
     (
         flag_asced_96,
-        "aSCED_96_split1_batch1",
-        splitting_pattern[1],
+        "aSCED_96_split2_batch1",
+        splitting_pattern[2],
         1,
     ),
     (
         flag_asced_192,
-        "aSCED_192_split1_batch2",
-        splitting_pattern[1],
+        "aSCED_192_split2_batch2",
+        splitting_pattern[2],
         2,
+    ),
+    (
+        flag_asced_288,
+        "aSCED_192_split2_batch3",
+        splitting_pattern[2],
+        3,
+    ),
+    (
+        flag_asced_384,
+        "aSCED_384_split2_batch4",
+        splitting_pattern[2],
+        4,
     ),
     # no split
     (

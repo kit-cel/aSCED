@@ -15,7 +15,7 @@ import channel_code_lib2
 
 import matplotlib.pyplot as plt
 
-if len(sys.argv) !=5:
+if len(sys.argv) != 5:
     raise ValueError("Usage: python simulate.py <decoder_variant> <n_simul>")
 
 decoder_variant = sys.argv[1].lower()
@@ -86,7 +86,7 @@ flag_asced_64_nosplit = False  # 2**6
 flag_asced_128 = False  # 2batches of 2**6
 
 if decoder_variant == "nmsa":
-    flag_nmsa = True
+    flag_nmsa = False
 
 elif decoder_variant == "aed":
     flag_aed = True
@@ -151,6 +151,9 @@ H_full = code["h"].astype(int)
 
 print(H_full.shape)
 
+plt.spy(H_full)
+plt.show()
+
 
 block_offset = 0  # first batch, uses block 0, 2nd batch, uses block and so on
 
@@ -174,6 +177,9 @@ number_vns = number_vns_start + harq_part * Zc
 assert number_vn_simul == number_vns
 
 H = gf2(H_full[:m, :number_vns])  # take until current m
+
+plt.spy(H)
+plt.show()
 
 G = np.array(gf2(H[:m, :number_vns]).null_space()).astype(int)
 

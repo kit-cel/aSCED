@@ -69,25 +69,32 @@ flag_nmsa = False  # if true simulates NMSA-32
 flag_aed = False  # if true simulates AED-11
 
 ##splitting_pattern [1, 2, 3, 4, 5]
-flag_aed_asced_12_split0 = False  # 1 batch of 6*2**1
-flag_aed_asced_24_split0 = False  # 2 batches of  6*2**1
-flag_aed_asced_48_split0 = False  # 4 batches of  6*2**1
+flag_aed_asced_12_split1 = False  # 1 batch of 6*2**1
+flag_aed_asced_24_split1 = False  # 2 batches of  6*2**1
+flag_aed_asced_48_split1 = False  # 4 batches of  6*2**1
+flag_aed_asced_60_split1 = False  # 5 batches of  6*2**1
+flag_aed_asced_96_split1 = False
+
 
 ##splitting pattern [2, 4]
-flag_asced_12_split1 = False  # 3*(2**2)
-flag_asced_24_split1 = False  # 2 batches of 3*(2**2)
-flag_asced_48_split1 = False  # 4 batches of 3*(2**2)
+flag_asced_12_split2 = False  # 3*(2**2)
+flag_asced_24_split2 = False  # 2 batches of 3*(2**2)
+flag_asced_48_split2 = False  # 4 batches of 3*(2**2)
+flag_asced_96_split2 = False
 
 
 ##splitting pattern [3]
 
-flag_asced_16 = False  # 2*(2**3)
-flag_asced_48 = False  # 3*(2**3)
-flag_asced_64 = False  # 4*(2**3)
+flag_asced_16_split3 = False  # 2*(2**3)
+flag_asced_48_split3 = False  # 3*(2**3)
+flag_asced_64_split3 = False  # 4*(2**3)
+flag_asced_96_split3 = False
+flag_asced_128_split3 = False
 
 ##no spliitng
 flag_asced_64_nosplit = False  # 2**6
-flag_asced_128 = False  # 2batches of 2**6
+flag_asced_128_nosplit = False  # 2batches of 2**6
+flag_asced_192_nosplit = False
 
 if decoder_variant == "nmsa":
     flag_nmsa = True
@@ -96,41 +103,57 @@ elif decoder_variant == "aed":
     flag_aed = True
 
 # splitting pattern [1,2,3,4,5]
-elif decoder_variant == "12_split0":
-    flag_aed_asced_12_split0 = True
-
-elif decoder_variant == "24_split0":
-    flag_aed_asced_24_split0 = True
-
-elif decoder_variant == "48_split0":
-    flag_aed_asced_48_split0 = True
-
-# splitting pattern [2,4]
 elif decoder_variant == "12_split1":
-    flag_asced_12_split1 = True
+    flag_aed_asced_12_split1 = True
 
 elif decoder_variant == "24_split1":
-    flag_asced_24_split1 = True
+    flag_aed_asced_24_split1 = True
 
 elif decoder_variant == "48_split1":
-    flag_asced_48_split1 = True
+    flag_aed_asced_48_split1 = True
+
+elif decoder_variant == "60_split1":
+    flag_aed_asced_60_split1 = True
+
+elif decoder_variant == "96_split1":
+    flag_aed_asced_96_split1 = True
+
+# splitting pattern [2,4]
+elif decoder_variant == "12_split2":
+    flag_asced_12_split2 = True
+
+elif decoder_variant == "24_split2":
+    flag_asced_24_split2 = True
+
+elif decoder_variant == "48_split2":
+    flag_asced_48_split2 = True
+
+elif decoder_variant == "96_split2":
+    flag_asced_96_split2 = True
 
 # splitting pattern [3]
-elif decoder_variant == "16":
-    flag_asced_16 = True
+elif decoder_variant == "16_split3":
+    flag_asced_16_split3 = True
 
-elif decoder_variant == "48":
-    flag_asced_48 = True
+elif decoder_variant == "48_split3":
+    flag_asced_48_split3 = True
 
-elif decoder_variant == "64":
-    flag_asced_64 = True
+elif decoder_variant == "64_split3":
+    flag_asced_64_split3 = True
 
+elif decoder_variant == "96_split3":
+    flag_asced_96_split3 = True
+
+elif decoder_variant == "128_split3":
+    flag_asced_128_split3 = True
 # no splitting
 elif decoder_variant == "64_nosplit":
     flag_asced_64_nosplit = True
 
-elif decoder_variant == "128":
-    flag_asced_128 = True
+elif decoder_variant == "128_nosplit":
+    flag_asced_128_nosplit = True
+elif decoder_variant == "192_nosplit":
+    flag_asced_192_nosplit = True
 
 else:
     raise ValueError(f"Unknown decoder variant '{decoder_variant}'")
@@ -220,7 +243,9 @@ def create_asced_config(
     path_configs = []
 
     for block in range(num_used_blocks):
-
+        print(block)
+        print(block_offset)
+        print(number_additional_cyclic_blocks)
         assert block + block_offset <= number_additional_cyclic_blocks
 
         row_block = candidate_rows[
@@ -298,7 +323,7 @@ def search_target_fer(
     sim,
     start_snr,
     target_fer,
-    tolerance=0.03,      # ±5%
+    tolerance=0.03,  # ±5%
     initial_step=0.3,
     min_step=0.001,
     max_iter=30,
@@ -413,64 +438,93 @@ def search_target_fer(
     return high_snr, high_fer
 
 
-
 experiments = [
     # splitting pattern [1,2,3,4,5]
     (
-        flag_aed_asced_12_split0,
+        flag_aed_asced_12_split1,
         "aSCED_12_split0_batch1",
         splitting_pattern[0],
         1,
     ),
     (
-        flag_aed_asced_24_split0,
+        flag_aed_asced_24_split1,
         "aSCED_24_split0_batch2",
         splitting_pattern[0],
         2,
     ),
     (
-        flag_aed_asced_48_split0,
+        flag_aed_asced_48_split1,
         "aSCED_48_split0_batch4",
         splitting_pattern[0],
         4,
     ),
+    (
+        flag_aed_asced_60_split1,
+        "aSCED_60_split0_batch5",
+        splitting_pattern[0],
+        5,
+    ),
+    (
+        flag_aed_asced_96_split1,
+        "aSCED_96_split0_batch8",
+        splitting_pattern[0],
+        8,
+    ),
     # splitting pattern [2,4]
     (
-        flag_asced_12_split1,
+        flag_asced_12_split2,
         "aSCED_12_split1_batch1",
         splitting_pattern[1],
         1,
     ),
     (
-        flag_asced_24_split1,
+        flag_asced_24_split2,
         "aSCED_24_split1_batch2",
         splitting_pattern[1],
         2,
     ),
     (
-        flag_asced_48_split1,
+        flag_asced_48_split2,
         "aSCED_48_split1_batch4",
         splitting_pattern[1],
         4,
     ),
+    (
+        flag_asced_96_split2,
+        "aSCED_96_split1_batch8",
+        splitting_pattern[1],
+        8,
+    ),
     # splitting pattern [3]
     (
-        flag_asced_16,
+        flag_asced_16_split3,
         "aSCED_16_split2_batch1",
         splitting_pattern[2],
         1,
     ),
     (
-        flag_asced_48,
+        flag_asced_48_split3,
         "aSCED_48_split2_batch3",
         splitting_pattern[2],
         3,
     ),
     (
-        flag_asced_64,
+        flag_asced_64_split3,
         "aSCED_64_split2_batch4",
         splitting_pattern[2],
         4,
+    ),
+    (
+        flag_asced_96_split3,
+        "aSCED_96_split2_batch6",
+        splitting_pattern[2],
+        6,
+    ),
+    (
+        flag_asced_128_split3,
+        "aSCED_128_split2_batch8",
+        splitting_pattern[2],
+        8,
     ),
     # no splitting
     (
@@ -480,10 +534,16 @@ experiments = [
         1,
     ),
     (
-        flag_asced_128,
+        flag_asced_128_nosplit,
         "aSCED_128_nosplit_batch2",
         [],
         2,
+    ),
+    (
+        flag_asced_192_nosplit,
+        "aSCED_192_nosplit_batch3",
+        [],
+        3,
     ),
 ]
 
@@ -508,17 +568,15 @@ if flag_nmsa:
     else:
         sim_nmsa.all_zero_init(nmsa_config)
 
-    
     required_snr, accepted_fer = search_target_fer(
-            sim_nmsa,
-            snr_start,
-            target_fer,
-        )
+        sim_nmsa,
+        snr_start,
+        target_fer,
+    )
 
     summary.append(
         {
-            "decoder": "nmsa",
-            "split_pattern": str(""),
+            "split": 0,
             "num_blocks": 0,
             "num_paths": 1,
             "required_snr": required_snr,
@@ -543,10 +601,20 @@ for enabled, save_name, split_pattern, num_blocks in experiments:
         target_fer,
     )
 
+    if "split1" in save_name:
+        split = 1
+    elif "split2" in save_name:
+        split = 2
+    elif "split3" in save_name:
+        split = 3
+    elif "nosplit" in save_name:
+        split = 4
+    else:
+        split = -1
+
     summary.append(
         {
-            "decoder": save_name,
-            "split_pattern": str(split_pattern),
+            "split": split,
             "num_blocks": num_blocks,
             "num_paths": num_paths,
             "required_snr": required_snr,
@@ -561,17 +629,36 @@ summary_dir = os.path.join(results_dir, "summary")
 
 os.makedirs(summary_dir, exist_ok=True)
 
-summary_path = os.path.join(summary_dir, "paths_vs_required_snr.csv")
+summary_path = os.path.join(summary_dir, "paths_vs_required_snr.dat")
 
 new_df = pd.DataFrame(summary)
 
 if os.path.exists(summary_path):
-    old_df = pd.read_csv(summary_path)
+    old_df = pd.read_csv(summary_path, sep=" ")
 
-    # Remove decoders that are being rerun
-    old_df = old_df[~old_df["decoder"].isin(new_df["decoder"])]
+    # Remove already existing identical split/path combinations
+    new_df_keys = new_df[["split", "num_paths"]]
+    old_df = old_df.merge(
+        new_df_keys,
+        on=["split", "num_paths"],
+        how="left",
+        indicator=True,
+    )
 
-    # Append new results
+    old_df = old_df[old_df["_merge"] == "left_only"]
+    old_df = old_df.drop(columns=["_merge"])
+
     new_df = pd.concat([old_df, new_df], ignore_index=True)
 
-new_df.to_csv(summary_path, index=False)
+
+new_df = new_df.sort_values(["split", "num_paths"])
+
+new_df.to_csv(
+    summary_path,
+    sep=" ",
+    index=False,
+)
+
+print(new_df)
+print()
+print(f"Saved summary to {summary_path}")
