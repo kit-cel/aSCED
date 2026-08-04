@@ -36,7 +36,7 @@ variants=(
     128_split3
     64_nosplit # no splitting
     128_nosplit
-    196_nosplit
+    192_nosplit
 )
 
 for e in "${variants[@]}"; do
