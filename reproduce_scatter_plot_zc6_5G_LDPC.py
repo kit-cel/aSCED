@@ -330,11 +330,7 @@ def create_asced_config(
     return channel_code_lib2.Ensemble_config(H, path_configs), len(path_configs)
 
 
-def create_asced_sim(
-    save_dir_name,
-    split_pattern,
-    num_used_blocks,
-):
+def create_asced_sim(save_dir_name, split_pattern, num_used_blocks, subsplit=None):
     ensemble_cfg, num_paths = create_asced_config(
         H=H,
         candidate_rows=candidate_rows,
@@ -343,6 +339,7 @@ def create_asced_sim(
         split_pattern=split_pattern,
         num_used_blocks=num_used_blocks,
         use_all_zero=use_all_zero,
+        subsplit=subsplit,
     )
 
     sim = channel_code_lib2.Simulation_Env(k, n, "all")
@@ -759,7 +756,7 @@ if flag_aed:
     )
 
 
-for enabled, save_name, split_pattern, num_blocks in experiments:
+for enabled, save_name, split_pattern, num_blocks, subsplit in experiments:
 
     if not enabled:
         continue
@@ -768,6 +765,7 @@ for enabled, save_name, split_pattern, num_blocks in experiments:
         save_name,
         split_pattern,
         num_blocks,
+        subsplit
     )
 
     required_snr, accepted_fer = search_target_fer(
@@ -804,7 +802,7 @@ summary_dir = os.path.join(results_dir, "summary")
 
 os.makedirs(summary_dir, exist_ok=True)
 
-summary_path = os.path.join(summary_dir, "paths_vs_required_snr.dat")
+summary_path = os.path.join(summary_dir, f"n{n_simul}_paths_vs_required_snr.dat")
 
 new_df = pd.DataFrame(summary)
 
@@ -812,10 +810,10 @@ if os.path.exists(summary_path):
     old_df = pd.read_csv(summary_path, sep=" ")
 
     # Remove already existing identical split/path combinations
-    new_df_keys = new_df[["split", "num_paths"]]
+    new_df_keys = new_df[["split", "numpaths"]]
     old_df = old_df.merge(
         new_df_keys,
-        on=["split", "num_paths"],
+        on=["split", "numpaths"],
         how="left",
         indicator=True,
     )
@@ -826,7 +824,7 @@ if os.path.exists(summary_path):
     new_df = pd.concat([old_df, new_df], ignore_index=True)
 
 
-new_df = new_df.sort_values(["split", "num_paths"])
+new_df = new_df.sort_values(["split", "numpaths"])
 
 new_df.to_csv(
     summary_path,
