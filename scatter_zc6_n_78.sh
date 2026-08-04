@@ -19,23 +19,23 @@ snr_start=5.0
 target_fer=1e-3
 
 variants=(
-    nmsa
-    12_split1 # splitting pattern [1,2,3,4,5]
-    24_split1
-    48_split1
-    60_split1
-    96_split1
-    12_split2 # splitting pattern [2,4]
-    24_split2
-    48_split2
-    96_split2
-    16_split3 # splitting pattern [3]
-    48_split3
-    64_split3
-    96_split3
-    128_split3
-    64_nosplit # no splitting
-    128_nosplit
+    # nmsa
+    # 12_split1 # splitting pattern [1,2,3,4,5]
+    # 24_split1
+    # 48_split1
+    # 60_split1
+    # 96_split1
+    # 12_split2 # splitting pattern [2,4]
+    # 24_split2
+    # 48_split2
+    # 96_split2
+    # 16_split3 # splitting pattern [3]
+    # 48_split3
+    # 64_split3
+    # 96_split3
+    # 128_split3
+    # 64_nosplit # no splitting
+    # 128_nosplit
     192_nosplit
 )
 
