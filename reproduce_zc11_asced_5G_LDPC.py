@@ -375,7 +375,7 @@ experiments = [
     ),
     (
         flag_asced_288,
-        "aSCED_192_split2_batch3",
+        "aSCED_288_split2_batch3",
         splitting_pattern[2],
         3,
     ),

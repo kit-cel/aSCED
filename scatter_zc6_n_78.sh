@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=256
-#SBATCH --time=2-00:00:00
+#SBATCH --time=0-10:00:00
 
 # Tell OpenMP how many threads to use
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
@@ -20,16 +20,25 @@ target_fer=1e-3
 
 variants=(
     # nmsa
-    # 12_split1 # splitting pattern [1,2,3,4,5]
+    aed
+    2_split1_subsplit1 # splitting pattern [1,2,3,4,5]
+    4_split1_subsplit2
+    6_split1_subsplit3
+    8_split1_subsplit4
+    10_split1_subsplit5       
+    # 12_split1 
     # 24_split1
     # 48_split1
     # 60_split1
     # 96_split1
-    # 12_split2 # splitting pattern [2,4]
+    4_split2_subsplit1 # splitting pattern [2,4]
+    8_split2_subsplit2
+    # 12_split2 
     # 24_split2
     # 48_split2
     # 96_split2
-    # 16_split3 # splitting pattern [3]
+    8_split3_subsplit1 # splitting pattern [3]
+    # 16_split3 
     # 48_split3
     # 64_split3
     # 96_split3

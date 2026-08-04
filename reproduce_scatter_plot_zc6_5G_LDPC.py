@@ -69,6 +69,11 @@ flag_nmsa = False  # if true simulates NMSA-32
 flag_aed = False  # if true simulates AED-11
 
 ##splitting_pattern [1, 2, 3, 4, 5]
+flag_aed_asced_2_split1_subsplit1 = False
+flag_aed_asced_4_split1_subsplit2 = False
+flag_aed_asced_6_split1_subsplit3 = False
+flag_aed_asced_8_split1_subsplit4 = False
+flag_aed_asced_10_split1_subsplit5 = False
 flag_aed_asced_12_split1 = False  # 1 batch of 6*2**1
 flag_aed_asced_24_split1 = False  # 2 batches of  6*2**1
 flag_aed_asced_48_split1 = False  # 4 batches of  6*2**1
@@ -77,6 +82,9 @@ flag_aed_asced_96_split1 = False
 
 
 ##splitting pattern [2, 4]
+# split2 subsplits
+flag_asced_4_split2_subsplit1 = False
+flag_asced_8_split2_subsplit2 = False
 flag_asced_12_split2 = False  # 3*(2**2)
 flag_asced_24_split2 = False  # 2 batches of 3*(2**2)
 flag_asced_48_split2 = False  # 4 batches of 3*(2**2)
@@ -84,7 +92,8 @@ flag_asced_96_split2 = False
 
 
 ##splitting pattern [3]
-
+# split3 subsplits
+flag_asced_8_split3_subsplit1 = False
 flag_asced_16_split3 = False  # 2*(2**3)
 flag_asced_48_split3 = False  # 3*(2**3)
 flag_asced_64_split3 = False  # 4*(2**3)
@@ -102,7 +111,24 @@ if decoder_variant == "nmsa":
 elif decoder_variant == "aed":
     flag_aed = True
 
+# ----------------------------------------------------------
 # splitting pattern [1,2,3,4,5]
+# ----------------------------------------------------------
+elif decoder_variant == "2_split1_subsplit1":
+    flag_aed_asced_2_split1_subsplit1 = True
+
+elif decoder_variant == "4_split1_subsplit2":
+    flag_aed_asced_4_split1_subsplit2 = True
+
+elif decoder_variant == "6_split1_subsplit3":
+    flag_aed_asced_6_split1_subsplit3 = True
+
+elif decoder_variant == "8_split1_subsplit4":
+    flag_aed_asced_8_split1_subsplit4 = True
+
+elif decoder_variant == "10_split1_subsplit5":
+    flag_aed_asced_10_split1_subsplit5 = True
+
 elif decoder_variant == "12_split1":
     flag_aed_asced_12_split1 = True
 
@@ -118,7 +144,15 @@ elif decoder_variant == "60_split1":
 elif decoder_variant == "96_split1":
     flag_aed_asced_96_split1 = True
 
+# ----------------------------------------------------------
 # splitting pattern [2,4]
+# ----------------------------------------------------------
+elif decoder_variant == "4_split2_subsplit1":
+    flag_asced_4_split2_subsplit1 = True
+
+elif decoder_variant == "8_split2_subsplit2":
+    flag_asced_8_split2_subsplit2 = True
+
 elif decoder_variant == "12_split2":
     flag_asced_12_split2 = True
 
@@ -131,7 +165,12 @@ elif decoder_variant == "48_split2":
 elif decoder_variant == "96_split2":
     flag_asced_96_split2 = True
 
+# ----------------------------------------------------------
 # splitting pattern [3]
+# ----------------------------------------------------------
+elif decoder_variant == "8_split3_subsplit1":
+    flag_asced_8_split3_subsplit1 = True
+
 elif decoder_variant == "16_split3":
     flag_asced_16_split3 = True
 
@@ -146,12 +185,15 @@ elif decoder_variant == "96_split3":
 
 elif decoder_variant == "128_split3":
     flag_asced_128_split3 = True
+# ----------------------------------------------------------
 # no splitting
+# ----------------------------------------------------------
 elif decoder_variant == "64_nosplit":
     flag_asced_64_nosplit = True
 
 elif decoder_variant == "128_nosplit":
     flag_asced_128_nosplit = True
+
 elif decoder_variant == "192_nosplit":
     flag_asced_192_nosplit = True
 
@@ -237,6 +279,7 @@ def create_asced_config(
     split_pattern,
     num_used_blocks,
     use_all_zero,
+    subsplit=None,
 ):
     """Construct all decoder paths for one ASCED configuration."""
 
@@ -257,6 +300,10 @@ def create_asced_config(
             row_segments = [row_block]
         else:
             row_segments = np.split(row_block, split_pattern)
+
+        if subsplit is not None:
+            assert 1 <= subsplit <= len(row_segments)
+            row_segments = row_segments[:subsplit]
 
         for rows in row_segments:
 
@@ -441,90 +488,160 @@ def search_target_fer(
 experiments = [
     # splitting pattern [1,2,3,4,5]
     (
+        flag_aed_asced_2_split1_subsplit1,
+        "aSCED_12_split1_batch1_subsplit1",
+        splitting_pattern[0],
+        1,
+        1,
+    ),
+    (
+        flag_aed_asced_4_split1_subsplit2,
+        "aSCED_12_split1_batch1_subsplit2",
+        splitting_pattern[0],
+        1,
+        2,
+    ),
+    (
+        flag_aed_asced_6_split1_subsplit3,
+        "aSCED_12_split1_batch1_subsplit3",
+        splitting_pattern[0],
+        1,
+        3,
+    ),
+    (
+        flag_aed_asced_8_split1_subsplit4,
+        "aSCED_12_split1_batch1_subsplit4",
+        splitting_pattern[0],
+        1,
+        4,
+    ),
+    (
+        flag_aed_asced_10_split1_subsplit5,
+        "aSCED_12_split1_batch1_subsplit5",
+        splitting_pattern[0],
+        1,
+        5,
+    ),
+    (
         flag_aed_asced_12_split1,
         "aSCED_12_split1_batch1",
         splitting_pattern[0],
         1,
+        None,
     ),
     (
         flag_aed_asced_24_split1,
         "aSCED_24_split1_batch2",
         splitting_pattern[0],
         2,
+        None,
     ),
     (
         flag_aed_asced_48_split1,
         "aSCED_48_split1_batch4",
         splitting_pattern[0],
         4,
+        None,
     ),
     (
         flag_aed_asced_60_split1,
         "aSCED_60_split1_batch5",
         splitting_pattern[0],
         5,
+        None,
     ),
     (
         flag_aed_asced_96_split1,
         "aSCED_96_split1_batch8",
         splitting_pattern[0],
         8,
+        None,
     ),
     # splitting pattern [2,4]
+    (
+        flag_asced_4_split2_subsplit1,
+        "aSCED_12_split2_batch1_subsplit1",
+        splitting_pattern[1],
+        1,
+        1,
+    ),
+    (
+        flag_asced_8_split2_subsplit2,
+        "aSCED_12_split2_batch1_subsplit2",
+        splitting_pattern[1],
+        1,
+        2,
+    ),
     (
         flag_asced_12_split2,
         "aSCED_12_split2_batch1",
         splitting_pattern[1],
         1,
+        None,
     ),
     (
         flag_asced_24_split2,
         "aSCED_24_split2_batch2",
         splitting_pattern[1],
         2,
+        None,
     ),
     (
         flag_asced_48_split2,
         "aSCED_48_split2_batch4",
         splitting_pattern[1],
         4,
+        None,
     ),
     (
         flag_asced_96_split2,
         "aSCED_96_split2_batch8",
         splitting_pattern[1],
         8,
+        None,
     ),
     # splitting pattern [3]
+    (
+        flag_asced_8_split3_subsplit1,
+        "aSCED_16_split3_batch1_subsplit1",
+        splitting_pattern[2],
+        1,
+        1,
+    ),
     (
         flag_asced_16_split3,
         "aSCED_16_split3_batch1",
         splitting_pattern[2],
         1,
+        None,
     ),
     (
         flag_asced_48_split3,
         "aSCED_48_split3_batch3",
         splitting_pattern[2],
         3,
+        None,
     ),
     (
         flag_asced_64_split3,
         "aSCED_64_split3_batch4",
         splitting_pattern[2],
         4,
+        None,
     ),
     (
         flag_asced_96_split3,
         "aSCED_96_split3_batch6",
         splitting_pattern[2],
         6,
+        None,
     ),
     (
         flag_asced_128_split3,
         "aSCED_128_split3_batch8",
         splitting_pattern[2],
         8,
+        None,
     ),
     # no splitting
     (
@@ -532,18 +649,21 @@ experiments = [
         "aSCED_64_nosplit_batch1",
         [],
         1,
+        None,
     ),
     (
         flag_asced_128_nosplit,
         "aSCED_128_nosplit_batch2",
         [],
         2,
+        None,
     ),
     (
         flag_asced_192_nosplit,
         "aSCED_192_nosplit_batch3",
         [],
         3,
+        None,
     ),
 ]
 
@@ -577,12 +697,67 @@ if flag_nmsa:
     summary.append(
         {
             "split": 0,
-            "num_blocks": 0,
-            "num_paths": 1,
-            "required_snr": required_snr,
-            "accepted_fer": accepted_fer,
+            "numblocks": 0,
+            "numpaths": 1,
+            "requiredsnr": required_snr,
+            "acceptedfer": accepted_fer,
         }
     )
+
+
+def quasi_cyclic_permutation_vector(length, block_size=11):
+    permuted_indices = np.arange(length)
+    for start in range(0, length, block_size):
+        end = min(start + block_size, length)
+        block_indices = permuted_indices[start:end]
+        if len(block_indices) == block_size:
+            permuted_indices[start:end] = np.roll(block_indices, 1)
+    return permuted_indices
+
+
+if flag_aed:
+    permutation = quasi_cyclic_permutation_vector(n, Zc)
+    H_del = H[1:, :]
+    shifted_permutations = [permutation]
+    undercomplete_bp_config = [channel_code_lib2.BP_config(H_del)]
+
+    undercomplete_bp_config[0].early_stopping = True
+    undercomplete_bp_config[0].max_iterations = 32
+    undercomplete_bp_config[0].cn_update_type = "msa"
+    undercomplete_bp_config[0].scheduling_type = "flooding"
+    undercomplete_bp_config[0].norm_factor = 0.75
+    for i in range(1, 11):
+        shifted_permutations.append(shifted_permutations[i - 1][permutation])
+    for per in shifted_permutations:
+        assert np.all(gf2(H) @ gf2(G[:, per]).T == 0)
+    processing_config = channel_code_lib2.Automorphism_config(shifted_permutations)
+    ensemble_decoder_config = channel_code_lib2.Ensemble_config(
+        H, undercomplete_bp_config, processing_config
+    )
+    sim_aed = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_aed.auto_save = auto_save
+    sim_aed.save_dir = results_dir + f"/aed{Zc}"
+    sim_aed.puncturing(message_bit_pucturing)
+    if not use_all_zero:
+        sim_aed.init(enc_cfg, ensemble_decoder_config, use_all_zero)
+    else:
+        sim_aed.all_zero_init(ensemble_decoder_config)
+
+    required_snr, accepted_fer = search_target_fer(
+        sim_aed,
+        snr_start,
+        target_fer,
+    )
+    summary.append(
+        {
+            "split": 5,
+            "numblocks": 1,
+            "numpaths": Zc,
+            "requiredsnr": required_snr,
+            "acceptedfer": accepted_fer,
+        }
+    )
+
 
 for enabled, save_name, split_pattern, num_blocks in experiments:
 
@@ -615,10 +790,10 @@ for enabled, save_name, split_pattern, num_blocks in experiments:
     summary.append(
         {
             "split": split,
-            "num_blocks": num_blocks,
-            "num_paths": num_paths,
-            "required_snr": required_snr,
-            "accepted_fer": accepted_fer,
+            "numblocks": num_blocks,
+            "numpaths": num_paths,
+            "requiredsnr": required_snr,
+            "acceptedfer": accepted_fer,
         }
     )
 
