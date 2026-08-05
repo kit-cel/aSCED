@@ -76,8 +76,11 @@ flag_aed_asced_8_split1_subsplit4 = False
 flag_aed_asced_10_split1_subsplit5 = False
 flag_aed_asced_12_split1 = False  # 1 batch of 6*2**1
 flag_aed_asced_24_split1 = False  # 2 batches of  6*2**1
+flag_aed_asced_36_split1 = False  # new3
 flag_aed_asced_48_split1 = False  # 4 batches of  6*2**1
 flag_aed_asced_60_split1 = False  # 5 batches of  6*2**1
+flag_aed_asced_72_split1 = False  # new 6
+flag_aed_asced_84_split1 = False  # new 7
 flag_aed_asced_96_split1 = False
 
 
@@ -87,17 +90,24 @@ flag_asced_4_split2_subsplit1 = False
 flag_asced_8_split2_subsplit2 = False
 flag_asced_12_split2 = False  # 3*(2**2)
 flag_asced_24_split2 = False  # 2 batches of 3*(2**2)
+flag_asced_36_split2 = False  # new3
 flag_asced_48_split2 = False  # 4 batches of 3*(2**2)
+flag_asced_60_split2 = False  # new 5
+flag_asced_72_split2 = False  # new 6
+flag_asced_84_split2 = False  # new 7
 flag_asced_96_split2 = False
 
 
 ##splitting pattern [3]
 # split3 subsplits
 flag_asced_8_split3_subsplit1 = False
-flag_asced_16_split3 = False  # 2*(2**3)
+flag_asced_16_split3 = False  # 1 batch  2*(2**3)
+flag_asced_32_split3 = False  # new 2batches
 flag_asced_48_split3 = False  # 3*(2**3)
 flag_asced_64_split3 = False  # 4*(2**3)
+flag_asced_80_split3 = False  # new 5*(2**3)
 flag_asced_96_split3 = False
+flag_asced_112_split3 = False  # new 7
 flag_asced_128_split3 = False
 
 ##no spliitng
@@ -135,11 +145,20 @@ elif decoder_variant == "12_split1":
 elif decoder_variant == "24_split1":
     flag_aed_asced_24_split1 = True
 
+elif decoder_variant == "36_split1":
+    flag_aed_asced_36_split1 = True
+
 elif decoder_variant == "48_split1":
     flag_aed_asced_48_split1 = True
 
 elif decoder_variant == "60_split1":
     flag_aed_asced_60_split1 = True
+
+elif decoder_variant == "72_split1":
+    flag_aed_asced_72_split1 = True
+
+elif decoder_variant == "84_split1":
+    flag_aed_asced_84_split1 = True
 
 elif decoder_variant == "96_split1":
     flag_aed_asced_96_split1 = True
@@ -159,8 +178,20 @@ elif decoder_variant == "12_split2":
 elif decoder_variant == "24_split2":
     flag_asced_24_split2 = True
 
+elif decoder_variant == "36_split2":
+    flag_asced_36_split2 = True
+
 elif decoder_variant == "48_split2":
     flag_asced_48_split2 = True
+
+elif decoder_variant == "60_split2":
+    flag_asced_60_split2 = True
+
+elif decoder_variant == "72_split2":
+    flag_asced_72_split2 = True
+
+elif decoder_variant == "84_split2":
+    flag_asced_84_split2 = True
 
 elif decoder_variant == "96_split2":
     flag_asced_96_split2 = True
@@ -174,14 +205,23 @@ elif decoder_variant == "8_split3_subsplit1":
 elif decoder_variant == "16_split3":
     flag_asced_16_split3 = True
 
+elif decoder_variant == "32_split3":
+    flag_asced_32_split3 = True
+
 elif decoder_variant == "48_split3":
     flag_asced_48_split3 = True
 
 elif decoder_variant == "64_split3":
     flag_asced_64_split3 = True
 
+elif decoder_variant == "80_split3":
+    flag_asced_80_split3 = True
+
 elif decoder_variant == "96_split3":
     flag_asced_96_split3 = True
+
+elif decoder_variant == "112_split3":
+    flag_asced_112_split3 = True
 
 elif decoder_variant == "128_split3":
     flag_asced_128_split3 = True
@@ -343,6 +383,7 @@ def create_asced_sim(save_dir_name, split_pattern, num_used_blocks, subsplit=Non
     )
 
     sim = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim.target_errors = 1000
 
     sim.auto_save = auto_save
     sim.save_dir = os.path.join(results_dir, save_dir_name)
@@ -367,10 +408,10 @@ def search_target_fer(
     sim,
     start_snr,
     target_fer,
-    tolerance=0.03,  # ±5%
-    initial_step=0.3,
-    min_step=0.001,
-    max_iter=30,
+    tolerance=0.02,  # ±5%
+    initial_step=0.2,
+    min_step=0.0001,
+    max_iter=40,
 ):
     """
     Find the SNR required to achieve the target FER.
@@ -486,35 +527,35 @@ experiments = [
     # splitting pattern [1,2,3,4,5]
     (
         flag_aed_asced_2_split1_subsplit1,
-        "aSCED_12_split1_batch1_subsplit1",
+        "aSCED_2_split1_batch1_subsplit1",
         splitting_pattern[0],
         1,
         1,
     ),
     (
         flag_aed_asced_4_split1_subsplit2,
-        "aSCED_12_split1_batch1_subsplit2",
+        "aSCED_4_split1_batch1_subsplit2",
         splitting_pattern[0],
         1,
         2,
     ),
     (
         flag_aed_asced_6_split1_subsplit3,
-        "aSCED_12_split1_batch1_subsplit3",
+        "aSCED_6_split1_batch1_subsplit3",
         splitting_pattern[0],
         1,
         3,
     ),
     (
         flag_aed_asced_8_split1_subsplit4,
-        "aSCED_12_split1_batch1_subsplit4",
+        "aSCED_8_split1_batch1_subsplit4",
         splitting_pattern[0],
         1,
         4,
     ),
     (
         flag_aed_asced_10_split1_subsplit5,
-        "aSCED_12_split1_batch1_subsplit5",
+        "aSCED_10_split1_batch1_subsplit5",
         splitting_pattern[0],
         1,
         5,
@@ -534,6 +575,13 @@ experiments = [
         None,
     ),
     (
+        flag_aed_asced_36_split1,
+        "aSCED_36_split1_batch3",
+        splitting_pattern[0],
+        3,
+        None,
+    ),
+    (
         flag_aed_asced_48_split1,
         "aSCED_48_split1_batch4",
         splitting_pattern[0],
@@ -545,6 +593,20 @@ experiments = [
         "aSCED_60_split1_batch5",
         splitting_pattern[0],
         5,
+        None,
+    ),
+    (
+        flag_aed_asced_72_split1,
+        "aSCED_72_split1_batch6",
+        splitting_pattern[0],
+        6,
+        None,
+    ),
+    (
+        flag_aed_asced_84_split1,
+        "aSCED_84_split1_batch7",
+        splitting_pattern[0],
+        7,
         None,
     ),
     (
@@ -584,10 +646,38 @@ experiments = [
         None,
     ),
     (
+        flag_asced_36_split2,
+        "aSCED_36_split2_batch3",
+        splitting_pattern[1],
+        3,
+        None,
+    ),
+    (
         flag_asced_48_split2,
         "aSCED_48_split2_batch4",
         splitting_pattern[1],
         4,
+        None,
+    ),
+    (
+        flag_asced_60_split2,
+        "aSCED_60_split2_batch5",
+        splitting_pattern[1],
+        5,
+        None,
+    ),
+    (
+        flag_asced_72_split2,
+        "aSCED_72_split2_batch6",
+        splitting_pattern[1],
+        6,
+        None,
+    ),
+    (
+        flag_asced_84_split2,
+        "aSCED_84_split2_batch7",
+        splitting_pattern[1],
+        7,
         None,
     ),
     (
@@ -613,6 +703,13 @@ experiments = [
         None,
     ),
     (
+        flag_asced_32_split3,
+        "aSCED_16_split3_batch2",
+        splitting_pattern[2],
+        2,
+        None,
+    ),
+    (
         flag_asced_48_split3,
         "aSCED_48_split3_batch3",
         splitting_pattern[2],
@@ -627,10 +724,24 @@ experiments = [
         None,
     ),
     (
+        flag_asced_80_split3,
+        "aSCED_80_split3_batch5",
+        splitting_pattern[2],
+        5,
+        None,
+    ),
+    (
         flag_asced_96_split3,
         "aSCED_96_split3_batch6",
         splitting_pattern[2],
         6,
+        None,
+    ),
+    (
+        flag_asced_112_split3,
+        "aSCED_112_split3_batch6",
+        splitting_pattern[2],
+        7,
         None,
     ),
     (
@@ -677,6 +788,7 @@ if flag_nmsa:
     nmsa_config.scheduling_type = "flooding"  # Scheduling method (flooding, row_layered, column_layered); default is flooding
     nmsa_config.norm_factor = 0.75
     sim_nmsa = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_nmsa.target_errors = 1000
     sim_nmsa.auto_save = auto_save
     sim_nmsa.save_dir = results_dir + "/nmsa"
     sim_nmsa.puncturing(message_bit_pucturing)
@@ -698,6 +810,7 @@ if flag_nmsa:
             "numpaths": 1,
             "requiredsnr": required_snr,
             "acceptedfer": accepted_fer,
+            "subsplit": 0,
         }
     )
 
@@ -733,6 +846,7 @@ if flag_aed:
     )
     sim_aed = channel_code_lib2.Simulation_Env(k, n, "all")
     sim_aed.auto_save = auto_save
+    sim_aed.target_errors = 1000
     sim_aed.save_dir = results_dir + f"/aed{Zc}"
     sim_aed.puncturing(message_bit_pucturing)
     if not use_all_zero:
@@ -752,6 +866,7 @@ if flag_aed:
             "numpaths": Zc,
             "requiredsnr": required_snr,
             "acceptedfer": accepted_fer,
+            "subsplit": 0,
         }
     )
 
@@ -761,12 +876,7 @@ for enabled, save_name, split_pattern, num_blocks, subsplit in experiments:
     if not enabled:
         continue
 
-    sim, num_paths = create_asced_sim(
-        save_name,
-        split_pattern,
-        num_blocks,
-        subsplit
-    )
+    sim, num_paths = create_asced_sim(save_name, split_pattern, num_blocks, subsplit)
 
     required_snr, accepted_fer = search_target_fer(
         sim,
@@ -784,6 +894,10 @@ for enabled, save_name, split_pattern, num_blocks, subsplit in experiments:
         split = 4
     else:
         split = -1
+    if "subsplit" in save_name:
+        subsplit = 1
+    else:
+        subsplit = 0
 
     summary.append(
         {
@@ -792,6 +906,7 @@ for enabled, save_name, split_pattern, num_blocks, subsplit in experiments:
             "numpaths": num_paths,
             "requiredsnr": required_snr,
             "acceptedfer": accepted_fer,
+            "subsplit": subsplit,
         }
     )
 
