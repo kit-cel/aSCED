@@ -32,7 +32,7 @@ target_fraction_coverged_path = 0.5
 results_dir = "RESULTS/fig_10"
 
 
-sim_regime = np.linspace(2, 7,11)
+sim_regime = np.linspace(5.5, 6 ,2)
 
 norm_const = 0.5
 max_iter = 20
@@ -46,8 +46,8 @@ flag_asced_6 = False
 flag_mbbp_6 = False
 flag_mbbp_30 = False
 
-flag_sced_6 = True
-flag_sced_6_w_original = False
+flag_sced_6 = False
+flag_sced_6_w_original = True
 
 
 mbbp_base_dir = Path("Codes/BCH63_36/bch_63_36_sspcm2_mbbp_32_matrices")
