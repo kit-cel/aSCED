@@ -1,0 +1,520 @@
+{
+  "accepted": false,
+  "acceptance_rule": "new MBBP-8 and MBBP-16 must each be no worse than their old incumbent at 3.5/4/4.5 dB on the second independent validation, and each must be strictly better at least once",
+  "selection_method": "nested actual-decision FER selection over the 26-arm old/new union; combined original screen plus first validation; explicit regression/recovery objective; one-exchange local search",
+  "selection_frames_by_snr": {
+    "3.0": 15000,
+    "3.5": 80000,
+    "4.0": 500000,
+    "4.5": 1500000
+  },
+  "candidate_union_pool_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    21,
+    49,
+    28,
+    61,
+    27,
+    25,
+    45,
+    33,
+    31,
+    62
+  ],
+  "selected8_pool_indices": [
+    49,
+    8,
+    61,
+    5,
+    3,
+    25,
+    45,
+    9
+  ],
+  "selected16_pool_indices": [
+    49,
+    8,
+    61,
+    5,
+    3,
+    25,
+    45,
+    9,
+    7,
+    6,
+    21,
+    10,
+    4,
+    28,
+    31,
+    27
+  ],
+  "old8_pool_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "old16_pool_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "trace8": [
+    {
+      "step": 1,
+      "selected_candidate": 17,
+      "objective": {
+        "relative_error_sum": 25.144460526768263,
+        "total_errors": 7375,
+        "regressions": 6359,
+        "recoveries": 113
+      }
+    },
+    {
+      "step": 2,
+      "selected_candidate": 8,
+      "objective": {
+        "relative_error_sum": 12.226183351327123,
+        "total_errors": 3550,
+        "regressions": 2638,
+        "recoveries": 217
+      }
+    },
+    {
+      "step": 3,
+      "selected_candidate": 19,
+      "objective": {
+        "relative_error_sum": 8.492514529396038,
+        "total_errors": 2465,
+        "regressions": 1640,
+        "recoveries": 304
+      }
+    },
+    {
+      "step": 4,
+      "selected_candidate": 5,
+      "objective": {
+        "relative_error_sum": 6.548127382605663,
+        "total_errors": 1881,
+        "regressions": 1054,
+        "recoveries": 302
+      }
+    },
+    {
+      "step": 5,
+      "selected_candidate": 3,
+      "objective": {
+        "relative_error_sum": 5.385279298783046,
+        "total_errors": 1539,
+        "regressions": 712,
+        "recoveries": 302
+      }
+    },
+    {
+      "step": 6,
+      "selected_candidate": 21,
+      "objective": {
+        "relative_error_sum": 4.634294698589413,
+        "total_errors": 1324,
+        "regressions": 552,
+        "recoveries": 357
+      }
+    },
+    {
+      "step": 7,
+      "selected_candidate": 22,
+      "objective": {
+        "relative_error_sum": 4.0914097880852,
+        "total_errors": 1166,
+        "regressions": 450,
+        "recoveries": 413
+      }
+    },
+    {
+      "step": 8,
+      "selected_candidate": 9,
+      "objective": {
+        "relative_error_sum": 3.650581097585432,
+        "total_errors": 1039,
+        "regressions": 372,
+        "recoveries": 462
+      }
+    }
+  ],
+  "trace16": [
+    {
+      "step": 9,
+      "selected_candidate": 7,
+      "objective": {
+        "relative_error_sum": 5.947155772766679,
+        "total_errors": 941,
+        "regressions": 426,
+        "recoveries": 105
+      }
+    },
+    {
+      "step": 10,
+      "selected_candidate": 6,
+      "objective": {
+        "relative_error_sum": 5.44671457590375,
+        "total_errors": 859,
+        "regressions": 344,
+        "recoveries": 105
+      }
+    },
+    {
+      "step": 11,
+      "selected_candidate": 16,
+      "objective": {
+        "relative_error_sum": 5.062935864499213,
+        "total_errors": 797,
+        "regressions": 301,
+        "recoveries": 124
+      }
+    },
+    {
+      "step": 12,
+      "selected_candidate": 10,
+      "objective": {
+        "relative_error_sum": 4.72210483083043,
+        "total_errors": 743,
+        "regressions": 247,
+        "recoveries": 124
+      }
+    },
+    {
+      "step": 13,
+      "selected_candidate": 4,
+      "objective": {
+        "relative_error_sum": 4.437363277135777,
+        "total_errors": 696,
+        "regressions": 198,
+        "recoveries": 122
+      }
+    },
+    {
+      "step": 14,
+      "selected_candidate": 18,
+      "objective": {
+        "relative_error_sum": 4.179861395592054,
+        "total_errors": 656,
+        "regressions": 172,
+        "recoveries": 136
+      }
+    },
+    {
+      "step": 15,
+      "selected_candidate": 24,
+      "objective": {
+        "relative_error_sum": 3.9827562736648447,
+        "total_errors": 626,
+        "regressions": 154,
+        "recoveries": 148
+      }
+    },
+    {
+      "step": 16,
+      "selected_candidate": 20,
+      "objective": {
+        "relative_error_sum": 3.8154749164552246,
+        "total_errors": 599,
+        "regressions": 141,
+        "recoveries": 162
+      }
+    }
+  ],
+  "fresh_validation": {
+    "3.5": {
+      "frames": 100000,
+      "seed": 2026072499,
+      "old_mbbp8": {
+        "frames": 100000,
+        "errors": 331,
+        "fer": 0.00331,
+        "winner_counts": {
+          "0": 98273,
+          "1": 871,
+          "2": 295,
+          "3": 178,
+          "4": 128,
+          "5": 107,
+          "6": 82,
+          "7": 66
+        }
+      },
+      "new_mbbp8": {
+        "frames": 100000,
+        "errors": 324,
+        "fer": 0.00324,
+        "winner_counts": {
+          "3": 98308,
+          "5": 814,
+          "8": 311,
+          "9": 173,
+          "16": 121,
+          "17": 120,
+          "18": 83,
+          "19": 70
+        },
+        "recoveries": 114,
+        "regressions": 107,
+        "net_error_reduction": 7
+      },
+      "old_mbbp16": {
+        "frames": 100000,
+        "errors": 200,
+        "fer": 0.002,
+        "winner_counts": {
+          "0": 98238,
+          "1": 844,
+          "2": 268,
+          "3": 160,
+          "4": 94,
+          "5": 71,
+          "6": 60,
+          "7": 38,
+          "8": 33,
+          "9": 38,
+          "10": 35,
+          "11": 21,
+          "12": 26,
+          "13": 28,
+          "14": 26,
+          "15": 20
+        }
+      },
+      "new_mbbp16": {
+        "frames": 100000,
+        "errors": 195,
+        "fer": 0.00195,
+        "winner_counts": {
+          "3": 98272,
+          "4": 779,
+          "5": 290,
+          "6": 159,
+          "7": 83,
+          "8": 74,
+          "9": 57,
+          "10": 53,
+          "16": 32,
+          "17": 38,
+          "18": 31,
+          "19": 26,
+          "20": 34,
+          "21": 22,
+          "22": 29,
+          "23": 21
+        },
+        "recoveries": 48,
+        "regressions": 43,
+        "net_error_reduction": 5
+      }
+    },
+    "4.0": {
+      "frames": 500000,
+      "seed": 2026072500,
+      "old_mbbp8": {
+        "frames": 500000,
+        "errors": 412,
+        "fer": 0.000824,
+        "winner_counts": {
+          "0": 496925,
+          "1": 1682,
+          "2": 480,
+          "3": 305,
+          "4": 218,
+          "5": 161,
+          "6": 133,
+          "7": 96
+        }
+      },
+      "new_mbbp8": {
+        "frames": 500000,
+        "errors": 417,
+        "fer": 0.000834,
+        "winner_counts": {
+          "3": 497021,
+          "5": 1620,
+          "8": 538,
+          "9": 276,
+          "16": 199,
+          "17": 147,
+          "18": 107,
+          "19": 92
+        },
+        "recoveries": 157,
+        "regressions": 162,
+        "net_error_reduction": -5
+      },
+      "old_mbbp16": {
+        "frames": 500000,
+        "errors": 219,
+        "fer": 0.000438,
+        "winner_counts": {
+          "0": 496887,
+          "1": 1652,
+          "2": 448,
+          "3": 268,
+          "4": 174,
+          "5": 124,
+          "6": 89,
+          "7": 67,
+          "8": 49,
+          "9": 48,
+          "10": 35,
+          "11": 36,
+          "12": 35,
+          "13": 33,
+          "14": 26,
+          "15": 29
+        }
+      },
+      "new_mbbp16": {
+        "frames": 500000,
+        "errors": 236,
+        "fer": 0.000472,
+        "winner_counts": {
+          "3": 496979,
+          "4": 1546,
+          "5": 546,
+          "6": 247,
+          "7": 133,
+          "8": 118,
+          "9": 79,
+          "10": 65,
+          "16": 46,
+          "17": 49,
+          "18": 37,
+          "19": 32,
+          "20": 39,
+          "21": 33,
+          "22": 28,
+          "23": 23
+        },
+        "recoveries": 63,
+        "regressions": 80,
+        "net_error_reduction": -17
+      }
+    },
+    "4.5": {
+      "frames": 2000000,
+      "seed": 2026072501,
+      "old_mbbp8": {
+        "frames": 2000000,
+        "errors": 287,
+        "fer": 0.0001435,
+        "winner_counts": {
+          "0": 1996964,
+          "1": 1861,
+          "2": 452,
+          "3": 291,
+          "4": 169,
+          "5": 105,
+          "6": 88,
+          "7": 70
+        }
+      },
+      "new_mbbp8": {
+        "frames": 2000000,
+        "errors": 284,
+        "fer": 0.000142,
+        "winner_counts": {
+          "3": 1996887,
+          "5": 1882,
+          "8": 536,
+          "9": 236,
+          "16": 161,
+          "17": 144,
+          "18": 89,
+          "19": 65
+        },
+        "recoveries": 124,
+        "regressions": 121,
+        "net_error_reduction": 3
+      },
+      "old_mbbp16": {
+        "frames": 2000000,
+        "errors": 155,
+        "fer": 7.75e-05,
+        "winner_counts": {
+          "0": 1996920,
+          "1": 1834,
+          "2": 422,
+          "3": 263,
+          "4": 149,
+          "5": 84,
+          "6": 68,
+          "7": 44,
+          "8": 38,
+          "9": 31,
+          "10": 31,
+          "11": 33,
+          "12": 31,
+          "13": 14,
+          "14": 18,
+          "15": 20
+        }
+      },
+      "new_mbbp16": {
+        "frames": 2000000,
+        "errors": 148,
+        "fer": 7.4e-05,
+        "winner_counts": {
+          "3": 1996843,
+          "4": 1845,
+          "5": 538,
+          "6": 220,
+          "7": 122,
+          "8": 103,
+          "9": 63,
+          "10": 58,
+          "16": 41,
+          "17": 48,
+          "18": 26,
+          "19": 21,
+          "20": 22,
+          "21": 16,
+          "22": 14,
+          "23": 20
+        },
+        "recoveries": 57,
+        "regressions": 50,
+        "net_error_reduction": 7
+      }
+    }
+  },
+  "selected_archive": "/home/jovyan/decoder_research/results/bch63_18_mbbp_complementarity_search/bch63_18_mbbp_selected_nested8_16_refined_candidate.npz"
+}

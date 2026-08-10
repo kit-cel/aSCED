@@ -1,0 +1,22 @@
+BCH(63,18) MBBP selections used in the final 500-error FER figure
+
+Pool indexing:
+  matrix_XXX.npz corresponds to source array sspcm2_XXX.
+
+MBBP-8 indices:
+  [21, 45, 10, 29, 36, 6, 15, 2]
+
+MBBP-16 indices:
+  [21, 45, 10, 29, 36, 6, 15, 2, 13, 16, 18, 0, 1, 3, 4, 5]
+
+The MBBP-16 selection is nested: its first eight matrices are MBBP-8.
+
+Important provenance:
+  These are the indices recorded in the final simulation CSV and in the
+  accepted base-bank selection JSON. The later complementarity candidate was
+  rejected on independent validation (accepted=false) and was not plotted.
+
+Reference decoders:
+  BP on H used references/parent_code.npz::h_parent.
+  BP on the single paper SSPCM used references/paper_single_sspcm.npz.
+  OSD-3 used references/parent_code.npz::g_parent; it has no SSPCM matrix.

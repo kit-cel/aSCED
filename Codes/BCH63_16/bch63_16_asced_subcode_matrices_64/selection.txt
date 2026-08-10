@@ -1,0 +1,20 @@
+BCH(63,16) affine-subcode selections used in the final 500-error FER figure
+
+Pool indexing:
+  matrix_XXX.npz is the enriched form of cached subcode_XXX.npz.
+
+ASCED-8 / Subcode ensemble-8:
+  Four subcode matrices, each decoded in its subcode and affine-coset branch,
+  giving eight decoder arms.
+  Selected pool indices: [7, 21, 27, 42]
+
+ASCED-16 / Subcode ensemble-16:
+  Eight subcode matrices, each decoded in its subcode and affine-coset branch,
+  giving sixteen decoder arms.
+  Selected pool indices: [2, 21, 25, 27, 42, 46, 59, 62]
+
+The two selections were optimized independently and are not nested.
+
+Each individual NPZ contains the SSPCM, punctured columns, deterministic affine
+representative, and appended check. The JSON sidecar gives the complete
+appended-check vector/support/weight and exact per-block s and t values.

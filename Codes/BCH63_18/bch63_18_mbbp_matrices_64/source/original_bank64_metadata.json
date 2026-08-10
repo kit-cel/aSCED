@@ -1,0 +1,5494 @@
+{
+  "code": {
+    "m": 6,
+    "n": 63,
+    "k": 18,
+    "designed_distance": 21,
+    "primitive_poly_int": 67,
+    "primitive_poly_binary": "0b1000011",
+    "generator_polynomial_low_first": [
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1
+    ],
+    "parity_polynomial_low_first": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      1,
+      1,
+      0,
+      1,
+      0,
+      1,
+      1,
+      0,
+      1
+    ],
+    "cyclotomic_cosets": [
+      [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32
+      ],
+      [
+        3,
+        6,
+        12,
+        24,
+        48,
+        33
+      ],
+      [
+        5,
+        10,
+        20,
+        40,
+        17,
+        34
+      ],
+      [
+        7,
+        14,
+        28,
+        56,
+        49,
+        35
+      ],
+      [
+        9,
+        18,
+        36
+      ],
+      [
+        11,
+        22,
+        44,
+        25,
+        50,
+        37
+      ],
+      [
+        13,
+        26,
+        52,
+        41,
+        19,
+        38
+      ],
+      [
+        15,
+        30,
+        60,
+        57,
+        51,
+        39
+      ]
+    ],
+    "minimal_polynomials_low_first": [
+      [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1
+      ]
+    ],
+    "h_std": {
+      "shape": [
+        45,
+        63
+      ],
+      "rank": 45,
+      "edges": 450,
+      "four_cycles": 2227,
+      "row_weight_min": 10,
+      "row_weight_mean": 10.0,
+      "row_weight_max": 10,
+      "row_weight_counts": {
+        "10": 45
+      }
+    }
+  },
+  "paper_reference": {
+    "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+    "code": "BCH(63,18)",
+    "designed_distance": 21,
+    "source_weight": 8,
+    "t": 4,
+    "s_values": [
+      6,
+      7,
+      14
+    ],
+    "block_size_counts": {
+      "6": 19,
+      "7": 16,
+      "14": 5
+    },
+    "blocks": 40,
+    "shape": [
+      336,
+      103
+    ],
+    "edges": 1680,
+    "rank": 85,
+    "projected_rank": 45,
+    "four_cycles": 274,
+    "source_weight_counts": {
+      "8": 296
+    },
+    "common_weight_counts": {
+      "4": 40
+    },
+    "sent_column_degree_min": 20,
+    "sent_column_degree_mean": 21.333333333333332,
+    "sent_column_degree_max": 23,
+    "selector_seed": 631800,
+    "catalog": {
+      "raw_common_counts": {
+        "6": 50274,
+        "7": 3024,
+        "14": 315
+      },
+      "accepted_block_counts": {
+        "6": 50274,
+        "7": 3024,
+        "14": 315
+      }
+    },
+    "dual_search": {
+      "method": "random_information_set_gauss_jordan_c",
+      "seconds": 8.0,
+      "max_weight": 8,
+      "max_rows": 100000,
+      "seed": 63182026,
+      "rows": 33957,
+      "rank": 45,
+      "weight_counts": {
+        "8": 33957
+      },
+      "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+      "retained_weight": 8,
+      "retained_rows": 33957,
+      "retained_rank": 45
+    },
+    "paper_target": {
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "t": 4
+    }
+  },
+  "bank_size": 64,
+  "bank_method": "four independently selected paper-parameter bases, each with 16 cyclic BCH coordinate images",
+  "matrices": [
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 0,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 0
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 1,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 0
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 2,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 0
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 3,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 0
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 4,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 1
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 5,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 1
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 6,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 1
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 7,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 1
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 8,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 2
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 9,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 2
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 10,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 2
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 11,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 2
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 12,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 3
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 13,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 3
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 14,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 3
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 15,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 3
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 16,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 4
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 17,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 4
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 18,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 4
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 19,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 4
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 20,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 5
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 21,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 5
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 22,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 5
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 23,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 5
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 24,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 6
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 25,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 6
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 26,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 6
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 27,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 6
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 28,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 7
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 29,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 7
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 30,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 7
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 31,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 7
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 32,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 8
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 33,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 8
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 34,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 8
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 35,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 8
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 36,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 9
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 37,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 9
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 38,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 9
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 39,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 9
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 40,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 10
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 41,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 10
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 42,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 10
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 43,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 10
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 44,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 11
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 45,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 11
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 46,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 11
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 47,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 11
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 48,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 12
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 49,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 12
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 50,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 12
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 51,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 12
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 52,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 13
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 53,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 13
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 54,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 13
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 55,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 13
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 56,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 14
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 57,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 14
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 58,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 14
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 59,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 14
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 274,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 20,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 23,
+      "selector_seed": 631800,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 60,
+      "base_matrix": 0,
+      "sent_column_cyclic_shift": 15
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 314,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 25,
+      "selector_seed": 632809,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 61,
+      "base_matrix": 1,
+      "sent_column_cyclic_shift": 15
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 345,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 18,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 633818,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 62,
+      "base_matrix": 2,
+      "sent_column_cyclic_shift": 15
+    },
+    {
+      "construction": "shen_isit2025_sspcm_ii_paper_parameter_equivalent",
+      "code": "BCH(63,18)",
+      "designed_distance": 21,
+      "source_weight": 8,
+      "t": 4,
+      "s_values": [
+        6,
+        7,
+        14
+      ],
+      "block_size_counts": {
+        "6": 19,
+        "7": 16,
+        "14": 5
+      },
+      "blocks": 40,
+      "shape": [
+        336,
+        103
+      ],
+      "edges": 1680,
+      "rank": 85,
+      "projected_rank": 45,
+      "four_cycles": 366,
+      "source_weight_counts": {
+        "8": 296
+      },
+      "common_weight_counts": {
+        "4": 40
+      },
+      "sent_column_degree_min": 17,
+      "sent_column_degree_mean": 21.333333333333332,
+      "sent_column_degree_max": 24,
+      "selector_seed": 634827,
+      "catalog": {
+        "raw_common_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        },
+        "accepted_block_counts": {
+          "6": 50274,
+          "7": 3024,
+          "14": 315
+        }
+      },
+      "dual_search": {
+        "method": "random_information_set_gauss_jordan_c",
+        "seconds": 8.0,
+        "max_weight": 8,
+        "max_rows": 100000,
+        "seed": 63182026,
+        "rows": 33957,
+        "rank": 45,
+        "weight_counts": {
+          "8": 33957
+        },
+        "search_log": "trials=45312 best=8 rows=33957 seconds=8.039919",
+        "retained_weight": 8,
+        "retained_rows": 33957,
+        "retained_rank": 45
+      },
+      "paper_target": {
+        "shape": [
+          336,
+          103
+        ],
+        "edges": 1680,
+        "s_values": [
+          6,
+          7,
+          14
+        ],
+        "t": 4
+      },
+      "bank_method": "independent_bases_with_cyclic_code_automorphisms",
+      "bank_arm": 63,
+      "base_matrix": 3,
+      "sent_column_cyclic_shift": 15
+    }
+  ],
+  "archive": "/home/jovyan/decoder_research/results/bch63_18_clean_200err/bch63_18_sspcm2_bank64.npz"
+}

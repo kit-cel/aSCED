@@ -1,0 +1,171 @@
+{
+  "selection": "greedy actual MBBP decision FER on training frames",
+  "screen_snr_db": 4.0,
+  "training_frames": 20000,
+  "selected_arms": [
+    21,
+    45,
+    10,
+    29,
+    36,
+    6,
+    15,
+    2
+  ],
+  "selected_arms16": [
+    21,
+    45,
+    10,
+    29,
+    36,
+    6,
+    15,
+    2,
+    13,
+    16,
+    18,
+    0,
+    1,
+    3,
+    4,
+    5
+  ],
+  "greedy_trace": [
+    {
+      "step": 1,
+      "selected_arm": 21,
+      "ensemble_errors": 110,
+      "ensemble_fer": 0.0055
+    },
+    {
+      "step": 2,
+      "selected_arm": 45,
+      "ensemble_errors": 47,
+      "ensemble_fer": 0.00235
+    },
+    {
+      "step": 3,
+      "selected_arm": 10,
+      "ensemble_errors": 28,
+      "ensemble_fer": 0.0014
+    },
+    {
+      "step": 4,
+      "selected_arm": 29,
+      "ensemble_errors": 18,
+      "ensemble_fer": 0.0009
+    },
+    {
+      "step": 5,
+      "selected_arm": 36,
+      "ensemble_errors": 14,
+      "ensemble_fer": 0.0007
+    },
+    {
+      "step": 6,
+      "selected_arm": 6,
+      "ensemble_errors": 11,
+      "ensemble_fer": 0.00055
+    },
+    {
+      "step": 7,
+      "selected_arm": 15,
+      "ensemble_errors": 9,
+      "ensemble_fer": 0.00045
+    },
+    {
+      "step": 8,
+      "selected_arm": 2,
+      "ensemble_errors": 8,
+      "ensemble_fer": 0.0004
+    },
+    {
+      "step": 9,
+      "selected_arm": 13,
+      "ensemble_errors": 7,
+      "ensemble_fer": 0.00035
+    },
+    {
+      "step": 10,
+      "selected_arm": 16,
+      "ensemble_errors": 6,
+      "ensemble_fer": 0.0003
+    },
+    {
+      "step": 11,
+      "selected_arm": 18,
+      "ensemble_errors": 5,
+      "ensemble_fer": 0.00025
+    },
+    {
+      "step": 12,
+      "selected_arm": 0,
+      "ensemble_errors": 5,
+      "ensemble_fer": 0.00025
+    },
+    {
+      "step": 13,
+      "selected_arm": 1,
+      "ensemble_errors": 5,
+      "ensemble_fer": 0.00025
+    },
+    {
+      "step": 14,
+      "selected_arm": 3,
+      "ensemble_errors": 5,
+      "ensemble_fer": 0.00025
+    },
+    {
+      "step": 15,
+      "selected_arm": 4,
+      "ensemble_errors": 5,
+      "ensemble_fer": 0.00025
+    },
+    {
+      "step": 16,
+      "selected_arm": 5,
+      "ensemble_errors": 5,
+      "ensemble_fer": 0.00025
+    }
+  ],
+  "holdout": {
+    "frames": 50000,
+    "errors": 34,
+    "fer": 0.00068,
+    "winner_counts": {
+      "2": 49715,
+      "6": 172,
+      "10": 43,
+      "15": 33,
+      "21": 15,
+      "29": 10,
+      "36": 5,
+      "45": 7
+    }
+  },
+  "holdout16": {
+    "frames": 50000,
+    "errors": 20,
+    "fer": 0.0004,
+    "winner_counts": {
+      "0": 49718,
+      "1": 152,
+      "2": 46,
+      "3": 27,
+      "4": 9,
+      "5": 7,
+      "6": 8,
+      "10": 6,
+      "13": 4,
+      "15": 8,
+      "16": 3,
+      "18": 2,
+      "21": 6,
+      "29": 1,
+      "36": 1,
+      "45": 2
+    }
+  },
+  "matrix_archive": "/home/jovyan/decoder_research/results/bch63_18_clean_200err/bch63_18_sspcm2_bank64.npz",
+  "matrix_archive_sha256": "a245cc08d6161ea1f518c537feaa3d2189a74c271b1b541dae499af5af0a1619"
+}

@@ -1,0 +1,484 @@
+{
+  "code": "BCH(63,16)",
+  "selection_method": "direct forward selection plus exhaustive one-for-one coordinate descent on two common-noise shards; third shard reserved for incumbent acceptance",
+  "screen_snr_db": 3.5,
+  "parent_pool_size": 64,
+  "subcode_pool_size": 64,
+  "subcode_cosets_per_matrix": 2,
+  "training_shards": {
+    "MBBP": [
+      "/home/jovyan/decoder_research/results/bch63_16_mbbp8_deeper_fair64/parent_screen_seed_20330000.npz",
+      "/home/jovyan/decoder_research/results/bch63_16_mbbp8_deeper_fair64/parent_screen_seed_20330001.npz"
+    ],
+    "Subcode": [
+      "/home/jovyan/decoder_research/results/bch63_16_subcode_sspcm_deeper_fair64/subcode_screen_seed_20370000.npz",
+      "/home/jovyan/decoder_research/results/bch63_16_subcode_sspcm_deeper_fair64/subcode_screen_seed_20370001.npz"
+    ]
+  },
+  "holdout_shards": {
+    "MBBP": [
+      "/home/jovyan/decoder_research/results/bch63_16_mbbp8_deeper_fair64/parent_screen_seed_20330002.npz"
+    ],
+    "Subcode": [
+      "/home/jovyan/decoder_research/results/bch63_16_subcode_sspcm_deeper_fair64/subcode_screen_seed_20370002.npz"
+    ]
+  },
+  "selections": {
+    "MBBP-8": {
+      "subset_size": 8,
+      "incumbent": [
+        0,
+        1,
+        5,
+        13,
+        18,
+        47,
+        51,
+        58
+      ],
+      "greedy_candidate": [
+        1,
+        7,
+        19,
+        22,
+        23,
+        25,
+        29,
+        51
+      ],
+      "incumbent_tuned_candidate": [
+        1,
+        2,
+        13,
+        16,
+        26,
+        51,
+        58,
+        60
+      ],
+      "candidate": [
+        1,
+        2,
+        13,
+        16,
+        26,
+        51,
+        58,
+        60
+      ],
+      "accepted_candidate": false,
+      "selected": [
+        0,
+        1,
+        5,
+        13,
+        18,
+        47,
+        51,
+        58
+      ],
+      "greedy_local_swaps": 0,
+      "incumbent_local_swaps": 4,
+      "incumbent_train": {
+        "frames_by_shard": [
+          50000,
+          25000
+        ],
+        "errors_by_shard": [
+          26,
+          30
+        ],
+        "total_frames": 75000,
+        "total_errors": 56,
+        "fer": 0.0007466666666666666,
+        "worst_shard_fer": 0.0012
+      },
+      "candidate_train": {
+        "frames_by_shard": [
+          50000,
+          25000
+        ],
+        "errors_by_shard": [
+          28,
+          22
+        ],
+        "total_frames": 75000,
+        "total_errors": 50,
+        "fer": 0.0006666666666666666,
+        "worst_shard_fer": 0.00088
+      },
+      "incumbent_holdout": {
+        "frames_by_shard": [
+          25000
+        ],
+        "errors_by_shard": [
+          15
+        ],
+        "total_frames": 25000,
+        "total_errors": 15,
+        "fer": 0.0006,
+        "worst_shard_fer": 0.0006
+      },
+      "candidate_holdout": {
+        "frames_by_shard": [
+          25000
+        ],
+        "errors_by_shard": [
+          17
+        ],
+        "total_frames": 25000,
+        "total_errors": 17,
+        "fer": 0.00068,
+        "worst_shard_fer": 0.00068
+      },
+      "acceptance_rule": "lower holdout error count, or equal holdout count and lower training error count"
+    },
+    "MBBP-16": {
+      "subset_size": 16,
+      "incumbent": [
+        0,
+        1,
+        5,
+        13,
+        18,
+        47,
+        51,
+        58,
+        21,
+        24,
+        60,
+        35,
+        2,
+        10,
+        37,
+        19
+      ],
+      "greedy_candidate": [
+        2,
+        12,
+        13,
+        17,
+        18,
+        19,
+        20,
+        22,
+        25,
+        28,
+        29,
+        35,
+        37,
+        53,
+        57,
+        60
+      ],
+      "incumbent_tuned_candidate": [
+        2,
+        13,
+        17,
+        18,
+        19,
+        20,
+        24,
+        26,
+        31,
+        35,
+        37,
+        47,
+        51,
+        53,
+        58,
+        60
+      ],
+      "candidate": [
+        2,
+        12,
+        13,
+        17,
+        18,
+        19,
+        20,
+        22,
+        25,
+        28,
+        29,
+        35,
+        37,
+        53,
+        57,
+        60
+      ],
+      "accepted_candidate": false,
+      "selected": [
+        0,
+        1,
+        5,
+        13,
+        18,
+        47,
+        51,
+        58,
+        21,
+        24,
+        60,
+        35,
+        2,
+        10,
+        37,
+        19
+      ],
+      "greedy_local_swaps": 4,
+      "incumbent_local_swaps": 5,
+      "incumbent_train": {
+        "frames_by_shard": [
+          50000,
+          25000
+        ],
+        "errors_by_shard": [
+          20,
+          22
+        ],
+        "total_frames": 75000,
+        "total_errors": 42,
+        "fer": 0.00056,
+        "worst_shard_fer": 0.00088
+      },
+      "candidate_train": {
+        "frames_by_shard": [
+          50000,
+          25000
+        ],
+        "errors_by_shard": [
+          19,
+          18
+        ],
+        "total_frames": 75000,
+        "total_errors": 37,
+        "fer": 0.0004933333333333334,
+        "worst_shard_fer": 0.00072
+      },
+      "incumbent_holdout": {
+        "frames_by_shard": [
+          25000
+        ],
+        "errors_by_shard": [
+          14
+        ],
+        "total_frames": 25000,
+        "total_errors": 14,
+        "fer": 0.00056,
+        "worst_shard_fer": 0.00056
+      },
+      "candidate_holdout": {
+        "frames_by_shard": [
+          25000
+        ],
+        "errors_by_shard": [
+          18
+        ],
+        "total_frames": 25000,
+        "total_errors": 18,
+        "fer": 0.00072,
+        "worst_shard_fer": 0.00072
+      },
+      "acceptance_rule": "lower holdout error count, or equal holdout count and lower training error count"
+    },
+    "Subcode ensemble-8": {
+      "subset_size": 4,
+      "incumbent": [
+        2,
+        7,
+        21,
+        27
+      ],
+      "greedy_candidate": [
+        2,
+        10,
+        53,
+        56
+      ],
+      "incumbent_tuned_candidate": [
+        7,
+        21,
+        27,
+        42
+      ],
+      "candidate": [
+        7,
+        21,
+        27,
+        42
+      ],
+      "accepted_candidate": true,
+      "selected": [
+        7,
+        21,
+        27,
+        42
+      ],
+      "greedy_local_swaps": 0,
+      "incumbent_local_swaps": 1,
+      "incumbent_train": {
+        "frames_by_shard": [
+          25000,
+          25000
+        ],
+        "errors_by_shard": [
+          9,
+          18
+        ],
+        "total_frames": 50000,
+        "total_errors": 27,
+        "fer": 0.00054,
+        "worst_shard_fer": 0.00072
+      },
+      "candidate_train": {
+        "frames_by_shard": [
+          25000,
+          25000
+        ],
+        "errors_by_shard": [
+          10,
+          11
+        ],
+        "total_frames": 50000,
+        "total_errors": 21,
+        "fer": 0.00042,
+        "worst_shard_fer": 0.00044
+      },
+      "incumbent_holdout": {
+        "frames_by_shard": [
+          10000
+        ],
+        "errors_by_shard": [
+          6
+        ],
+        "total_frames": 10000,
+        "total_errors": 6,
+        "fer": 0.0006,
+        "worst_shard_fer": 0.0006
+      },
+      "candidate_holdout": {
+        "frames_by_shard": [
+          10000
+        ],
+        "errors_by_shard": [
+          5
+        ],
+        "total_frames": 10000,
+        "total_errors": 5,
+        "fer": 0.0005,
+        "worst_shard_fer": 0.0005
+      },
+      "acceptance_rule": "lower holdout error count, or equal holdout count and lower training error count"
+    },
+    "Subcode ensemble-16": {
+      "subset_size": 8,
+      "incumbent": [
+        2,
+        7,
+        21,
+        27,
+        42,
+        46,
+        62,
+        25
+      ],
+      "greedy_candidate": [
+        2,
+        8,
+        10,
+        25,
+        26,
+        46,
+        56,
+        59
+      ],
+      "incumbent_tuned_candidate": [
+        2,
+        21,
+        25,
+        27,
+        42,
+        46,
+        59,
+        62
+      ],
+      "candidate": [
+        2,
+        21,
+        25,
+        27,
+        42,
+        46,
+        59,
+        62
+      ],
+      "accepted_candidate": true,
+      "selected": [
+        2,
+        21,
+        25,
+        27,
+        42,
+        46,
+        59,
+        62
+      ],
+      "greedy_local_swaps": 1,
+      "incumbent_local_swaps": 1,
+      "incumbent_train": {
+        "frames_by_shard": [
+          25000,
+          25000
+        ],
+        "errors_by_shard": [
+          8,
+          9
+        ],
+        "total_frames": 50000,
+        "total_errors": 17,
+        "fer": 0.00034,
+        "worst_shard_fer": 0.00036
+      },
+      "candidate_train": {
+        "frames_by_shard": [
+          25000,
+          25000
+        ],
+        "errors_by_shard": [
+          7,
+          9
+        ],
+        "total_frames": 50000,
+        "total_errors": 16,
+        "fer": 0.00032,
+        "worst_shard_fer": 0.00036
+      },
+      "incumbent_holdout": {
+        "frames_by_shard": [
+          10000
+        ],
+        "errors_by_shard": [
+          3
+        ],
+        "total_frames": 10000,
+        "total_errors": 3,
+        "fer": 0.0003,
+        "worst_shard_fer": 0.0003
+      },
+      "candidate_holdout": {
+        "frames_by_shard": [
+          10000
+        ],
+        "errors_by_shard": [
+          3
+        ],
+        "total_frames": 10000,
+        "total_errors": 3,
+        "fer": 0.0003,
+        "worst_shard_fer": 0.0003
+      },
+      "acceptance_rule": "lower holdout error count, or equal holdout count and lower training error count"
+    }
+  }
+}

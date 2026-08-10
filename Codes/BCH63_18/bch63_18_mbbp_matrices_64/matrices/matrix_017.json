@@ -1,0 +1,82 @@
+{
+  "appended_check": null,
+  "appended_check_support": [],
+  "appended_check_weight": 0,
+  "bank_index": 17,
+  "base_matrix": 1,
+  "blocks": 40,
+  "code": "BCH(63,18)",
+  "edges": 1680,
+  "family": "MBBP parent-code SSPCM-II",
+  "four_cycles": 314,
+  "matrix_sha256": "40d775b2c0e77ff45e8f81aa2983de1c9285ac53f7943fb7eb8324184dae21b7",
+  "punctured_columns": [
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102
+  ],
+  "s_counts": {
+    "14": 5,
+    "6": 19,
+    "7": 16
+  },
+  "s_values": [
+    6,
+    7,
+    14
+  ],
+  "sent_column_cyclic_shift": 4,
+  "shape": [
+    336,
+    103
+  ],
+  "source_array": "sspcm2_17",
+  "source_check_weight_counts": {
+    "8": 296
+  },
+  "t_counts": {
+    "4": 40
+  },
+  "t_values": [
+    4
+  ],
+  "used_in_mbbp16": false,
+  "used_in_mbbp8": false
+}

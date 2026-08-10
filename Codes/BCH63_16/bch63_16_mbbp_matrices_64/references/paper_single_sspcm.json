@@ -1,0 +1,23 @@
+{
+  "appended_check": null,
+  "appended_check_weight": 0,
+  "blocks": 161,
+  "code": "BCH(63,16)",
+  "edges": 1932,
+  "s_counts": {
+    "2": 161
+  },
+  "s_values": [
+    2
+  ],
+  "shape": [
+    483,
+    224
+  ],
+  "t_counts": {
+    "3": 161
+  },
+  "t_values": [
+    3
+  ]
+}

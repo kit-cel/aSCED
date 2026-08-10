@@ -1,0 +1,22 @@
+BCH(63,16) MBBP selections used in the final 500-error FER figure
+
+Pool indexing:
+  matrix_XXX.npz is the exact cached parent_XXX.npz used by the runner.
+
+MBBP-8 indices:
+  [0, 1, 5, 13, 18, 47, 51, 58]
+
+MBBP-16 indices:
+  [0, 1, 5, 13, 18, 47, 51, 58, 21, 24, 60, 35, 2, 10, 37, 19]
+
+The MBBP-16 selection is nested: its first eight matrices are MBBP-8.
+
+Selection provenance:
+  Final independent optimization retained both incumbent MBBP selections.
+  The new candidates improved the training screen but regressed on the held-out
+  shard, so they were not used in the final FER simulation.
+
+Reference decoders:
+  BP on H used references/parent_code.npz::h_parent.
+  BP on the single SSPCM used references/paper_single_sspcm.npz.
+  OSD-3 used references/parent_code.npz::g_parent and no SSPCM matrix.
