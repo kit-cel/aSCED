@@ -14,8 +14,8 @@ conda activate asced
 
 
 n_simul=132
-snr_start=2.0
-snr_end=4.5
+snr_start=1.0
+snr_end=5
 
 
 variants=(
@@ -24,12 +24,12 @@ variants=(
     #asced44
     #asced88
     #asced24
-    #asced48
-    asced96_4batch
-    asced192_8batch
+    asced48
+    #asced96_4batch
+    #asced192_8batch
     #asced96
     #asced192
-    asced288
+    #asced288
     asced384
     #asced2048
 )

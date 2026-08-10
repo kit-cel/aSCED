@@ -27,7 +27,7 @@ target_fraction_coverged_path = 0.5
 
 results_dir = "RESULTS/fig_9_full"
 
-sim_regime = np.linspace(5.5, 6, 2)
+sim_regime = np.linspace(5.5, 5.6, 1)
 
 norm_const = 0.5
 max_iter = 20
@@ -47,8 +47,8 @@ flag_asced_64 = False  # nmsa
 flag_asced_spa_64 = False  # spa
 
 
-flag_sced_8 = False
-flag_sced_8_w_original = True
+flag_sced_8 = False#True
+flag_sced_8_w_original =True# True
 
 asced_base_dir = Path(
     "Codes/BCH63_30/multi_batch_Delta=1/bch_63_30_sspcm2_asced_64_matrices"
