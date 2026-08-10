@@ -274,6 +274,9 @@ def run_asced(
     print("starting", save_dir_name)
 
     sim = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim.target_errors = 1000
+    sim.max_transmissions=int(3e8)
+
 
     sim.auto_save = auto_save
     sim.save_dir = results_dir + "/" + save_dir_name

@@ -47,13 +47,13 @@ flag_mbbp_6 = False
 flag_mbbp_30 = False
 
 flag_sced_6 = False
-flag_sced_6_w_original = True
+flag_sced_6_w_original = False
 
 
 mbbp_base_dir = Path("Codes/BCH63_36/bch_63_36_sspcm2_mbbp_32_matrices")
 
 
-flag_asced_30 = False  #
+flag_asced_30 = True  #
 
 
 plot_using_tex = False
@@ -362,6 +362,9 @@ if flag_asced_30:
     asced_30_config = channel_code_lib2.Ensemble_config(H, asced_path_configs)
 
     sim_asced30 = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_asced30.target_errors = 1000
+    sim_asced30.max_transmissions=int(3e8)
+
     sim_asced30.auto_save = auto_save
     sim_asced30.save_dir = results_dir + "/aSCED30"
 
@@ -372,6 +375,7 @@ if flag_asced_30:
     print("start sim")
 
     sim_asced30.get_error_rates(sim_regime)
+
     FER_aSCED30 = sim_asced30.error_rates["FER-SNR"]
 
     print(FER_aSCED30)
