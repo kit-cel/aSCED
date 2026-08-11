@@ -32,7 +32,7 @@ target_fraction_coverged_path = 0.5
 results_dir = "RESULTS/new_fig_11"
 
 
-sim_regime = np.linspace(5.5, 6 ,2)
+sim_regime = np.arange(5., 5.1 ,0.5)
 
 norm_const = 0.5
 max_iter = 20

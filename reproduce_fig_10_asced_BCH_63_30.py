@@ -27,7 +27,7 @@ target_fraction_coverged_path = 0.5
 
 results_dir = "RESULTS/new_fig_10"
 
-sim_regime = np.linspace(5.5, 5.6, 1)
+sim_regime = np.linspace(4.5, 5., 1)
 
 norm_const = 0.5
 max_iter = 20
@@ -44,11 +44,11 @@ mbbp_base_dir = Path("Codes/BCH63_30/bch_63_30_sspcm2_mbbp_64_matrices")
 
 flag_asced_8 = False
 flag_asced_64 = False  # nmsa
-flag_asced_spa_64 = False  # spa
+flag_asced_spa_64 = True  # spa
 
 
 flag_sced_8 = False#True
-flag_sced_8_w_original =True# True
+flag_sced_8_w_original =False# True
 
 asced_base_dir = Path(
     "Codes/BCH63_30/multi_batch_Delta=1/bch_63_30_sspcm2_asced_64_matrices"
@@ -434,6 +434,8 @@ if flag_asced_spa_64:
     asced_64_spa_config = channel_code_lib2.Ensemble_config(H, asced64_spa_path_configs)
 
     sim_asced64_spa = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_asced64_spa.target_errors = 1000
+    sim_asced64_spa.max_transmissions=int(3e8)
     sim_asced64_spa.auto_save = auto_save
     sim_asced64_spa.save_dir = results_dir + "/aSCED64_SPA"
 
