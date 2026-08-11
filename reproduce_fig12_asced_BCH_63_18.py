@@ -21,7 +21,7 @@ NORM_CONST = 0.5
 MAX_ITER = 20
 
 # SNR points to simulate
-SIM_REGIME = np.linspace(5.5, 5.6, 1)
+SIM_REGIME = np.arange(1., 1.1, 0.5)
 
 # ============================================================
 # Paths
@@ -30,7 +30,7 @@ SIM_REGIME = np.linspace(5.5, 5.6, 1)
 CODE_ALIST = r"Codes/BCH63_18/BCH_63_18.alist"
 MBBP_MATRIX_DIR = Path(r"Codes/BCH63_18/bch63_18_mbbp_matrices_64/matrices")
 ASCED_MATRIX_DIR = Path(r"Codes/BCH63_18/bch63_18_asced_subcode_matrices_52/matrices")
-RESULTS_DIR = Path(r"RESULTS/BCH63_18")
+RESULTS_DIR = Path(r"RESULTS/new_fig_12/BCH63_18")
 
 # Ensemble sizes requested
 MBBP8_COUNT = 8
@@ -39,6 +39,9 @@ ASCED8_COUNT = 8
 ASCED16_COUNT = 16
 
 # Enable / disable individual simulations
+RUN_H = True
+RUN_SSPCM = True
+
 RUN_MBBP8 = True
 RUN_MBBP16 = True
 RUN_ASCSED8 = True
@@ -163,6 +166,97 @@ def run_ensemble(name, H, g_enc_cfg, k, n, configs, save_subdir):
 
     return fer
 
+def run_H(H, g_enc_cfg, k, n):
+    print()
+    print("=" * 70)
+    print("Starting H")
+    print("=" * 70)
+
+    h_config = channel_code_lib2.BP_config(H)
+
+    h_config.use_avns = True
+    h_config.early_stopping = True
+    h_config.max_iterations = MAX_ITER
+    h_config.cn_update_type = "msa"
+    h_config.norm_factor = NORM_CONST
+    h_config.scheduling_type = "flooding"
+
+    sim_H = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_H.auto_save = AUTO_SAVE
+    sim_H.save_dir = str(RESULTS_DIR / "H")
+
+    if not USE_ALL_ZERO:
+        sim_H.init(g_enc_cfg, h_config, USE_ALL_ZERO)
+    else:
+        sim_H.all_zero_init(h_config)
+
+    sim_H.get_error_rates(SIM_REGIME)
+
+    FER_H = sim_H.error_rates["FER-SNR"]
+
+    print("H FER:")
+    print(FER_H)
+    print("H finished")
+
+    del sim_H
+    del h_config
+    gc.collect()
+
+    return FER_H
+
+
+def run_SSPCM(MBBP_MATRIX_DIR, g_enc_cfg, k, n):
+    print()
+    print("=" * 70)
+    print("Starting SSPCM")
+    print("=" * 70)
+
+    sspcm_path = MBBP_MATRIX_DIR / "matrix_000.npz"
+
+    if not sspcm_path.exists():
+        raise FileNotFoundError(
+            f"Missing SSPCM matrix file: {sspcm_path}"
+        )
+
+    sspcm_matrix = load_npz_matrix(sspcm_path)
+
+    sspcm_config = channel_code_lib2.BP_config(sspcm_matrix)
+
+    sspcm_config.use_avns = True
+    sspcm_config.early_stopping = True
+    sspcm_config.max_iterations = MAX_ITER
+    sspcm_config.cn_update_type = "msa"
+    sspcm_config.norm_factor = NORM_CONST
+    sspcm_config.scheduling_type = "flooding"
+
+    sim_sspcm = channel_code_lib2.Simulation_Env(k, n, "all")
+    sim_sspcm.auto_save = AUTO_SAVE
+    sim_sspcm.save_dir = str(RESULTS_DIR / "SSPCM")
+
+    if not USE_ALL_ZERO:
+        sim_sspcm.init(
+            g_enc_cfg,
+            sspcm_config,
+            USE_ALL_ZERO,
+        )
+    else:
+        sim_sspcm.all_zero_init(sspcm_config)
+
+    sim_sspcm.get_error_rates(SIM_REGIME)
+
+    FER_SSPCM = sim_sspcm.error_rates["FER-SNR"]
+
+    print("SSPCM FER:")
+    print(FER_SSPCM)
+    print("SSPCM finished")
+
+    del sim_sspcm
+    del sspcm_config
+    del sspcm_matrix
+    gc.collect()
+
+    return FER_SSPCM
+
 
 def main():
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -191,6 +285,30 @@ def main():
         g_enc_cfg = channel_code_lib2.G_Encoder_config(G, k, n)
     else:
         g_enc_cfg = None
+
+    # --------------------------------------------------------
+    # H
+    # --------------------------------------------------------
+    if RUN_H:
+        run_H(
+            H,
+            g_enc_cfg,
+            k,
+            n,
+        )
+
+    # --------------------------------------------------------
+    # SSPCM
+    #
+    # Uses matrix_000.npz from the MBBP matrix directory.
+    # --------------------------------------------------------
+    if RUN_SSPCM:
+        run_SSPCM(
+            MBBP_MATRIX_DIR,
+            g_enc_cfg,
+            k,
+            n,
+        )
 
     # --------------------------------------------------------
     # MBBP-8
