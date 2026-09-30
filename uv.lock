@@ -13,7 +13,7 @@ resolution-markers = [
 [[package]]
 name = "channel-code-lib2"
 version = "0.1.0"
-source = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2?branch=claude_sequential#165f9fccedd75468785f13954318a50d05c880d6" }
+source = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2?branch=claude_sequential#c0fd4c1ee640f61907ef9ce0eadca5eb0550ec77" }
 dependencies = [
     { name = "galois" },
     { name = "matplotlib" },
