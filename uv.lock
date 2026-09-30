@@ -13,7 +13,7 @@ resolution-markers = [
 [[package]]
 name = "channel-code-lib2"
 version = "0.1.0"
-source = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2?branch=sequential#2f99c1810fcfa3672aa151ecbd77d14211a6d814" }
+source = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2?branch=claude_sequential#165f9fccedd75468785f13954318a50d05c880d6" }
 dependencies = [
     { name = "galois" },
     { name = "matplotlib" },
@@ -619,7 +619,7 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "channel-code-lib2", git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2?branch=sequential" }]
+requires-dist = [{ name = "channel-code-lib2", git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2?branch=claude_sequential" }]
 
 [[package]]
 name = "six"
