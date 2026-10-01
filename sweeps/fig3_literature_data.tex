@@ -1,0 +1,330 @@
+\begin{tikzpicture}[scale=0.92,spy using outlines={rectangle, magnification=2}]
+
+\begin{axis}[%
+width=.9\columnwidth,
+height=1.2\ferfigheight,
+at={(0.758in,0.645in)},
+scale only axis,
+xmin=1,
+xmax=5,
+xlabel style={font=\color{white!15!black}},
+xlabel={$E_{\mathrm{b}}/N_0$ ($\si{dB}$)},
+ymode=log,
+ymin=1e-06,
+ymax=1,
+yminorticks=true,
+ylabel style={font=\color{white!15!black}},
+ylabel={FER},
+axis background/.style={fill=white},
+xmajorgrids,
+ymajorgrids,
+legend style={at={(0.004,0.005)}, anchor=south west, legend cell align=left, align=left, draw=white!15!black,font=\scriptsize}
+]
+
+
+
+
+\addplot[color=kit-royalblue80,solid,line width = 1pt,mark=x, mark options={solid}]
+table[row sep=crcr]{
+ 1.0  5.467980e-01\\
+ 1.5  3.553223e-01\\
+ 2.0  1.798365e-01\\
+ 2.5  7.278189e-02\\
+ 3.0  2.111038e-02\\
+ 3.5  4.332920e-03\\
+ 4.0  7.442976e-04\\
+ 4.5  1.148381e-04\\
+ 5.0  1.290430e-05\\
+};
+\addlegendentry{NMSA \cite{mandelbaum_subcode_2025}};
+
+
+
+%juliy10th nmsa
+% {
+%     2 0.17901013714967204,
+%     2.5 0.06768144549043426,
+%     3 0.021144963262570902,
+%     3.5 0.004581345550254801
+% }
+
+
+
+\addplot[color=kit-royalblue80,dotted,line width = 1pt,mark=x, mark options={solid}]
+table[row sep=crcr]{
+ 1.00  5.141388e-01\\
+ 1.50  2.551020e-01\\
+ 2.00  1.264223e-01\\
+ 2.50  4.380201e-02\\
+3.00  1.090275e-02\\
+ 3.50  2.144956e-03\\
+ 4.00  3.055329e-04\\
+ 4.50  4.053300e-05\\
+ 5.00  4.830237e-06\\
+};
+\addlegendentry{NMSA \cite{mandelbaum_subcode_2025}\\${I_\mathrm{max}=352}$ };
+%juliy10th nmsa 352
+% {
+%     2 0.12519587183227968,
+%     2.5 0.04327806651779539,
+%     3 0.010657878305815412,
+%     3.5 0.0019972316495168933
+% }
+
+
+
+\addplot[color=KITgreen,dashed,line width = 1pt,mark=triangle, mark options={solid}]
+table[row sep=crcr]{
+ 1.00  4.926108e-01\\
+ 1.50  2.998501e-01\\
+ 2.00  1.362398e-01\\
+ 2.50  4.621072e-02\\
+ 3.00  1.192677e-02\\
+ 3.50  2.103359e-03\\
+ 4.00  2.896100e-04\\
+4.50  3.245119e-05\\
+ 5.00  3.464770e-06\\%200FE
+};
+\addlegendentry{AED-$11$ \cite{mandelbaum_subcode_2025}};
+%juliy10th aed
+% {
+%     2 0.13438652655021227,
+%     2.5 0.044949038203016156,
+%     3 0.01160568725445653,
+%     3.5 0.0021428418638068597
+% }
+
+
+
+\addplot[color=KITorange,line width = 1pt,mark=diamond*, mark options={solid}, dashed]
+table[row sep=crcr]{
+ 1.00  4.464286e-01\\
+ 1.50  2.743484e-01\\
+ 2.00  1.147447e-01\\
+ 2.50  4.145078e-02\\
+ 3.00  8.008329e-03\\
+ 3.50  1.445713e-03\\
+ 4.00  1.989583e-04\\
+4.50  1.514168e-05\\
+ 5.00  1.494075e-06\\%146FE
+};
+\addlegendentry{SCED-$11$ \cite{mandelbaum_subcode_2025}};
+
+\addplot[color=KITpurple,dashed,line width = 1pt,mark=square, mark options={solid}]
+table[row sep=crcr]{
+ 1.00  3.960396e-01\\
+ 1.50  2.242152e-01\\
+ 2.00  7.855460e-02\\
+ 2.50  2.734108e-02\\
+ 3.00  5.499945e-03\\
+ 3.50  6.574903e-04\\
+ 4.00  6.791694e-05\\
+4.50  5.026574e-06\\
+};
+\addlegendentry{SCED-43 \cite{mandelbaum_subcode_2025}};
+% july10th sced
+% {
+%     2 0.11184250624733345,
+%     2.5 0.03640248244989317,
+%     3 0.008560109887922282,
+%     3.5 0.0014590560181291237
+% }
+
+
+\addplot[color=KITred,line width = 1pt,mark=diamond*, mark options={solid}]
+table[row sep=crcr]{
+% Actually simulated: [  488.  1013.  2353.  7460. 31599.]
+% Collected FE: [250. 250. 250. 250. 242.]
+ 1.00  5.122951e-01\\
+ 1.50  2.467917e-01\\
+ 2.00  1.062473e-01\\
+ 2.50  3.351206e-02\\
+ 3.00  7.658470e-03\\ %16th January 26
+%  Actually simulated: [172356. 998156.]
+% Collected FE: [200.% FER
+3.50  1.160389e-03\\%200\textbf{(}
+% Actually simulated
+% Eb/N0: 4.0 dB | FE: 300 | Simulated: 2153991
+ 4.00  1.392763e-04\\
+ 4.50  1.281535e-05\\
+% Actually simulated: [2.97731358e+08]
+% Collected FE: [300.]
+% FER
+% {
+ 5.00  1.007620e-06\\
+};
+\addlegendentry{aSCED-11};
+%july10th asced
+% {
+%     2 0.10606239659654929,
+%     2.5 0.033492259697451295,
+%     3 0.007631638049858861,
+%     3.5 0.001203562661204344
+% }
+
+
+% \addplot[color=KITred!70,line width = 1pt,mark=diamond*, mark options={solid}]
+% table[row sep=crcr]{
+% 2 0.09591455273698264\\
+% 2.5 0.031171797584857493\\
+% 3 0.006458657881202436\\
+% 3.5 0.0010374698868748826\\
+% 4 0.00011036196993066121\\
+% 4.5 8.198374098448796e-06\\
+% };
+% \addlegendentry{aSCED-22 $\Delta=1$};
+
+% \addplot[color=KITred!50,line width = 1pt,mark=diamond*, mark options={solid}]
+% table[row sep=crcr]{
+% 2  0.08304809944154207\\
+% 2.5 0.023204520835780378\\
+% 3 0.005126627417527864\\
+% 3.5 0.0006998052769255824\\
+% 4 6.620814487800598e-05\\
+% 4.5 4.7974702344725915e-06\\
+% };
+% \addlegendentry{aSCED-44 $\Delta=1$};
+
+
+
+% \addplot[color=KITred!30,line width = 1pt,mark=diamond*, mark options={solid}]
+% table[row sep=crcr]{
+% 2 0.07259713701431493\\
+% 2.5 0.02023874943001789\\
+% 3 0.0036875864778531287\\
+% 3.5 0.0004807158013351494\\
+% };
+% \addlegendentry{aSCED-88 $\Delta=1$};
+
+%%split1%%%%
+% \addplot[color=KITblue,line width = 1pt,mark=triangle, mark options={solid}]
+% table[row sep=crcr]{
+% 2 0.0863679694947569\\
+% 2.5 0.0267972481749632\\
+% 3 0.00544671663579376\\
+% 3.5 0.0008348912101546912\\
+% 4 8.464363745269203e-05\\
+% 4.5 6.1576936886658944e-06\\
+% };
+% \addlegendentry{aSCED-24 $\Delta\in\{2,3\}$};
+
+\addplot[color=KITblue!60,line width = 1pt,mark=triangle, mark options={solid}]
+table[row sep=crcr]{
+1 0.3571035747021082\\
+1.5 0.18488151184881513\\
+2 0.06884949348769899\\
+2.5 0.019854137385318563\\
+3 0.0036196964605847448\\
+3.5 0.000491052420269672\\
+4 4.4328988197752285e-05\\
+4.5  2.965920104771095e-06\\%now >1000 FE
+5 1.3379296624288492e-07\\%403FE
+};
+\addlegendentry{aSCED-48}
+%\\ $\Delta\in\{2,3\}$};
+
+% \addplot[color=KITblue!60,line width = 1pt,mark=triangle, mark options={solid}]
+% table[row sep=crcr]{
+% 2 0.05466198687623989\\
+% 2.5 0.013857999601208645\\
+% 3 0.002488020134965819\\
+% 3.5 0.0002815316231616229\\
+% 4 2.0120750541869567e-05\\
+% 4.5 1.3385755626889385e-06\\
+% };
+% \addlegendentry{aSCED-96 $\Delta\in\{2,3\}$};
+
+% \addplot[color=KITblue!10,line width = 1pt,mark=triangle, mark options={solid}]
+% table[row sep=crcr]{
+% 2 0.049774605559729526\\
+% 2.5 0.012015645084790036\\
+% 3 0.0020916276174705517\\
+% 3.5 0.00021940390755251647\\
+% 4 1.630873972756211e-05\\
+% 4.5 1.0683674866017814e-06\\
+% };
+% \addlegendentry{aSCED-192 $\Delta\in\{2,3\}$};
+
+
+% \addplot[color=KITpurple,line width = 1pt,mark=pentagon, mark options={solid}]
+% table[row sep=crcr]{
+% 2 0.06085409252669039\\
+% 2.5 0.017259536625321786\\
+% 3 0.00327931592119136\\
+% 3.5 0.0004563464622459742\\
+% 4 4.5058878444340646e-05\\
+% 4.5 3.7016427142161315e-06\\
+% };
+% \addlegendentry{aSCED-96 $\Delta\in\{5,6\}$};
+
+% \addplot[color=KITpurple!70,dashed,line width = 1pt,mark=pentagon, mark options={solid}]
+% table[row sep=crcr]{
+% 2 0.04578255927678359\\
+% 2.5 0.010863371505247873\\
+% 3 0.0017614320545611304\\
+% 3.5 0.0002149323231847372\\
+% 4 1.6224458074480527e-05\\
+% 4.5 1.0656347743622956e-06\\
+% };
+% \addlegendentry{aSCED-192 $\Delta\in\{5,6\}$};
+
+% \addplot[color=KITpurple!50,line width = 1pt,mark=pentagon, mark options={solid}]
+% table[row sep=crcr]{
+% 2 0.03642274402617302\\
+% 2.5 0.008639434368870916\\
+% 3 0.0013862025267268254\\
+% 3.5 0.0001579774350363887\\
+% };
+% \addlegendentry{aSCED-288 $\Delta\in\{5,6\}$};
+
+
+\addplot[color=KITpurple!30,line width = 1pt,mark=pentagon, mark options={solid}]
+table[row sep=crcr]{
+1 0.23617896631524812\\
+1.5 0.10047980361526444\\
+2 0.030786870657493925\\
+2.5 0.006419873173834153\\
+3 0.0009913115828252789\\
+3.5 9.581785784534925e-05\\
+4 7.385968565865376e-06\\%1133FE
+% 4.5 5.111879177511223e-07\\%13fe
+};
+\addlegendentry{aSCED-384}
+%\\ $\Delta\in\{5,6\}$};
+
+% \addplot[color=KITpalegreen,line width = 1pt,mark=pentagon, mark options={solid}]
+% table[row sep=crcr]{
+% 2 0.03945992837600374\\
+% 2.5 0.010299777136058716\\
+% 3 0.0021692082265162616\\
+% 3.5 0.0003717295392208172\\
+% };
+% \addlegendentry{aSCED-2048 $\Delta=11$};
+
+
+
+\addplot[color=black,line width = 1pt, solid]
+table[col sep=comma]{
+1.00, 1.120e-01
+1.50, 3.609e-02
+2.00, 9.891e-03
+2.50, 1.623e-03
+3.00, 2.514e-04
+};
+\label{plot:5g132_osd}
+\addlegendentry{OSD-4 \cite{stuttgart_ldpc_aed}};
+
+
+% \coordinate (spypoint) at (axis cs:3.41,0.0005);
+% 			\coordinate (spyviewer) at (axis cs:4,0.025);
+% 			\spy[width=2.2cm,height=1.25cm, thin, spy connection path={\draw(tikzspyonnode.south west) -- (tikzspyinnode.south west);\draw (tikzspyonnode.south east) -- (tikzspyinnode.south east);
+% 			\draw (tikzspyonnode.north west) -- (tikzspyinnode.north west);\draw (tikzspyonnode.north east) -- (intersection of  tikzspyinnode.north east--tikzspyonnode.north east and tikzspyinnode.south east--tikzspyinnode.south west);
+% 			;}] on (spypoint) in node at (spyviewer);
+% 		\coordinate (a) at ($(axis cs:-10.8/1.4,-0.12)+(spyviewer)$);
+% 		\coordinate[label={[font=\small,text=black]right:$10^{-2}$}] (b) at ($(axis cs:+10.8/1.4,-0.12)+(spyviewer)$);
+\end{axis}
+
+
+
+
+\end{tikzpicture}%
