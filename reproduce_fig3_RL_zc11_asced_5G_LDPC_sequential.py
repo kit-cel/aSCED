@@ -23,7 +23,7 @@ if len(sys.argv) != 8:
         "Usage: python reproduce_fig3_RL_zc11_asced_5G_LDPC_sequential.py "
         "<decoder_variant> <n_simul> <snr_start> <snr_end> "
         "<selector_type: full_parallel|fixed_sequential|random_sequential|syndrome_sequential> "
-        "<members_per_group> <target_fraction_converged>"
+        "<members_per_group> <target_num_converged (ignored for full_parallel)>"
     )
 
 decoder_variant = sys.argv[1].lower()
@@ -32,7 +32,7 @@ snr_start = float(sys.argv[3])
 snr_end = float(sys.argv[4])
 selector_type = sys.argv[5].lower()
 members_per_group = int(sys.argv[6])
-target_fraction_converged = float(sys.argv[7])
+target_num_converged = int(sys.argv[7])
 
 # Include the end point
 sim_regime = np.arange(snr_start, snr_end + 0.25, 0.5)
@@ -171,7 +171,6 @@ def run_asced(save_dir_name, split_pattern, num_used_blocks):
     )
 
     if selector_type != "full_parallel":
-        target_num_converged = max(1, round(target_fraction_converged * ensemble_size))
         ensemble_cfg.set_mConvergedConfig(target_num_converged)
 
         if selector_type == "fixed_sequential":
@@ -214,5 +213,8 @@ def run_asced(save_dir_name, split_pattern, num_used_blocks):
     return sim.error_rates["FER-SNR"]
 
 
-save_name = f"{decoder_variant}_{selector_type}_mpg{members_per_group}_target{target_fraction_converged}"
+if selector_type == "full_parallel":
+    save_name = f"{decoder_variant}_{selector_type}"
+else:
+    save_name = f"{decoder_variant}_{selector_type}_mpg{members_per_group}_target{target_num_converged}"
 FER_results = {save_name: run_asced(save_name, split_pattern, num_used_blocks)}
