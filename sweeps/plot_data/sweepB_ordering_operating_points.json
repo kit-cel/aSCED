@@ -1,0 +1,50 @@
+{
+ "operating_points": {
+  "0.1": [
+   {
+    "selector": "fixed_sequential",
+    "snr": 2.1240418127982634,
+    "effort": 944.6568940274067,
+    "latency": 247.40152709391262,
+    "frame_errors": 314
+   },
+   {
+    "selector": "random_sequential",
+    "snr": 2.158718037593683,
+    "effort": 931.2859666136077,
+    "latency": 245.43305513794192,
+    "frame_errors": 333
+   },
+   {
+    "selector": "syndrome_sequential",
+    "snr": 2.160469305559416,
+    "effort": 911.9763523120139,
+    "latency": 239.80834059368945,
+    "frame_errors": 321
+   }
+  ],
+  "0.001": [
+   {
+    "selector": "fixed_sequential",
+    "snr": 3.6791364974773195,
+    "effort": 752.9358777097735,
+    "latency": 202.5385495762397,
+    "frame_errors": 327
+   },
+   {
+    "selector": "random_sequential",
+    "snr": 3.6826899213145086,
+    "effort": 754.4241437854795,
+    "latency": 204.91208479867606,
+    "frame_errors": 327
+   },
+   {
+    "selector": "syndrome_sequential",
+    "snr": 3.662712922417013,
+    "effort": 719.7537682662137,
+    "latency": 195.13375286628633,
+    "frame_errors": 349
+   }
+  ]
+ }
+}
