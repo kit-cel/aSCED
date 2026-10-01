@@ -74,20 +74,72 @@ rather than trusting a single shared FER.json to be complete for runs from
 early sweeps** (pre-fix data lives at `<config>/FER.json` directly with no
 `snr_*` subdir; post-fix data lives at `<config>/snr_<X>/FER.json`).
 
-## Completed sweeps (as of this writing)
+## CRITICAL BUG — n_simul=110 was wrong, all n110 data is invalid (found 2026-10-01/02)
 
-### Sweep A — main sweep (job 531557, `sweeps/sequential_rl_manifest.csv`, 70 tasks)
+Built a results page (`sweeps/plot_sequential_results.html`) comparing our
+full_parallel aSCED-48/384 against the paper's Fig. 3 curves and they didn't
+match at all (our FER systematically 1.4-6x worse, growing with SNR —
+not noise, >300 FE at every point). Root-cause process (all verified, not
+guessed):
+1. Ran the **original unmodified** `reproduce_fig3_RL_zc11_asced_5G_LDPC.py`
+   (from `v1.0.0`) standalone — same bad numbers. Not something broken by
+   the sequential-script port.
+2. Ran **standalone NMSA** (bypasses aSCED ensemble logic entirely, just BP
+   on the base PCM) — also mismatched the paper's NMSA curve. So the bug
+   isn't in aSCED/selector/stopping logic at all, it's upstream of all of
+   that.
+3. Checked out aSCED's actual `v1.0.0` working tree (`/home/pj9034/aSCED`,
+   which has its own `.venv` built against channel-code-lib2 pinned at the
+   **exact** commit `18faaa12886fb32e5f1cb2daeb6507080370d54a` that
+   `v1.0.0`'s own `uv.lock` requests) and ran NMSA/asced48 there — **same
+   mismatch**. Rules out any channel-code-lib2 version regression between
+   `v1.0.0` and `sequential`/`claude_sequential`.
+4. User found it: `n_simul` is **not an offset**, it's the final transmitted
+   codeword length `n` directly (`number_vn_simul = n_simul + 2*Zc`, then
+   puncturing removes exactly those `2*Zc` bits back off, so printed
+   `n == n_simul`). Running with `n_simul=132` (not 110) reproduces the
+   paper's NMSA curve closely (e.g. FER@2.0dB: ours 0.1801 vs paper 0.1798).
+   **`n_simul=110` was actually simulating the higher-rate `C_5G(110,66)`
+   code (rate 0.6) instead of the paper's `C_5G(132,66)` (rate 0.5)** — a
+   genuinely different, weaker-protection code, fully explaining the
+   systematically worse FER.
+
+Verified the fix on `claude_sequential` too: `asced48 full_parallel` with
+`n_simul=132` gives FER 0.371/0.187/0.071 @ 1.0/1.5/2.0dB vs paper's
+0.357/0.185/0.069 — matches well.
+
+**Impact: every number in both completed sweeps (jobs 531557, 532206, both
+under `RESULTS/.../..._n110/...`) was generated with the wrong code and is
+not comparable to the paper.** The *relative* comparisons within those
+sweeps (full_parallel vs. sequential selectors, across group sizes/
+orderings) are still internally self-consistent since everything in them
+used the same (wrong) code — but don't reuse the absolute FER/effort/
+latency numbers, and the published plot (`sweeps/plot_sequential_results.html`,
+built from `..._n110` data) is now known-stale and needs to be rebuilt once
+new data lands. Do not delete the `_n110` RESULTS directories without
+asking — kept for now as a record, but treat them as invalid for anything
+paper-comparable.
+
+Fixed: `N_SIMUL = 132` in both `sweeps/generate_sequential_rl_manifest.py`
+and `sweeps/generate_parallelism_ordering_manifest.py`, manifests
+regenerated (same 70/56 row counts, grid unchanged — the SNR range 1.0-4.0dB
+still brackets both FER=1e-1 and FER=1e-3 for the corrected code, confirmed
+from the paper's own aSCED-48 numbers).
+
+## Relaunched sweeps (2026-10-02, n_simul=132 — supersedes the n110 jobs below)
+
+### Sweep A — main sweep (job 532495, `sweeps/sequential_rl_manifest.csv`, 70 tasks) — SUBMITTED, pending/running
 variants {asced48, asced384} x selectors {full_parallel, fixed_sequential,
 syndrome_sequential} x SNR {1.0..4.0dB step 0.5} x target_num_converged
 {2,6} (full_parallel ignores target, 1 run/SNR only).
-Output root: `RESULTS/fig_x_zc11_r4_seq_<selector>_mpg8_n110/<variant>_<selector>[_mpg8_target<N>]/`
-Status: 67/70 complete. Remaining 3 = asced384 @ 4.0dB (full_parallel,
-fixed_sequential target6, syndrome_sequential target6) — the single
-hardest/slowest point in the grid, still running, bounded by
-max_transmissions=2e6 and 24h walltime so it WILL finish or self-cap.
+Output root: `RESULTS/fig_x_zc11_r4_seq_<selector>_mpg8_n132/<variant>_<selector>[_mpg8_target<N>]/`
+`target_num_converged` values {2,6} reused as-is from the old (wrong-code)
+calibration — not re-derived yet; if mconverged doesn't trigger on the
+corrected code, recalibrate the same way as last time (read measured
+`average_number_converged_path` from this run, pick new targets, re-run).
 
-### Sweep B — parallelism + ordering (job 532206, `sweeps/parallelism_ordering_manifest.csv`, 56 tasks) — COMPLETE (56/56)
-asced48 only. Two parts:
+### Sweep B — parallelism + ordering (job 532496, `sweeps/parallelism_ordering_manifest.csv`, 56 tasks) — SUBMITTED, pending/running
+asced48 only, `n_simul=132`. Same structure as before:
 - Parallelism/group-size trade-off: `members_per_group in {1,2,4,8,16,24}`,
   selector fixed to `syndrome_sequential`, `target_num_converged=6` fixed,
   SNR 1.0-4.0dB. (mpg=48 endpoint = reuse asced48 full_parallel from Sweep A,
@@ -96,15 +148,25 @@ asced48 only. Two parts:
   {fixed_sequential, random_sequential} (syndrome_sequential@mpg=4 already
   in the parallelism sweep above), target=6, same SNR grid.
 
-Target FER operating points for asced48 (from full_parallel baseline,
-log-interpolated): **FER=1e-1 ≈ 2.15dB**, **FER=1e-3 ≈ 3.7dB** — both inside
-the swept 1.0-4.0dB grid, read off by interpolation rather than re-sweeping.
+Once both complete: rebuild `sweeps/plot_data/build_data*.py` +
+`sweeps/plot_data/build_html.py` pointing at the `..._n132` RESULTS
+directories (same extraction logic — still always prefer per-SNR
+subdirectories over flat top-level files, see race-condition note below,
+which is independent of the n_simul bug and still applies), republish
+`sweeps/plot_sequential_results.html`, and re-verify the "vs. literature"
+overlay actually lines up this time. Re-derive the FER=1e-1/1e-3 SNR
+operating points from the new full_parallel baseline rather than reusing
+the old ≈2.15dB/≈3.7dB estimates (they were based on the wrong code, though
+likely close since rate-0.5 vs rate-0.6 shifts the waterfall but not
+drastically at these FERs — confirm, don't assume).
 
 ## Infrastructure
 
 - `reproduce_fig3_RL_zc11_asced_5G_LDPC_sequential.py`: CLI
   `<variant> <n_simul> <snr_start> <snr_end> <selector> <members_per_group> <target_num_converged>`.
-  `n_simul=110` reproduces the exact C_5G(132,66)/Zc=11 code used in Fig. 3.
+  `n_simul=132` reproduces the exact C_5G(132,66)/Zc=11 code used in Fig. 3
+  (n_simul IS the final transmitted length n directly, not an offset — see
+  the n_simul bug section above; 110 was wrong).
   `target_errors=200`, `max_transmissions=2e6` (bounded on purpose — see
   commit messages for why the paper's own 1000/3e8 defaults are impractical
   at high SNR).

@@ -19,7 +19,9 @@ SEQUENTIAL_SELECTORS = ["fixed_sequential", "syndrome_sequential"]
 SNR_POINTS = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
 MEMBERS_PER_GROUP = 8
 TARGET_NUM_CONVERGED_VALUES = [2, 6]
-N_SIMUL = 110  # reproduces the exact C_5G(132,66) code used in Fig. 3
+N_SIMUL = 132  # reproduces the exact C_5G(132,66) code used in Fig. 3 (n_simul IS
+# the final transmitted length n directly, not an offset - n_simul=110 was wrong,
+# it simulated the higher-rate C_5G(110,66) code instead; see STATUS.md)
 
 rows = []
 for variant in VARIANTS:

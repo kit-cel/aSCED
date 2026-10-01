@@ -20,7 +20,8 @@ rerunning it.
 import csv
 
 VARIANT = "asced48"
-N_SIMUL = 110
+N_SIMUL = 132  # n_simul IS the final transmitted length n directly; 110 was wrong
+# (simulated the higher-rate C_5G(110,66) code instead of C_5G(132,66)), see STATUS.md
 SNR_POINTS = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
 TARGET_NUM_CONVERGED = 6
 
