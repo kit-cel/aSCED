@@ -196,7 +196,14 @@ def run_asced(save_dir_name, split_pattern, num_used_blocks):
     if slurm_cpus is not None:
         sim.num_threads = int(slurm_cpus)
     sim.auto_save = auto_save
-    sim.save_dir = results_dir + "/" + save_dir_name
+    # One directory per (config, SNR): sim_regime here is always a single SNR
+    # point (snr_start==snr_end), and these JSON outputs are merged by the
+    # C++ side via a non-atomic read-modify-write - concurrent SLURM array
+    # tasks sharing a save_dir (e.g. all SNR points of one config launched in
+    # the same wave) can race and silently drop entries. A unique directory
+    # per run sidesteps that entirely and is better provenance anyway.
+    snr_tag = f"{sim_regime[0]:g}"
+    sim.save_dir = results_dir + "/" + save_dir_name + "/" + f"snr_{snr_tag}"
 
     sim.puncturing(message_bit_pucturing)
 
