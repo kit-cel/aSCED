@@ -116,6 +116,27 @@ the swept 1.0-4.0dB grid, read off by interpolation rather than re-sweeping.
 - `smoke_test_sequential.py` (repo root): quick 4-thread functional smoke
   test, not part of the sweeps.
 
+## Final verification pass (before compacting)
+
+- Both repos clean, fully committed and pushed; aSCED's `uv.lock` pin
+  (`c0fd4c1...`) exactly matches channel-code-lib2's `claude_sequential` HEAD.
+- Found and fixed one more bug: an earlier `echo "sweeps/logs/" >> .gitignore`
+  landed on a file with no trailing newline and silently merged into the
+  existing `RESULTS/` line, producing the single broken pattern
+  `RESULTS/sweeps/logs/` — which **unignored `RESULTS/`** (the actual
+  sweep output, ~1.5MB and growing) from that commit onward. Fixed to two
+  separate lines; verified both `RESULTS/` and `sweeps/logs/` are ignored
+  again via `git check-ignore`. Confirmed via `git ls-files` that nothing
+  under either path was ever accidentally committed in the meantime.
+- Cross-checked every config's data completeness by unioning each config's
+  flat `FER.json` keys with any `snr_*/FER.json` subdirectory keys (handles
+  configs that have both pre- and post-race-fix data, e.g. the asced48
+  backfill): confirmed exactly 0/7 missing for all Sweep B configs (56/56),
+  and 0/7 missing for all Sweep A configs **except** the 3 still-running
+  asced384@4.0dB tasks (6/7, missing only 4.0dB, which matches `sacct`
+  showing those 3 as the only non-COMPLETED tasks) — i.e. no further silent
+  data loss beyond what was already known and documented above.
+
 ## Not yet done / next steps
 
 1. **Build the interactive plot.** Style guide verbatim in

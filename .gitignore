@@ -143,4 +143,5 @@ _build/
 docs/api/
 
 
-RESULTS/sweeps/logs/
+RESULTS/
+sweeps/logs/
