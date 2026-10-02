@@ -199,6 +199,82 @@ drastically at these FERs — confirm, don't assume).
   showing those 3 as the only non-COMPLETED tasks) — i.e. no further silent
   data loss beyond what was already known and documented above.
 
+## Scheduling/iteration-count study (2026-10-02, new worktree branch `scheduling_study`)
+
+Pure scheduling/iteration-count study, decoupled from the sequential-selector
+work above (full_parallel selector only - one clean variable at a time).
+Compares BP `scheduling_type` {flooding, row_layered natural, row_layered
+appended_first} x `max_iterations` {32, 16}, for 3 variants: standalone NMSA
+(BP on `H` alone), aSCED-48, aSCED-384 (full_parallel ensembles). SNR
+1.0-4.0dB step 0.5, `n_simul=132`, `target_errors=200`,
+`max_transmissions=2e6` - same conventions as the sequential sweeps above.
+
+New files: `sweeps/scheduling_study.py` (CLI:
+`<variant> <n_simul> <snr_start> <snr_end> <scheduling_config> <max_iterations>`),
+`sweeps/generate_scheduling_manifest.py` / `sweeps/scheduling_manifest.csv`
+(126 rows), `sweeps/scheduling_study_array.sbatch`. Output root:
+`RESULTS/scheduling_study_zc11_r4_n132/<variant>_<scheduling_config>_maxiter<N>/snr_<X>/`
+(name includes "scheduling_study" to stay clearly distinguishable from the
+sequential sweeps' `..._seq_<selector>_...` paths).
+
+Row-layered schedule construction (verified from channel-code-lib2 source,
+`claude_sequential` branch, commit `c0fd4c1`): `BP_Row_Layered::init()`
+(`src/Decoder/BP/BP_Scheduling/BP_Row_Layered.cpp`) copies `config.schedule`/
+`config.nodes_in_layer` verbatim - no auto-generation from `Z` anywhere
+(`Z` is bound to Python in `bindings.cpp` but never read in
+`BP_Decoder.cpp`/`BP_Row_Layered.cpp`/`Decoder_Factory.h` - confirmed dead
+field). For each H_aux = vstack(H, appended_rows) (H's `m=88` rows for
+n_simul=132 are 8 Zc=11-row blocks), `nodes_in_layer` = one layer per block of
+H's rows in original order, plus one final layer for the batch's
+appended-rows block (absent for standalone nmsa, which has no appended rows).
+"natural" visits layers in that same order; "appended_first" visits the
+appended layer first, then H's blocks in order. Every path within a batch
+shares the same H_aux, hence the same row-layered layout.
+
+### Sanity check (before launching the sweep)
+
+Ran a cheap standalone check (not committed, scratchpad-only) at SNR=2.0dB,
+`target_errors=30`, `max_transmissions=20000`, `num_threads=16`: standalone
+NMSA and one aSCED-48 batch (4 paths, delta=2), all three scheduling configs.
+Result: **not broken** - row_layered FER was in the same ballpark as flooding
+and consistently *equal or slightly better* (nmsa: flooding=0.165,
+row_layered_natural=0.135, row_layered_appended_first=0.155; asced48 1-batch:
+flooding=0.121, natural=0.102, appended_first=0.105) - consistent with
+row-layered's known faster per-iteration convergence, not a regression.
+Also smoke-tested the real `scheduling_study.py` CLI path directly (not the
+inline copy) for `asced384 row_layered_appended_first maxiter16`: PCM/ensemble
+construction succeeded (384 paths in 8 batches, matching aSCED-384's
+4-block x 2-segment construction) and the simulation started correctly before
+being killed by a timeout (this was a setup-phase smoke test, not a full run).
+
+### Sweep status - job 534114, `sweeps/scheduling_manifest.csv`, 126 tasks, SUBMITTED
+
+`sbatch --array=1-126%10 sweeps/scheduling_study_array.sbatch sweeps/scheduling_manifest.csv`.
+At time of writing: first 20 tasks (all standalone-nmsa combos) COMPLETED
+within seconds each (cheap at `num_threads=32`), remainder (nmsa tail +
+asced48 + asced384) PENDING/running under the `%10` concurrency cap - check
+`sacct -j 534114` for current state.
+
+Early real-data read from the completed nmsa tasks (full target_errors=200
+runs, not the sanity-check numbers above) - row_layered_natural clearly
+converges faster per iteration than flooding, as expected from the
+literature, e.g. at SNR=2.0dB: flooding/32iter FER=0.1742, flooding/16iter
+FER=0.2606; row_layered_natural/32iter FER=0.1451,
+row_layered_natural/16iter FER=0.1696 (row_layered at 16 iterations nearly
+matches flooding at 32). Same pattern holds across 1.0-3.0dB. Not yet
+available: row_layered_appended_first numbers (manifest orders nmsa's
+`flooding`/`row_layered_natural` combos before `row_layered_appended_first`
+per the SNR-innermost-loop structure - check again once more of the array has
+run), and all asced48/asced384 numbers.
+
+Next steps once the sweep completes: pull FER/effort numbers per
+(variant, scheduling_config, max_iterations, SNR) from the per-SNR
+`FER.json`/`decoder_stats.json` subdirectories (same per-SNR-subdir
+convention as the sequential sweeps - no shared-save_dir race risk here
+either, by the same one-dir-per-run construction), and compare whether the
+row-layered convergence-speed advantage seen in nmsa compounds, holds, or
+washes out at the aSCED-48/384 ensemble level.
+
 ## Not yet done / next steps
 
 1. **Build the interactive plot.** Style guide verbatim in
