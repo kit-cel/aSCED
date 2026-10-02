@@ -3,47 +3,47 @@
   "0.1": [
    {
     "selector": "fixed_sequential",
-    "snr": 2.1240418127982634,
-    "effort": 944.6568940274067,
-    "latency": 247.40152709391262,
-    "frame_errors": 314
+    "snr": 1.79945187774801,
+    "effort": 941.353000487978,
+    "latency": 246.00069084813197,
+    "frame_errors": 329
    },
    {
     "selector": "random_sequential",
-    "snr": 2.158718037593683,
-    "effort": 931.2859666136077,
-    "latency": 245.43305513794192,
-    "frame_errors": 333
+    "snr": 1.8386251809606116,
+    "effort": 936.097232419486,
+    "latency": 246.3187180293545,
+    "frame_errors": 317
    },
    {
     "selector": "syndrome_sequential",
-    "snr": 2.160469305559416,
-    "effort": 911.9763523120139,
-    "latency": 239.80834059368945,
-    "frame_errors": 321
+    "snr": 1.8095253876800406,
+    "effort": 913.0955197325123,
+    "latency": 239.80175151960955,
+    "frame_errors": 329
    }
   ],
   "0.001": [
    {
     "selector": "fixed_sequential",
-    "snr": 3.6791364974773195,
-    "effort": 752.9358777097735,
-    "latency": 202.5385495762397,
-    "frame_errors": 327
+    "snr": 3.329022952279361,
+    "effort": 759.6628841402346,
+    "latency": 203.9172675420572,
+    "frame_errors": 328
    },
    {
     "selector": "random_sequential",
-    "snr": 3.6826899213145086,
-    "effort": 754.4241437854795,
-    "latency": 204.91208479867606,
-    "frame_errors": 327
+    "snr": 3.3296203708721275,
+    "effort": 758.0999255411463,
+    "latency": 205.61356114190934,
+    "frame_errors": 322
    },
    {
     "selector": "syndrome_sequential",
-    "snr": 3.662712922417013,
-    "effort": 719.7537682662137,
-    "latency": 195.13375286628633,
-    "frame_errors": 349
+    "snr": 3.3226376787751315,
+    "effort": 721.9340089653389,
+    "latency": 195.50390842429823,
+    "frame_errors": 318
    }
   ]
  }

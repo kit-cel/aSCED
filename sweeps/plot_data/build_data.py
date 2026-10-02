@@ -46,7 +46,7 @@ def get_config_data(cdir: Path):
     return out
 
 configs = {}
-for cdir in sorted(ROOT.glob("*/*/")):
+for cdir in sorted(ROOT.glob("*_n132/*/")):
     name = cdir.name.rstrip("/")
     m = PATTERN.match(name)
     if not m:

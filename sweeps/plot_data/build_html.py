@@ -93,7 +93,8 @@ td:nth-child(2),th:nth-child(2){text-align:left}
   <section id="sweepA">
     <h2 style="margin-bottom:2px">Sweep A &mdash; selector comparison</h2>
     <p class="note" style="margin-top:2px;margin-bottom:18px">
-      Job 531557, 70/70 complete. members_per_group=8 fixed; target_num_converged &isin; {2, 6}; full parallel = no
+      Job 532495, 70/70 complete, n_simul=132 (C<sub>5G</sub>(132,66) &mdash; the earlier n_simul=110 sweep was
+      a different, higher-rate code and has been discarded). members_per_group=8 fixed; target_num_converged &isin; {2, 6}; full parallel = no
       grouping (one group, all paths). Complexity = <span class="mono">average_ensemble_effort</span> (total BP
       iterations per decoded frame, summed over the ensemble &mdash; the complexity axis). Literature curves from
       Fig. 3 are shown for context, hidden by default.
@@ -104,7 +105,7 @@ td:nth-child(2),th:nth-child(2){text-align:left}
   <section id="sweepB1">
     <h2 style="margin-bottom:2px">Sweep B, part 1 &mdash; best latency vs. best complexity</h2>
     <p class="note" style="margin-top:2px;margin-bottom:10px">
-      Job 532206, 56/56 complete. aSCED-48, syndrome_sequential, target_num_converged=6, members_per_group swept
+      Job 532496, 56/56 complete, n_simul=132. aSCED-48, syndrome_sequential, target_num_converged=6, members_per_group swept
       {1,2,4,8,16,24}; the mpg=48 endpoint reuses full-parallel (one group spanning the whole ensemble &mdash; no
       early stop is possible). Complexity = <span class="mono">average_ensemble_effort</span> (total BP iterations
       per frame, summed over the ensemble). Latency = <span class="mono">average_ensemble_latency</span> (sum of
