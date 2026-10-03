@@ -237,3 +237,90 @@ drastically at these FERs — confirm, don't assume).
    - `enc_gf2`/`gf4_ops`/`gf4_vector` C++ tests still fail to build (stale
      `#include` paths from an old refactor) — unrelated pre-existing rot,
      not touched.
+
+
+## Greedy RL/QC-block selection search (2026-10-02/03)
+
+Separate subagent task (different worktree/session) investigating whether
+"the next 2 (resp. 4) subsequent blocks" (block_offset=0, the reference
+script's arbitrary choice) is actually a good pick among the 34 candidate RL
+blocks available. Ran an independent greedy forward-selection search per
+ensemble (asced48: split `[2,4,6,8]`, 2 rounds; asced384: split `[5]`, 4
+rounds), ranking all not-yet-fixed candidates each round by combined rank
+(sum of per-SNR ranks at 1.8dB and 3.3dB) under a cheap eval budget
+(`target_errors=50, max_transmissions=2e5`).
+
+**New files** (none touch the existing reproduce/sequential scripts, to avoid
+conflicting with concurrent edits elsewhere):
+- `sweeps/greedy_block_search.py` -- per-candidate cheap-eval driver (CLI:
+  `<ensemble_name> <fixed_blocks> <candidate_block> <snr>`), generalizes
+  `create_asced_config` to an arbitrary block-index list.
+- `sweeps/run_greedy_search.py` -- orchestrator (one process per ensemble):
+  generates each round's manifest, submits a SLURM array, polls `sacct`
+  every 60s internally until fully terminal, retries missing results once,
+  ranks, picks the winner, persists state to
+  `sweeps/greedy_search_state_<ensemble>.json`, moves to the next round.
+  Resumable from that state file.
+- `sweeps/run_greedy_search_array.sbatch` -- generic array runner for the
+  above (same manifest-driven shape as `run_manifest_array.sbatch`).
+- `sweeps/greedy_block_search_results.md` -- full round-by-round
+  FER/rank tables for both ensembles plus the final greedy order.
+- `reproduce_fig3_RL_zc11_asced_5G_LDPC_greedy.py` -- production validation
+  script, identical CLI/logic to the `_sequential` reference script but
+  reads the winning block list (in greedy-discovered order) from
+  `sweeps/greedy_search_state_<variant>.json` instead of using contiguous
+  blocks from offset 0. Order is preserved (not sorted) because it
+  determines `fixed_sequential`'s path index order.
+- `sweeps/generate_greedy_production_manifest.py`,
+  `sweeps/run_greedy_production_array.sbatch` -- manifest + sbatch runner for
+  the production validation sweep, mirroring Sweep A's grid exactly.
+
+**Known bug hit and worked around (not fixed -- out of scope here)**: blocks
+10 and 19 (of the 34 candidates) reproducibly segfault channel-code-lib2's
+BP decoder (SIGSEGV, no Python traceback) under every split pattern tried.
+Root cause identified by inspection: these are the only 2 blocks where every
+row has weight exactly 1 (a degenerate check connected to a single VN; every
+other block has min row weight >= 2) -- the BP/MSA C++ implementation
+apparently assumes CN degree >= 2 and crashes on degree 1. Both search
+orchestrators automatically exclude candidates with missing results from
+ranking, so this didn't corrupt the search, just permanently removed these 2
+candidates from contention (confirmed via retry: crashes both times, in
+every round of both searches). Flagged as a separate background task
+(`task_94e48705`, "Fix channel-code-lib2 segfault on weight-1 check rows")
+for someone to actually fix the C++ side.
+
+**Results**:
+- **aSCED-48** winning blocks, greedy order (1st pick first): **`[21, 16]`**
+  (2 rounds, 67 candidate-evals / 134 SLURM tasks total, jobs 534040/534244/
+  534275/534387).
+- **aSCED-384** winning blocks, greedy order (1st pick first):
+  **`[31, 14, 17, 3]`** (4 rounds, 130 candidate-evals / 260 SLURM tasks
+  total, jobs 534051/534398/534402/534690/534701/535349/535353/535445).
+  Confirms the task's hypothesis that asced384's winners need not relate to
+  asced48's -- only block 16 appears in both lists (as asced48's 2nd pick,
+  not asced384's), everything else differs, as expected since the two
+  ensembles use different split patterns (different Delta) so a block's
+  marginal value differs.
+- Full round-by-round FER@1.8dB/FER@3.3dB/rank tables: see
+  `sweeps/greedy_block_search_results.md`.
+
+**Production validation sweep** -- job **535455** (`sweeps/greedy_production_manifest.csv`,
+70 tasks, `sbatch --array=1-70%10`), comparing the optimized (greedy-block)
+ensembles against the existing baseline ("subsequent blocks") sweep already
+at `RESULTS/fig_x_zc11_r4_seq_<selector>_mpg8_n132/`. Grid: {asced48,
+asced384} x selectors {full_parallel, fixed_sequential, syndrome_sequential}
+x SNR {1.0..4.0dB step 0.5} x target_num_converged {2,6} (full_parallel
+ignores target), members_per_group=8, n_simul=132, production budget
+(`target_errors=200, max_transmissions=2e6`) -- same structure as Sweep A.
+Output root: `RESULTS/fig_x_zc11_r4_seq_greedy_<selector>_mpg8_n132/<variant>_<selector>[_mpg8_target<N>]/`
+(note the `greedy` tag distinguishing it from Sweep A's baseline paths).
+Submitted and running at the time of writing -- check `sacct -j 535455
+--format=State -X --noheader | sort | uniq -c` for completion status. Once
+complete, extraction logic should follow the same per-SNR-subdirectory
+convention as Sweep A/B (see the race-condition note above).
+
+Worktree for all of the above: `/home/pj9034/aSCED/.claude/worktrees/agent-ad70233b227562690`,
+branch `worktree-agent-ad70233b227562690` (was reset to this session's
+`claude_sequential` tip at the start of the task since it had been created
+from a stale base). Committed but not pushed -- needs merging into
+`claude_sequential` by the orchestrating session.
