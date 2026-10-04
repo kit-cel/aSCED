@@ -199,6 +199,76 @@ drastically at these FERs — confirm, don't assume).
   showing those 3 as the only non-COMPLETED tasks) — i.e. no further silent
   data loss beyond what was already known and documented above.
 
+## PCM-first variants: aSCED-49 / aSCED-385 (2026-10-02)
+
+New ensemble variants aSCED-49 and aSCED-385 = aSCED-48/384 plus one extra
+decoding path on the plain original PCM `H` (no auxiliary rows, hence a
+single path, not a batch of affine-offset siblings), prepended at path
+index **0**. Verified from source (not assumed) that
+`FixedSequentialSelector` (`channel-code-lib2`'s
+`src/Decoder/Ensemble/DecoderSelector/FixedSequentialSelector.cpp`)
+partitions the ensemble into contiguous index ranges `[i*mpg, (i+1)*mpg)` in
+order, so index 0 always lands in the first group regardless of
+`members_per_group` — `members_per_group=7` divides both new sizes evenly
+(49=7x7, 385=7x55). Hypothesis: the plain-PCM path often converges fast on
+its own, so scheduling it first should let m-converged stopping trigger
+earlier, reducing `average_ensemble_effort`/`average_ensemble_latency` vs.
+plain aSCED-48/384, with FER never worse (one more ML candidate can only
+help). Scoped to `fixed_sequential` + `full_parallel` only —
+`syndrome_sequential` reorders per-word dynamically and would need a real
+C++ "pin" feature to guarantee index 0 goes first; out of scope here.
+
+New files (did not modify the existing sequential script/sbatch, to avoid
+colliding with concurrent work on adjacent files):
+- `reproduce_fig3_RL_zc11_asced_5G_LDPC_sequential_pcmfirst.py` — same CLI
+  as the base sequential script; `VARIANTS` dict extended with
+  `asced49`/`asced385` (3rd tuple element = prepend-PCM-path flag);
+  `create_asced_config` prepends `create_bp_config(H)` as its own one-entry
+  "batch" before the aSCED batches when that flag is set. results_dir
+  includes `pcmfirst` to stay distinguishable from the plain sequential
+  script's RESULTS tree.
+- `sweeps/generate_pcmfirst_manifest.py` → `sweeps/pcmfirst_manifest.csv`
+  (42 rows: 2 variants x (1 full_parallel + fixed_sequential x 2 targets) x
+  7 SNR points 1.0-4.0dB step 0.5; `target_num_converged={2,6}` reused as-is
+  from the plain aSCED-48/384 calibration).
+- `sweeps/run_manifest_array_pcmfirst.sbatch` — fork of
+  `run_manifest_array.sbatch` pointing at the new script (the generic
+  runner hardcodes the script name, so it couldn't be reused unmodified
+  without touching a shared file).
+
+**Sanity check (passed):** built asced49 (confirmed "Simulated num. aSCED
+paths: 49 in 11 batches") and asced385 ("...385 in 9 batches") locally,
+`full_parallel`, no errors. FER vs. the completed asced48/384 full_parallel
+baseline (`RESULTS/fig_x_zc11_r4_seq_full_parallel_mpg8_n132/`, same
+n_simul=132/target_errors=200 settings), checked at a few SNR points rather
+than the full grid (full grid is exactly what the production sweep below
+measures):
+
+| variant | SNR | FER | baseline (asced48/384) | SNR | FER |
+|---|---|---|---|---|---|
+| asced49  | 1.0 | 0.3546 | asced48  | 1.0 | 0.4069 |
+| asced49  | 3.0 | 0.0039 | asced48  | 3.0 | 0.00384 |
+| asced385 | 1.0 | 0.2283 | asced384 | 1.0 | 0.2306 |
+| asced385 | 2.0 | 0.0307 | asced384 | 2.0 | 0.0322 |
+
+3/4 points strictly lower (consistent with the "extra ML candidate can only
+help" expectation); the 4th (asced49@3.0dB, 0.0039 vs 0.00384) is
+statistically indistinguishable at ~200 FE (≈7% relative stderr) — not a
+violation. No red flags.
+
+**Production sweep:** submitted via
+`sbatch --array=1-42%10 sweeps/run_manifest_array_pcmfirst.sbatch sweeps/pcmfirst_manifest.csv`
+→ **job 534062**. `sacct` after a few seconds already showed several
+COMPLETED (0:0) and the rest RUNNING/PENDING, no FAILED — spot-checked
+task 1's log (`sweeps/logs/asced_pcmfirst_534062_1.out`): asced49,
+SNR=1.0, 49 paths confirmed, FER=0.3560 (consistent with the local sanity
+run). Output root:
+`RESULTS/fig_x_zc11_r4_seq_pcmfirst_<selector>_mpg7_n132/<variant>_<selector>[_mpg7_target<N>]/snr_<X>/`.
+Status as of submission: running, not yet verified complete — check
+`sacct -j 534062` and cross-reference against the 42-row manifest before
+building any plots from this data (same per-SNR-subdirectory merge caveat
+as the race-condition note above applies).
+
 ## Not yet done / next steps
 
 1. **Build the interactive plot.** Style guide verbatim in
