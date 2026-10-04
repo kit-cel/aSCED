@@ -345,6 +345,69 @@ either, by the same one-dir-per-run construction), and compare whether the
 row-layered convergence-speed advantage seen in nmsa compounds, holds, or
 washes out at the aSCED-48/384 ensemble level.
 
+## NMSA norm_factor sweep (2026-10-02, branch `alpha_sweep`, worktree `/home/pj9034/aSCED/.claude/worktrees/agent-a6c85817686a58275`)
+
+`BP_config.norm_factor` (the MSA normalization constant, used when
+`cn_update_type="msa"`) had been hardcoded to 0.75 everywhere, unexamined.
+Swept it over 9 dyadic values `[0.5, 0.5625, 0.625, 0.6875, 0.75, 0.8125,
+0.875, 0.9375, 1.0]` across three decoders: standalone NMSA (BP on the plain
+PCM `H`), and aSCED-48 / aSCED-384 **full_parallel** ensembles (same
+constructions as `reproduce_fig3_RL_zc11_asced_5G_LDPC_sequential.py`: split
+patterns `[2,4,6,8]`/2 blocks and `[5]`/4 blocks). Everything else held at
+the established defaults (`scheduling_type="flooding"`, `max_iterations=32`,
+`early_stopping=True`) - this sweep varies **only** `norm_factor`, no
+selector/stopping-policy/scheduling changes (those are separate studies
+elsewhere). SNR grid 1.0-4.0dB step 0.5 (7 points), `n_simul=132`,
+`target_errors=200`, `max_transmissions=2e6`. 3 variants x 9 alpha values x
+7 SNR = 189 tasks.
+
+New files (this worktree was handed a stale branch missing `sweeps/`
+entirely - re-based onto `claude_sequential`'s tip under a new branch
+`alpha_sweep` per the task's instructions, to avoid clobbering other
+subagents' concurrent work):
+- `sweeps/alpha_sweep.py`: CLI `<nmsa|asced48|asced384> <n_simul>
+  <snr_start> <snr_end> <norm_factor>`. Results under
+  `RESULTS/fig_x_zc11_r4_alpha_sweep_n<n_simul>/<variant>/alpha_<norm_factor>/<save_name>/snr_<snr>/`
+  (one dir per (config, SNR), same race-avoidance pattern as the sequential
+  sweep). Also honors optional `ALPHA_SWEEP_TARGET_ERRORS` /
+  `ALPHA_SWEEP_MAX_TRANSMISSIONS` env-var overrides for quick local sanity
+  checks only - the real sweep (sbatch array) never sets these, so it always
+  uses target_errors=200/max_transmissions=2e6.
+- `sweeps/generate_alpha_sweep_manifest.py` -> `sweeps/alpha_sweep_manifest.csv` (189 rows).
+- `sweeps/alpha_sweep_array.sbatch`: manifest-driven SLURM array runner
+  (`--cpus-per-task=32 --time=24:00:00 --partition=all --account=cel-assis`),
+  modeled on `sweeps/run_manifest_array.sbatch`.
+
+**Sanity check (before launching the full sweep, reduced trial budget via
+the env-var overrides above, output deleted afterward since the C++ side
+merges JSON via a non-atomic read-modify-write - leftover partial-budget
+data would have contaminated the real sweep's output for the same
+(variant, alpha, snr) combos):**
+- Confirmed `norm_factor` is actually applied: standalone NMSA @ 2.0dB gave
+  FER 0.547 / 0.157 / 0.358 for alpha = 0.5 / 0.75 / 1.0 respectively (80
+  target errors each) - a clear, non-monotonic (U-shaped, 0.75 near-optimal)
+  dependence, as expected for an MSA normalization sweep.
+- Cross-checked alpha=0.75 against existing norm_factor=0.75 baseline data:
+  - NMSA @ 2.0dB: 0.157 (ours, 80 errors) vs 0.1797 (baseline,
+    `/home/pj9034/aSCED/RESULTS/fig_x_zc11_r4n=132/nmsa/FER.json`, 200
+    errors) - within sampling noise.
+  - aSCED-48 full_parallel @ 1.5dB: 0.182 (ours, 60 errors) vs 0.187-0.204
+    (baseline, `.../sim-orchestrator-6e0478/RESULTS/fig_x_zc11_r4_seq_full_parallel_mpg8_n132/asced48_full_parallel/`,
+    200 errors) - within sampling noise.
+  - aSCED-384 full_parallel @ 1.5dB: 0.095 (ours, 50 errors) vs 0.101
+    (baseline, same dir, `asced384_full_parallel/`) - within sampling noise.
+- All three variants run correctly end-to-end, ensemble construction (48/384
+  paths) matches the existing script's path counts.
+
+**Sweep status: submitted, job 534481**
+(`sbatch --array=1-189%10 sweeps/alpha_sweep_array.sbatch
+sweeps/alpha_sweep_manifest.csv`). Early `sacct` check (seconds after
+submit): dozens of NMSA tasks already COMPLETED with exit code 0:0, several
+more RUNNING, rest PENDING (array cap `%10`) - job is healthy, not failing.
+aSCED-48/384 tasks (slower, more paths) will take longer; NMSA tasks are
+fast. Not yet complete as of this writing - check `sacct -j 534481` and the
+`RESULTS/fig_x_zc11_r4_alpha_sweep_n132/` tree for final results once done.
+
 ## Not yet done / next steps
 
 1. **Build the interactive plot.** Style guide verbatim in
