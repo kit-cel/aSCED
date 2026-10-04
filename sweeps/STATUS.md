@@ -177,6 +177,16 @@ drastically at these FERs — confirm, don't assume).
   version, kept as historical record of exactly what was submitted.)
 - `smoke_test_sequential.py` (repo root): quick 4-thread functional smoke
   test, not part of the sweeps.
+- **Worktree gotcha (2026-10-04)**: `RESULTS/` is gitignored, so when
+  several background subagents each worked in their own `isolation:
+  "worktree"` copy and ran their SLURM jobs there (`cd
+  "${SLURM_SUBMIT_DIR}"` = that worktree), their output landed only in
+  *their* worktree's `RESULTS/`, never in this one — merging their git
+  branches brought over code/manifests but not data. Had to manually
+  `cp -rn <agent-worktree>/RESULTS/* RESULTS/` for each of the 4 agent
+  worktrees after merging. If you spin up more isolated-worktree agents
+  that run SLURM jobs, remember to do this copy step before trying to
+  read their results from this worktree.
 
 ## Final verification pass (before compacting)
 
@@ -268,6 +278,31 @@ Status as of submission: running, not yet verified complete — check
 `sacct -j 534062` and cross-reference against the 42-row manifest before
 building any plots from this data (same per-SNR-subdirectory merge caveat
 as the race-condition note above applies).
+
+**UPDATE (production sweep complete, all 4 branches merged into
+claude_sequential, RESULTS/ copied in from each agent's isolated worktree —
+see "Infrastructure" section for why that copy step was needed):**
+Final effort/latency numbers (fixed_sequential target=2) are confounded —
+asced49/385 use `members_per_group=7` (required so index 0 lands in group 0
+evenly: 49=7x7, 385=7x55) while the asced48/384 baseline being compared
+against uses `members_per_group=8`. So the comparison mixes two effects:
+(1) adding the pinned PCM-first path, (2) shrinking the group size 8→7.
+aSCED-48 result is ambiguous (latency *increases* +16-17% at low SNR,
+effort improves -8 to -23% at high SNR) while aSCED-384 looks dramatic
+(effort/latency down up to -71%/-72%) — but it's unclear how much of the
+384 win is the PCM-first idea vs. just finer group granularity.
+
+**De-confounding control launched**: `sweeps/mpg7_control_manifest.csv` (28
+rows) — plain aSCED-48/384 (no PCM path, existing
+`reproduce_fig3_RL_zc11_asced_5G_LDPC_sequential.py`, unmodified) with
+`fixed_sequential`, `members_per_group=7`, `target_num_converged={2,6}`,
+same SNR grid. Submitted as **job 535646**
+(`sbatch --array=1-28%10 sweeps/run_manifest_array.sbatch sweeps/mpg7_control_manifest.csv`),
+output at `RESULTS/fig_x_zc11_r4_seq_fixed_sequential_mpg7_n132/`. Once
+complete, compare this (mpg=7, no PCM) against the existing pcmfirst mpg=7
+data to isolate the PCM-first effect cleanly: PCM-first's true effect =
+(pcmfirst mpg=7 vs. this mpg=7 control), separate from (this mpg=7 control
+vs. the existing mpg=8 baseline) which is the pure group-size effect.
 
 ## Scheduling/iteration-count study (2026-10-02, new worktree branch `scheduling_study`)
 
