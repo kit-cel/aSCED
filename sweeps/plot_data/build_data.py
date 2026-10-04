@@ -2,7 +2,7 @@ import json, csv, math
 from pathlib import Path
 
 ROOT = Path("/home/pj9034/aSCED/.claude/worktrees/sim-orchestrator-6e0478/RESULTS")
-OUT = Path("/tmp/claude-246141/-home-pj9034-aSCED--claude-worktrees-sim-orchestrator-6e0478/442a2e43-0413-4065-902f-1e00d80ea3b2/scratchpad")
+OUT = Path(__file__).parent
 SNR_GRID = ["1", "1.5", "2", "2.5", "3", "3.5", "4"]
 
 import re
@@ -46,7 +46,18 @@ def get_config_data(cdir: Path):
     return out
 
 configs = {}
-for cdir in sorted(ROOT.glob("*_n132/*/")):
+# NOTE: several other studies (greedy block search, pcmfirst, scheduling, alpha
+# sweep) now also live under RESULTS/*_n132/*/, and the greedy sweep in
+# particular reuses the *exact same* <variant>_<selector>_mpg8_target<N>
+# leaf-directory names as this plain Sweep A/B baseline (only the root dir
+# differs, e.g. "fig_x_zc11_r4_seq_greedy_fixed_sequential_mpg8_n132" vs
+# "fig_x_zc11_r4_seq_fixed_sequential_mpg8_n132") -- without this guard the
+# dict-key collision would silently let greedy data overwrite the baseline
+# here. Restrict to root dirs that are exactly this sweep's own naming
+# convention (no "greedy"/"pcmfirst"/etc. tag prefix).
+ROOT_PATTERN = re.compile(r"^fig_x_zc11_r\d+_seq_(?:full_parallel|fixed_sequential|random_sequential|syndrome_sequential)_mpg[\d.]+_n\d+$")
+valid_roots = sorted(root for root in ROOT.glob("*_n132") if ROOT_PATTERN.match(root.name))
+for cdir in sorted(p for root in valid_roots for p in root.glob("*/")):
     name = cdir.name.rstrip("/")
     m = PATTERN.match(name)
     if not m:

@@ -1,18 +1,37 @@
-import json
+import json, csv
 from pathlib import Path
 
-OUT = Path("/tmp/claude-246141/-home-pj9034-aSCED--claude-worktrees-sim-orchestrator-6e0478/442a2e43-0413-4065-902f-1e00d80ea3b2/scratchpad")
+OUT = Path(__file__).parent
+
+def csv_rows(name):
+    return list(csv.DictReader(open(OUT / name)))
 
 sweepA = json.load(open(OUT / "sweepA_data.json"))
 groupsize = json.load(open(OUT / "sweepB_groupsize.json"))
 ordering = json.load(open(OUT / "sweepB_ordering.json"))
 raw = json.load(open(OUT / "raw_numbers.json"))
+greedy = json.load(open(OUT / "greedy_data.json"))
+greedy_raw = csv_rows("greedy_raw.csv")
+pcmfirst = json.load(open(OUT / "pcmfirst_data.json"))
+pcmfirst_raw = csv_rows("pcmfirst_raw.csv")
+scheduling = json.load(open(OUT / "scheduling_data.json"))
+scheduling_raw = csv_rows("scheduling_raw.csv")
+alpha = json.load(open(OUT / "alpha_data.json"))
+alpha_raw = csv_rows("alpha_raw.csv")
 
 DATA_JS = json.dumps({
     "sweepA": sweepA,
     "groupsize": groupsize,
     "ordering": ordering,
     "raw": raw,
+    "greedy": greedy,
+    "greedyRaw": greedy_raw,
+    "pcmfirst": pcmfirst,
+    "pcmfirstRaw": pcmfirst_raw,
+    "scheduling": scheduling,
+    "schedulingRaw": scheduling_raw,
+    "alpha": alpha,
+    "alphaRaw": alpha_raw,
 }, indent=None)
 
 HTML = """<title>Sequential aSCED Decoding</title>
@@ -78,15 +97,21 @@ td:nth-child(2),th:nth-child(2){text-align:left}
   <p class="lede">
     aSCED-48 and aSCED-384 (RL / QC-block 5G LDPC, C<sub>5G</sub>(132,66), Z<sub>c</sub>=11) decoded with the new
     <span class="mono">DecoderSelector</span> + <span class="mono">MConvergedPolicy</span> group-sequential stopping
-    mechanism, compared against full-parallel ensemble decoding and against Fig. 3 of the paper. All curves below are
-    interactive &mdash; click a legend entry to hide/show, double-click to isolate. Hollow markers mark points with
-    &lt;300 collected frame errors.
+    mechanism, compared against full-parallel ensemble decoding and against Fig. 3 of the paper. Six studies in
+    total: the original selector/group-size sweeps (A, B), plus four follow-ups &mdash; greedy RL/QC-block
+    selection, PCM-first ensembles, BP scheduling/iteration count, and the MSA normalization constant (&alpha;).
+    All curves below are interactive &mdash; click a legend entry to hide/show, double-click to isolate. Hollow
+    markers mark points with &lt;300 collected frame errors.
   </p>
 
   <div class="toc">
     <a href="#sweepA">Sweep A &middot; selector comparison</a>
     <a href="#sweepB1">Sweep B &middot; latency/complexity vs. group size</a>
     <a href="#sweepB2">Sweep B &middot; ordering rule</a>
+    <a href="#greedy">Greedy block selection</a>
+    <a href="#pcmfirst">PCM-first (aSCED-49/385)</a>
+    <a href="#scheduling">Scheduling &amp; iterations</a>
+    <a href="#alpha">&alpha; (norm_factor) sweep</a>
     <a href="#raw">Raw numbers</a>
   </div>
 
@@ -144,6 +169,77 @@ td:nth-child(2),th:nth-child(2){text-align:left}
     first), so the paths most likely to converge run early &mdash; the lower bars above are the direct effect.</p>
   </section>
 
+  <section id="greedy">
+    <h2 style="margin-bottom:2px">Greedy RL/QC-block selection</h2>
+    <p class="note" style="margin-top:2px;margin-bottom:18px">
+      Job 535455, 70/70 complete, n_simul=132, members_per_group=8, target_num_converged &isin; {2, 6} (full parallel
+      ignores target). <b>Baseline</b> = the reference script's arbitrary choice of "the next 2 (resp. 4) subsequent
+      RL/QC blocks from offset 0". <b>Greedy</b> = blocks picked by round-by-round greedy forward selection over all
+      34 candidates, ranked by combined FER rank at 1.8/3.3dB (see
+      <span class="mono">sweeps/greedy_block_search_results.md</span>) &mdash; winning order aSCED-48: blocks
+      [21, 16]; aSCED-384: blocks [31, 14, 17, 3]. Only block 16 appears in both lists. Complexity =
+      <span class="mono">average_ensemble_effort</span>.
+    </p>
+    <p class="note" style="margin-bottom:18px"><b>Caveat (documented, not re-verified here):</b> 2 of the 34
+      candidate blocks (indices 10 and 19) reproducibly segfault channel-code-lib2's BP decoder &mdash; both are
+      degenerate check-node-degree-1 blocks (every row weight exactly 1). Both search orchestrators automatically
+      excluded them from ranking, so they never corrupted the search; they were simply permanently out of
+      contention. This is a C++-side bug, out of scope for this page (tracked separately).</p>
+    <div id="settings-greedy"></div>
+  </section>
+
+  <section id="pcmfirst">
+    <h2 style="margin-bottom:2px">PCM-first ensembles (aSCED-49/385)</h2>
+    <p class="note" style="margin-top:2px;margin-bottom:10px">
+      aSCED-49/385 = aSCED-48/384 plus one extra decoding path on the plain, unmodified PCM <span class="mono">H</span>
+      (no auxiliary rows &mdash; a single path, not a batch), prepended at ensemble index 0 so it is scheduled first
+      under <span class="mono">fixed_sequential</span>. Job 534062, 42/42 complete. Scoped to
+      <span class="mono">full_parallel</span> + <span class="mono">fixed_sequential</span> only (pinning index 0
+      first needs <span class="mono">members_per_group=7</span> so 49=7&times;7 / 385=7&times;55 divide evenly;
+      <span class="mono">syndrome_sequential</span> reorders dynamically per word and was out of scope).
+    </p>
+    <p class="verdict" style="background:color-mix(in srgb, var(--warn) 12%, transparent);border:1px solid var(--warn);border-radius:8px;padding:10px 14px;margin-bottom:16px">
+      <b>Confounded comparison &mdash; not yet corrected.</b> The PCM-first sweep necessarily used
+      <span class="mono">members_per_group=7</span>, while the baseline below (plain aSCED-48/384) uses
+      <span class="mono">members_per_group=8</span> &mdash; so the gap plotted here mixes <i>two</i> effects: (1)
+      adding the pinned PCM-first path, and (2) shrinking the group size 8&rarr;7 (finer grouping alone tends to
+      lower latency/effort). A de-confounding control (plain aSCED-48/384 at mpg=7, no PCM path &mdash; job 535646)
+      was running at the time this page was built (16/28 tasks complete, 10 running, 1 pending; check
+      <span class="mono">sacct -j 535646</span>). Once it lands, this section should be rebuilt to show the clean,
+      isolated PCM-first effect (pcmfirst mpg=7 vs. mpg=7 control) separately from the pure group-size effect
+      (mpg=7 control vs. mpg=8 baseline). Until then, treat the gap below as an upper bound on the PCM-first effect,
+      not a clean attribution.
+    </p>
+    <div id="settings-pcmfirst"></div>
+  </section>
+
+  <section id="scheduling">
+    <h2 style="margin-bottom:2px">BP scheduling &amp; iteration count</h2>
+    <p class="note" style="margin-top:2px;margin-bottom:18px">
+      Job 534114, 126/126 complete, n_simul=132, full_parallel only (one clean variable at a time, decoupled from the
+      selector work above). <span class="mono">scheduling_type</span> &isin; {flooding, row_layered (natural order),
+      row_layered (appended-rows block first)} &times; <span class="mono">max_iterations</span> &isin; {32, 16}, for
+      3 variants: standalone NMSA (BP on <span class="mono">H</span> alone), aSCED-48, aSCED-384 (full parallel).
+      Solid = 32 iterations, dashed = 16 iterations. <b>Headline:</b> row-layered scheduling at 16 iterations
+      roughly matches or beats flooding at 32 iterations on both FER and effort &mdash; i.e. the same error-rate
+      floor at about half the iteration budget.
+    </p>
+    <div id="settings-scheduling"></div>
+  </section>
+
+  <section id="alpha">
+    <h2 style="margin-bottom:2px">MSA normalization constant (&alpha;) sweep</h2>
+    <p class="note" style="margin-top:2px;margin-bottom:10px">
+      Job 534481, 189/189 complete, n_simul=132. <span class="mono">BP_config.norm_factor</span> (&alpha;, used when
+      <span class="mono">cn_update_type="msa"</span>) swept over 9 dyadic values in [0.5, 1.0], all else held at the
+      established defaults (flooding, max_iterations=32). One line per SNR point (darker = higher SNR / lower FER);
+      the dashed vertical guide marks &alpha;=0.75, the long-standing default. <b>Headline:</b> &alpha;=0.75 is at or
+      very near the FER-minimizing value for all three variants &mdash; it wins outright at every SNR &ge;2.5dB for
+      all three, and is within noise of the (slightly different) winner at the lower, noisier SNR points.
+    </p>
+    <div class="quad" id="settings-alpha"></div>
+  </section>
+
   <section id="raw">
     <h2>Raw numbers</h2>
     <p class="note" style="margin-top:2px">CSV/JSON of everything below were sent alongside this page.</p>
@@ -156,14 +252,31 @@ td:nth-child(2),th:nth-child(2){text-align:left}
       <div class="tscroll" id="tbl-ordering"></div>
     </details>
     <details>
-      <summary>All 119 simulated (config &times; SNR) data points</summary>
+      <summary>All 119 simulated (config &times; SNR) data points &mdash; Sweeps A/B</summary>
       <div class="tscroll" id="tbl-raw"></div>
+    </details>
+    <details>
+      <summary>Greedy block selection &mdash; baseline vs. greedy, raw (config &times; SNR) points</summary>
+      <div class="tscroll" id="tbl-greedy"></div>
+    </details>
+    <details>
+      <summary>PCM-first &mdash; raw (config &times; SNR) points</summary>
+      <div class="tscroll" id="tbl-pcmfirst"></div>
+    </details>
+    <details>
+      <summary>Scheduling study &mdash; raw (config &times; SNR) points</summary>
+      <div class="tscroll" id="tbl-scheduling"></div>
+    </details>
+    <details>
+      <summary>&alpha; sweep &mdash; raw (config &times; SNR) points</summary>
+      <div class="tscroll" id="tbl-alpha"></div>
     </details>
   </section>
 
-  <p class="note">CPU-time-per-frame was not instrumented separately from decoding effort in these runs; the
-  "complexity" axis above is BP-iteration effort (the paper's own cost proxy), not wall-clock CPU seconds.
-  n_simul=110, target_errors=200, max_transmissions=2e6 per point.</p>
+  <p class="note">CPU-time-per-frame was not instrumented separately from decoding effort in these runs, in any of
+  the six studies above; the "complexity"/"effort" axis is BP-iteration effort (the paper's own cost proxy), not
+  wall-clock CPU seconds. All runs: n_simul=132 (C<sub>5G</sub>(132,66)), target_errors=200, max_transmissions=2e6
+  per point, unless a section's own note states otherwise.</p>
 </div>
 
 <script>
@@ -186,7 +299,10 @@ function baseLayout(xlabel, ylabel, xlog, ylog) {
           hoverlabel: {bgcolor: tok('--panel'), bordercolor: tok('--rule'), font: {color: tok('--ink'), family: 'IBM Plex Mono, monospace', size: 12}}};
 }
 
-const GROUP_COLOR = {"Baseline": () => tok('--c-base'), "Fixed order": () => tok('--c-a'), "Syndrome order": () => tok('--c-b')};
+const GROUP_COLOR = {"Baseline": () => tok('--c-base'), "Fixed order": () => tok('--c-a'), "Syndrome order": () => tok('--c-b'),
+  "Baseline blocks": () => tok('--c-base'), "Greedy blocks": () => tok('--c-a'),
+  "No PCM-first (mpg=8, baseline)": () => tok('--c-base'), "PCM-first (mpg=7)": () => tok('--c-a'),
+  "flooding": () => tok('--c-base'), "row-layered (natural)": () => tok('--c-a'), "row-layered (appended-first)": () => tok('--c-b')};
 const DASHES = ["solid", "dash", "dot", "dashdot", "longdash"];
 const SYMS = ["circle", "square", "diamond", "triangle-up", "x"];
 
@@ -215,9 +331,11 @@ function settingTraces(d, cpu) {
   const tr = curveTraces(d, cpu);
   if (!cpu) {
     const R = d.reference;
-    tr.push({name: R.name, x: R.pts.map(p => p[0]), y: R.pts.map(p => p[1]), mode: 'lines+markers',
-             line: {color: tok('--c-ref'), dash: 'dashdot', width: 2}, marker: {size: 5, color: tok('--c-ref')},
-             hovertemplate: '%{y:.3e}<extra>' + R.name + '</extra>'});
+    if (R) {
+      tr.push({name: R.name, x: R.pts.map(p => p[0]), y: R.pts.map(p => p[1]), mode: 'lines+markers',
+               line: {color: tok('--c-ref'), dash: 'dashdot', width: 2}, marker: {size: 5, color: tok('--c-ref')},
+               hovertemplate: '%{y:.3e}<extra>' + R.name + '</extra>'});
+    }
     Object.entries(d.paper || {}).forEach(([n, s]) => tr.push({name: n + ' (paper)', x: s.map(p => p[0]), y: s.map(p => p[1]),
              mode: 'lines+markers', line: {color: tok('--ink-3'), dash: 'dot', width: 1.3}, marker: {size: 4, color: tok('--ink-3')},
              visible: 'legendonly'}));
@@ -257,6 +375,43 @@ function buildSweepA() {
       </div>`;
     host.appendChild(sec);
     drawSetting(id, d);
+  });
+}
+
+// Generic FER+effort "pair" card renderer, reused by greedy / pcmfirst / scheduling
+// (same shape as buildSweepA, parameterized over host id, data object and a title function).
+function buildPairedSettings(hostId, dataObj, titleFor) {
+  const host = document.getElementById(hostId);
+  host.innerHTML = '';
+  Object.entries(dataObj).forEach(([id, d]) => {
+    const uid = hostId + '-' + id;
+    const sec = document.createElement('div');
+    sec.className = 'card';
+    sec.innerHTML = `
+      <header><h2>${titleFor(id)}</h2></header>
+      <div class="pair">
+        <div class="plot" id="err-${uid}"></div>
+        <div class="plot" id="cpu-${uid}"></div>
+      </div>`;
+    host.appendChild(sec);
+    drawSetting(uid, d);
+  });
+}
+
+function buildGreedy() {
+  buildPairedSettings('settings-greedy', DATA.greedy, id =>
+    `aSCED-${id.replace('asced', '')} <span class="sub">baseline (subsequent blocks) vs. greedy-selected blocks</span>`);
+}
+
+function buildPcmfirst() {
+  buildPairedSettings('settings-pcmfirst', DATA.pcmfirst, id =>
+    `${id.replace('K', 'K=')} family <span class="sub">aSCED-${id === 'K48' ? '48 vs. 49' : '384 vs. 385'}</span>`);
+}
+
+function buildScheduling() {
+  buildPairedSettings('settings-scheduling', DATA.scheduling, id => {
+    const label = id === 'nmsa' ? 'Standalone NMSA' : `aSCED-${id.replace('asced', '')}`;
+    return `${label} <span class="sub">full parallel</span>`;
   });
 }
 
@@ -306,6 +461,45 @@ function buildOrdering() {
   buildOrderingBars('ord-lat-001', '0.001', 'latency');
 }
 
+// Parameter-sweep plot (PLOTTING_STYLE.md section 8): x = alpha (continuous decoder
+// parameter), y = absolute FER (log), one line per channel point (SNR), sequential
+// single-hue ramp (darker = higher SNR = lower FER = "better channel").
+function buildAlpha() {
+  const host = document.getElementById('settings-alpha');
+  host.innerHTML = '';
+  const names = {nmsa: 'Standalone NMSA', asced48: 'aSCED-48', asced384: 'aSCED-384'};
+  Object.entries(DATA.alpha.variants).forEach(([variant, lines]) => {
+    const div = document.createElement('div');
+    div.innerHTML = `<div class="sub" style="margin-bottom:4px">${names[variant] || variant}</div><div class="plot" id="alpha-${variant}" style="height:400px"></div>`;
+    host.appendChild(div);
+    const snrVals = lines.map(l => l.snr);
+    const lo = Math.min(...snrVals), hi = Math.max(...snrVals);
+    const traces = lines.filter(l => l.pts.length).map(l => {
+      const t = hi === lo ? 1 : (l.snr - lo) / (hi - lo);
+      // light -> dark single-hue blue ramp, darker = higher SNR (lower FER, "better channel")
+      const light = 82 - 54 * t; // lightness 82% (low SNR) -> 28% (high SNR)
+      const color = `hsl(215, 70%, ${light}%)`;
+      const few = l.pts.length <= 2;
+      return {
+        name: `SNR=${l.snr.toFixed(1)}dB`, x: l.pts.map(p => p[0]), y: l.pts.map(p => p[1]),
+        customdata: l.pts.map(p => p[2]),
+        hovertemplate: '%{y:.3e} &middot; %{customdata} err<extra>SNR=' + l.snr.toFixed(1) + 'dB</extra>',
+        mode: few ? 'markers' : 'lines+markers',
+        line: {color, width: 2},
+        marker: {size: few ? 9 : 6, color: l.pts.map(p => p[2] < 300 ? 'rgba(0,0,0,0)' : color), line: {width: 1.6, color}}
+      };
+    });
+    const layout = Object.assign(baseLayout('norm_factor (α)', 'FER', false, true), {
+      height: 400, legend: {orientation: 'h', y: -0.24, font: {size: 10, color: tok('--ink-2')}, bgcolor: 'rgba(0,0,0,0)'},
+      shapes: [{type: 'line', x0: 0.75, x1: 0.75, yref: 'paper', y0: 0, y1: 1,
+                line: {color: tok('--ink-3'), dash: 'dash', width: 1.3}}],
+      annotations: [{x: 0.75, y: 1, yref: 'paper', yanchor: 'bottom', showarrow: false, text: 'α=0.75 (default)',
+                      font: {size: 10, color: tok('--ink-3')}}]
+    });
+    Plotly.react('alpha-' + variant, traces, layout, cfg);
+  });
+}
+
 function table(rows, cols) {
   const head = '<tr>' + cols.map(c => `<th>${c.label}</th>`).join('') + '</tr>';
   const body = rows.map(r => '<tr>' + cols.map(c => `<td>${c.fmt ? c.fmt(r[c.key]) : (r[c.key] ?? '&ndash;')}</td>`).join('') + '</tr>').join('');
@@ -329,17 +523,45 @@ function buildTables() {
      {key: 'frame_errors', label: 'FE'}, {key: 'trials', label: 'trials'},
      {key: 'average_ensemble_effort', label: 'effort', fmt: f3}, {key: 'average_ensemble_latency', label: 'latency', fmt: f3},
      {key: 'average_number_converged_path', label: 'avg #converged', fmt: f3}]);
+  document.getElementById('tbl-greedy').innerHTML = table(DATA.greedyRaw,
+    [{key: 'source', label: 'source'}, {key: 'variant', label: 'variant'}, {key: 'selector', label: 'selector'},
+     {key: 'target_num_converged', label: 'target'}, {key: 'snr_db', label: 'SNR [dB]'}, {key: 'fer', label: 'FER', fmt: f3},
+     {key: 'frame_errors', label: 'FE'}, {key: 'trials', label: 'trials'},
+     {key: 'average_ensemble_effort', label: 'effort', fmt: f3}, {key: 'average_ensemble_latency', label: 'latency', fmt: f3}]);
+  document.getElementById('tbl-pcmfirst').innerHTML = table(DATA.pcmfirstRaw,
+    [{key: 'source', label: 'source'}, {key: 'variant', label: 'variant'}, {key: 'selector', label: 'selector'},
+     {key: 'members_per_group', label: 'mpg'}, {key: 'target_num_converged', label: 'target'},
+     {key: 'snr_db', label: 'SNR [dB]'}, {key: 'fer', label: 'FER', fmt: f3}, {key: 'frame_errors', label: 'FE'},
+     {key: 'trials', label: 'trials'}, {key: 'average_ensemble_effort', label: 'effort', fmt: f3},
+     {key: 'average_ensemble_latency', label: 'latency', fmt: f3}]);
+  document.getElementById('tbl-scheduling').innerHTML = table(DATA.schedulingRaw,
+    [{key: 'variant', label: 'variant'}, {key: 'scheduling_config', label: 'schedule'}, {key: 'max_iterations', label: 'maxiter'},
+     {key: 'snr_db', label: 'SNR [dB]'}, {key: 'fer', label: 'FER', fmt: f3}, {key: 'frame_errors', label: 'FE'},
+     {key: 'trials', label: 'trials'}, {key: 'average_ensemble_effort', label: 'effort', fmt: f3},
+     {key: 'average_ensemble_latency', label: 'latency', fmt: f3}]);
+  document.getElementById('tbl-alpha').innerHTML = table(DATA.alphaRaw,
+    [{key: 'variant', label: 'variant'}, {key: 'norm_factor', label: 'α'}, {key: 'snr_db', label: 'SNR [dB]'},
+     {key: 'fer', label: 'FER', fmt: f3}, {key: 'frame_errors', label: 'FE'}, {key: 'trials', label: 'trials'},
+     {key: 'average_ensemble_effort', label: 'effort', fmt: f3}]);
 }
 
-buildSweepA();
-buildGroupsize();
-buildOrdering();
+function buildAll() {
+  buildSweepA();
+  buildGroupsize();
+  buildOrdering();
+  buildGreedy();
+  buildPcmfirst();
+  buildScheduling();
+  buildAlpha();
+}
+
+buildAll();
 buildTables();
 
 try {
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { buildSweepA(); buildGroupsize(); buildOrdering(); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', buildAll);
 } catch (e) {}
-new MutationObserver(() => { buildSweepA(); buildGroupsize(); buildOrdering(); })
+new MutationObserver(buildAll)
   .observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
 </script>
 """

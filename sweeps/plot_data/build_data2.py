@@ -1,7 +1,7 @@
 import json, math
 from pathlib import Path
 
-OUT = Path("/tmp/claude-246141/-home-pj9034-aSCED--claude-worktrees-sim-orchestrator-6e0478/442a2e43-0413-4065-902f-1e00d80ea3b2/scratchpad")
+OUT = Path(__file__).parent
 raw = json.load(open(OUT / "raw_numbers.json"))
 lit = json.load(open(OUT / "literature.json"))
 

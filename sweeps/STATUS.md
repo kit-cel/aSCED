@@ -568,3 +568,71 @@ branch `worktree-agent-ad70233b227562690` (was reset to this session's
 `claude_sequential` tip at the start of the task since it had been created
 from a stale base). Committed but not pushed -- needs merging into
 `claude_sequential` by the orchestrating session.
+
+## Plot page extended to all six studies (2026-10-04)
+
+`sweeps/plot_sequential_results.html` (same published URL,
+`https://claude.ai/artifact/CA2zRnHi9VuyU5KWvKbfZj`, republished in place as
+Version 3) now covers all six studies, not just Sweeps A/B: greedy RL/QC-block
+selection, PCM-first (aSCED-49/385), the scheduling/iteration-count study, and
+the alpha (norm_factor) sweep were added as four new sections + TOC entries,
+reusing the existing CSS tokens / trace-building JS / table helper / sticky
+TOC pattern from the original two-study page.
+
+New extraction scripts (one per new study, data-complete at build time --
+cross-checked snr-subdirectory counts and manifest row counts, see each
+script's own print statements): `sweeps/plot_data/build_data_greedy.py`
+(140/140 rows, baseline "subsequent blocks" vs. greedy-selected blocks, both
+at mpg=8), `build_data_pcmfirst.py` (84/84 rows), `build_data_scheduling.py`
+(126/126 rows), `build_data_alpha.py` (189/189 rows, confirmed `alpha=1.0` is
+stored as `alpha_1` not `alpha_1.0`). All write into `sweeps/plot_data/`
+(JSON + raw CSV), consumed by the extended `build_html.py`.
+
+**Fixed a latent collision bug while doing this**: the greedy production
+sweep's output directories reuse the *exact same* leaf-directory naming as
+the plain Sweep A/B baseline (only the root tag differs, e.g.
+`..._seq_greedy_fixed_sequential_mpg8_n132` vs. `..._seq_fixed_sequential_mpg8_n132`),
+so `build_data.py`'s original glob (`ROOT.glob("*_n132/*/")`, matching on leaf
+name only) would have silently let greedy data overwrite Sweep A/B's baseline
+dict entries if ever rerun now that both result trees coexist in this
+worktree. Added a `ROOT_PATTERN` guard restricting `build_data.py` to roots
+matching only the plain `fig_x_zc11_r4_seq_<selector>_mpg<N>_n132` naming (no
+`greedy`/`pcmfirst` tag). Verified via a before/after diff of
+`raw_numbers.csv` that the fix adds zero regressions (0 rows removed, +20 new
+legitimate mpg=7-control rows picked up along the way, which existing
+Sweep A/B JS ignores since nothing there queries mpg=7). Also fixed
+`build_data.py`/`build_data2.py`/`build_html.py`'s hardcoded `OUT` path, which
+pointed at an ephemeral session-specific scratchpad directory from the
+original build (fragile -- only this session happened to still have it on
+disk); all three now resolve `OUT` relative to their own file location
+(`sweeps/plot_data/`), so the pipeline is reproducible from a fresh checkout.
+
+**PCM-first section status**: job 535646 (the mpg=7, no-PCM-first
+de-confounding control) had **not** finished at build time
+(`sacct -j 535646`: 16/28 COMPLETED, 10 RUNNING, 1 PENDING) -- so this
+section shows the **confounded** comparison (pcmfirst mpg=7 vs. the existing
+mpg=8 baseline) with a prominent on-page warning box explaining the two
+conflated effects (PCM-first path vs. group-size 8&rarr;7), not a silently
+clean-looking plot. Re-run `build_data_pcmfirst.py` + `build_html.py` once
+job 535646 completes and extend the section to show the clean, isolated
+comparison as the primary one (per the original task spec).
+
+**Other three sections (greedy, scheduling, alpha) were fully complete** at
+build time (jobs 535455, 534114, 534481 all 100% COMPLETED per `sacct`) and
+show clean, unconfounded comparisons. Headline findings reproduced from the
+real data (not just restated from earlier scratch checks): row-layered
+scheduling at 16 iterations tracks flooding at 32 iterations closely across
+SNR (e.g. nmsa @ 2.0dB: flooding/32it FER=0.1742 vs.
+row_layered_natural/16it FER=0.1696); alpha=0.75 wins the FER-argmin at every
+SNR &ge;2.5dB for all three variants (nmsa/asced48/asced384) and is within
+noise of the (slightly different) winner at the three lower, noisier SNR
+points (15/21 operating points overall).
+
+Page verified before publishing: tag-balance check (div/section/details/
+summary/table/etc. open==close counts), the embedded `DATA` JSON blob
+extracted via brace-counting and parsed with `json.loads` (confirmed all new
+keys/row-counts present), and the inline `<script>` parsed with
+`esprima.parseScript` (one pre-existing failure, `??` nullish-coalescing in
+the `table()` helper -- esprima's parser predates ES2020 and already failed
+on this same line in the previously-published, working version; confirmed by
+checking out the old commit, not a regression from this change).
