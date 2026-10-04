@@ -466,7 +466,7 @@ function buildAlpha() {
 
 function table(rows, cols) {
   const head = '<tr>' + cols.map(c => `<th>${c.label}</th>`).join('') + '</tr>';
-  const body = rows.map(r => '<tr>' + cols.map(c => `<td>${c.fmt ? c.fmt(r[c.key]) : (r[c.key] ?? '&ndash;')}</td>`).join('') + '</tr>').join('');
+  const body = rows.map(r => '<tr>' + cols.map(c => `<td>${c.fmt ? c.fmt(r[c.key]) : (r[c.key] == null ? '&ndash;' : r[c.key])}</td>`).join('') + '</tr>').join('');
   return `<table><thead>${head}</thead><tbody>${body}</tbody></table>`;
 }
 const f3 = x => x == null ? '&ndash;' : (+x).toPrecision(4);
