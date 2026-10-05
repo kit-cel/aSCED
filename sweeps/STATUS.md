@@ -607,15 +607,25 @@ original build (fragile -- only this session happened to still have it on
 disk); all three now resolve `OUT` relative to their own file location
 (`sweeps/plot_data/`), so the pipeline is reproducible from a fresh checkout.
 
-**PCM-first section status**: job 535646 (the mpg=7, no-PCM-first
-de-confounding control) had **not** finished at build time
-(`sacct -j 535646`: 16/28 COMPLETED, 10 RUNNING, 1 PENDING) -- so this
-section shows the **confounded** comparison (pcmfirst mpg=7 vs. the existing
-mpg=8 baseline) with a prominent on-page warning box explaining the two
-conflated effects (PCM-first path vs. group-size 8&rarr;7), not a silently
-clean-looking plot. Re-run `build_data_pcmfirst.py` + `build_html.py` once
-job 535646 completes and extend the section to show the clean, isolated
-comparison as the primary one (per the original task spec).
+**PCM-first section status (UPDATE 2026-10-05): de-confounded, job 535646
+complete (28/28).** `build_data_pcmfirst.py` now loads three groups instead
+of two: `baseline (mpg=8)` (original asced48/384), `no PCM-first (mpg=7
+control)` (plain asced48/384 at members_per_group=7, no PCM path -- job
+535646, new root `RESULTS/fig_x_zc11_r4_seq_fixed_sequential_mpg7_n132/`),
+and `PCM-first (mpg=7)` (asced49/385, job 534062). The clean, isolated
+PCM-first effect is the control-vs-pcmfirst gap (both at mpg=7), separate
+from the baseline-vs-control gap (pure group-size effect, mpg=8->7).
+
+Result holds up well once de-confounded: at target_num_converged=2,
+aSCED-384->385 effort drops 16-70% and latency 16-76% across 1-4dB (FER
+flat-to-better); aSCED-48->49 is a more modest but still real 11-28%
+effort / 15-67% latency win from 2.0dB up, with a small +2-3% overhead at
+1.0dB (early stopping barely triggers for either variant there, so the
+extra PCM path is pure overhead at that one point). The mpg=8->7 group-size
+effect alone (baseline vs. control, no PCM involved) is comparatively small
+by itself -- most of the original (confounded) win was genuinely the
+PCM-first idea, not just finer grouping. Page's warning box replaced with
+this verdict; republished as artifact version 5.
 
 **Other three sections (greedy, scheduling, alpha) were fully complete** at
 build time (jobs 535455, 534114, 534481 all 100% COMPLETED per `sacct`) and

@@ -6,7 +6,7 @@
   "curves": [
    {
     "name": "baseline \u00b7 full parallel",
-    "group": "No PCM-first (mpg=8, baseline)",
+    "group": "baseline (mpg=8)",
     "visible": true,
     "pts": [
      [
@@ -55,7 +55,7 @@
    },
    {
     "name": "baseline \u00b7 fixed order \u00b7 target=2",
-    "group": "No PCM-first (mpg=8, baseline)",
+    "group": "baseline (mpg=8)",
     "visible": true,
     "pts": [
      [
@@ -104,7 +104,7 @@
    },
    {
     "name": "baseline \u00b7 fixed order \u00b7 target=6",
-    "group": "No PCM-first (mpg=8, baseline)",
+    "group": "baseline (mpg=8)",
     "visible": false,
     "pts": [
      [
@@ -152,7 +152,105 @@
     ]
    },
    {
-    "name": "pcmfirst \u00b7 full parallel",
+    "name": "mpg7 control \u00b7 fixed order \u00b7 target=2",
+    "group": "no PCM-first (mpg=7 control)",
+    "visible": true,
+    "pts": [
+     [
+      1.0,
+      0.33877551020408164,
+      332,
+      834.5367346938775
+     ],
+     [
+      1.5,
+      0.19008264462809918,
+      345,
+      597.6060606060606
+     ],
+     [
+      2.0,
+      0.07212351945854484,
+      341,
+      388.9141285956007
+     ],
+     [
+      2.5,
+      0.018751781134226275,
+      329,
+      282.28481048731834
+     ],
+     [
+      3.0,
+      0.0035843832499839025,
+      334,
+      236.18678500139512
+     ],
+     [
+      3.5,
+      0.000496836851896563,
+      356,
+      223.75514735539048
+     ],
+     [
+      4.0,
+      5.79849900811002e-05,
+      184,
+      220.02924964586612
+     ]
+    ]
+   },
+   {
+    "name": "mpg7 control \u00b7 fixed order \u00b7 target=6",
+    "group": "no PCM-first (mpg=7 control)",
+    "visible": false,
+    "pts": [
+     [
+      1.0,
+      0.346078431372549,
+      353,
+      1200.2049019607844
+     ],
+     [
+      1.5,
+      0.17317896767969126,
+      359,
+      1028.8022190062711
+     ],
+     [
+      2.0,
+      0.0777034816693567,
+      337,
+      904.800553377911
+     ],
+     [
+      2.5,
+      0.018864457646842653,
+      308,
+      810.6990874012372
+     ],
+     [
+      3.0,
+      0.003961722938023136,
+      337,
+      770.8086734693877
+     ],
+     [
+      3.5,
+      0.0004444317204279087,
+      326,
+      755.1084031677348
+     ],
+     [
+      4.0,
+      4.5142158884833014e-05,
+      145,
+      749.1275069853599
+     ]
+    ]
+   },
+   {
+    "name": "PCM-first \u00b7 full parallel",
     "group": "PCM-first (mpg=7)",
     "visible": true,
     "pts": [
@@ -201,7 +299,7 @@
     ]
    },
    {
-    "name": "pcmfirst \u00b7 fixed order \u00b7 target=2",
+    "name": "PCM-first \u00b7 fixed order \u00b7 target=2",
     "group": "PCM-first (mpg=7)",
     "visible": true,
     "pts": [
@@ -250,7 +348,7 @@
     ]
    },
    {
-    "name": "pcmfirst \u00b7 fixed order \u00b7 target=6",
+    "name": "PCM-first \u00b7 fixed order \u00b7 target=6",
     "group": "PCM-first (mpg=7)",
     "visible": false,
     "pts": [
@@ -307,7 +405,7 @@
   "curves": [
    {
     "name": "baseline \u00b7 full parallel",
-    "group": "No PCM-first (mpg=8, baseline)",
+    "group": "baseline (mpg=8)",
     "visible": true,
     "pts": [
      [
@@ -356,7 +454,7 @@
    },
    {
     "name": "baseline \u00b7 fixed order \u00b7 target=2",
-    "group": "No PCM-first (mpg=8, baseline)",
+    "group": "baseline (mpg=8)",
     "visible": true,
     "pts": [
      [
@@ -405,7 +503,7 @@
    },
    {
     "name": "baseline \u00b7 fixed order \u00b7 target=6",
-    "group": "No PCM-first (mpg=8, baseline)",
+    "group": "baseline (mpg=8)",
     "visible": false,
     "pts": [
      [
@@ -453,7 +551,105 @@
     ]
    },
    {
-    "name": "pcmfirst \u00b7 full parallel",
+    "name": "mpg7 control \u00b7 fixed order \u00b7 target=2",
+    "group": "no PCM-first (mpg=7 control)",
+    "visible": true,
+    "pts": [
+     [
+      1.0,
+      0.26018099547511314,
+      345,
+      5712.503016591252
+     ],
+     [
+      1.5,
+      0.09997135491263248,
+      349,
+      3800.4520194786596
+     ],
+     [
+      2.0,
+      0.033003300330033,
+      320,
+      2761.415222772277
+     ],
+     [
+      2.5,
+      0.007453578589486531,
+      342,
+      2252.5638784761572
+     ],
+     [
+      3.0,
+      0.0016402187623078726,
+      329,
+      2102.179835778705
+     ],
+     [
+      3.5,
+      0.00046701000818351904,
+      323,
+      2073.1658969917617
+     ],
+     [
+      4.0,
+      0.0002434515123351153,
+      340,
+      2078.0362148445274
+     ]
+    ]
+   },
+   {
+    "name": "mpg7 control \u00b7 fixed order \u00b7 target=6",
+    "group": "no PCM-first (mpg=7 control)",
+    "visible": false,
+    "pts": [
+     [
+      1.0,
+      0.24267782426778242,
+      348,
+      9983.256624825663
+     ],
+     [
+      1.5,
+      0.09713331477873643,
+      349,
+      9046.007514611745
+     ],
+     [
+      2.0,
+      0.03185985295452483,
+      351,
+      8327.185077607333
+     ],
+     [
+      2.5,
+      0.006934616473252194,
+      343,
+      7907.760725405362
+     ],
+     [
+      3.0,
+      0.0009997476977418947,
+      317,
+      7745.979468903746
+     ],
+     [
+      3.5,
+      9.273005718353527e-05,
+      297,
+      7711.581760590974
+     ],
+     [
+      4.0,
+      7.806888798675952e-06,
+      25,
+      7725.837752552853
+     ]
+    ]
+   },
+   {
+    "name": "PCM-first \u00b7 full parallel",
     "group": "PCM-first (mpg=7)",
     "visible": true,
     "pts": [
@@ -502,7 +698,7 @@
     ]
    },
    {
-    "name": "pcmfirst \u00b7 fixed order \u00b7 target=2",
+    "name": "PCM-first \u00b7 fixed order \u00b7 target=2",
     "group": "PCM-first (mpg=7)",
     "visible": true,
     "pts": [
@@ -551,7 +747,7 @@
     ]
    },
    {
-    "name": "pcmfirst \u00b7 fixed order \u00b7 target=6",
+    "name": "PCM-first \u00b7 fixed order \u00b7 target=6",
     "group": "PCM-first (mpg=7)",
     "visible": false,
     "pts": [

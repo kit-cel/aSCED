@@ -198,17 +198,16 @@ td:nth-child(2),th:nth-child(2){text-align:left}
       first needs <span class="mono">members_per_group=7</span> so 49=7&times;7 / 385=7&times;55 divide evenly;
       <span class="mono">syndrome_sequential</span> reorders dynamically per word and was out of scope).
     </p>
-    <p class="verdict" style="background:color-mix(in srgb, var(--warn) 12%, transparent);border:1px solid var(--warn);border-radius:8px;padding:10px 14px;margin-bottom:16px">
-      <b>Confounded comparison &mdash; not yet corrected.</b> The PCM-first sweep necessarily used
-      <span class="mono">members_per_group=7</span>, while the baseline below (plain aSCED-48/384) uses
-      <span class="mono">members_per_group=8</span> &mdash; so the gap plotted here mixes <i>two</i> effects: (1)
-      adding the pinned PCM-first path, and (2) shrinking the group size 8&rarr;7 (finer grouping alone tends to
-      lower latency/effort). A de-confounding control (plain aSCED-48/384 at mpg=7, no PCM path &mdash; job 535646)
-      was running at the time this page was built (16/28 tasks complete, 10 running, 1 pending; check
-      <span class="mono">sacct -j 535646</span>). Once it lands, this section should be rebuilt to show the clean,
-      isolated PCM-first effect (pcmfirst mpg=7 vs. mpg=7 control) separately from the pure group-size effect
-      (mpg=7 control vs. mpg=8 baseline). Until then, treat the gap below as an upper bound on the PCM-first effect,
-      not a clean attribution.
+    <p class="verdict" style="background:color-mix(in srgb, var(--good) 12%, transparent);border:1px solid var(--good);border-radius:8px;padding:10px 14px;margin-bottom:16px">
+      <b>De-confounded (job 535646, 28/28 complete).</b> Three curves per plot isolate the two effects: "baseline
+      (mpg=8)" is the original aSCED-48/384; "no PCM-first (mpg=7 control)" is the same plain ensembles at
+      <span class="mono">members_per_group=7</span> with no PCM path (job 535646); "PCM-first (mpg=7)" is
+      aSCED-49/385. The PCM-first effect alone is the gap between the latter two (both at mpg=7) &mdash; e.g. at
+      target=2, aSCED-384&rarr;385 effort drops 16&ndash;70% and latency 16&ndash;76% across 1&ndash;4dB with FER
+      flat-to-better; aSCED-48&rarr;49 is a more modest 11&ndash;28%/15&ndash;67% win from 2dB up, with a small
+      (+2&ndash;3%) overhead at 1.0dB where early stopping barely triggers either way. The mpg=8&rarr;7 group-size
+      effect alone (baseline vs. control) is comparatively small by itself &mdash; most of the headline win is the
+      PCM-first idea, not just finer grouping.
     </p>
     <div id="settings-pcmfirst"></div>
   </section>
@@ -301,7 +300,7 @@ function baseLayout(xlabel, ylabel, xlog, ylog) {
 
 const GROUP_COLOR = {"Baseline": () => tok('--c-base'), "Fixed order": () => tok('--c-a'), "Syndrome order": () => tok('--c-b'),
   "Baseline blocks": () => tok('--c-base'), "Greedy blocks": () => tok('--c-a'),
-  "No PCM-first (mpg=8, baseline)": () => tok('--c-base'), "PCM-first (mpg=7)": () => tok('--c-a'),
+  "baseline (mpg=8)": () => tok('--c-base'), "no PCM-first (mpg=7 control)": () => tok('--c-extra'), "PCM-first (mpg=7)": () => tok('--c-a'),
   "flooding": () => tok('--c-base'), "row-layered (natural)": () => tok('--c-a'), "row-layered (appended-first)": () => tok('--c-b')};
 const DASHES = ["solid", "dash", "dot", "dashdot", "longdash"];
 const SYMS = ["circle", "square", "diamond", "triangle-up", "x"];
