@@ -1,0 +1,5 @@
+decoder_variant,n_simul,snr_start,target_fer
+4_split1_subsplit2,78,5.0,0.001
+8_split1_subsplit4,78,5.0,0.001
+4_split1_subsplit2,180,2.5,0.001
+8_split1_subsplit4,180,2.5,0.001

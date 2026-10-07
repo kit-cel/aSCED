@@ -776,3 +776,47 @@ SNR @ target_fer=1e-3 than "subsequent blocks" across essentially the whole
 `target_errors=1000` sampling noise). Largest win: n=78's `64_nosplit`,
 -0.153dB. At the largest ensemble size (192 paths, nosplit): n=78 -0.0125dB,
 n=180 -0.0750dB.
+
+### CORRECTION (2026-10-07): the classifier bug mislabels data, it does not just drop it
+
+The "silently dropped 2 of 35 rows" framing above is **wrong in an important
+way** — don't repeat it. Rigorously re-checked (4 independent fresh reruns
+of the genuine, non-colliding `split=1` configs, compared against both an
+honest rerun and the recovered true value of whichever config it collides
+with):
+
+| config | fresh rerun (true &Delta;=1 value) | value "surviving" under the &Delta;=1 label | gap | recovered true colliding config | gap to *that* |
+|---|---|---|---|---|---|
+| n=78, &Delta;=1@4 | 5.450 dB | 5.5063 dB (pasted old data) | 0.056 dB | &Delta;=2@4 = 5.5074 dB | 0.0011 dB |
+| n=78, &Delta;=1@8 | 5.3375 dB | 5.4125 dB (pasted old data) | 0.075 dB | &Delta;=3@8 = 5.4500 dB | 0.0375 dB |
+| n=180, &Delta;=1@4 | 3.550 dB | 3.6648 dB (pasted old data) | 0.115 dB | &Delta;=2@4 = 3.6578 dB | 0.007 dB |
+| n=180, &Delta;=1@8 | 3.328125 dB | 3.540625 dB (pasted old data) | 0.2125 dB | &Delta;=3@8 = 3.5506 dB | 0.0100 dB |
+
+4/4 consistent, gaps differing by 10-50x between the two hypotheses each
+time (well outside Monte Carlo run-to-run noise). **The value that survives
+at the collision key is the *other*, misclassified config's result, mislabeled
+as &Delta;=1 — not an untouched correct value with the other config cleanly
+absent.** The genuine &Delta;=1 result is what's actually missing; what you
+see instead is real data, just wearing the wrong tag. This affects both the
+`v1.0.0` baseline `.dat` files and (before this session's fix) this branch's
+own greedy production run — already corrected here (the recovered values
++ verification reruns above are the authoritative ones); **the user's
+`v1.0.0` checkout still has this mislabeling and was not touched** (out of
+scope, flagged back to the user directly rather than via a spawned task).
+
+Also found, separately: the user's pasted n=180 reference data has an
+unrelated 0.6dB outlier at &Delta;=3/64 paths (2.29dB vs ~2.9dB neighbors)
+that this classifier bug does **not** explain — excluded from the comparison
+plot, flagged as a distinct, undiagnosed anomaly worth its own investigation.
+
+Verification artifacts: `sweeps/verify_zc6_classifier_manifest.csv` (the 4
+cross-check reruns above), job 543658. Separately, job 543328 recomputed the
+6 missing/mislabeled points for the **cluster's own** `v1.0.0`-style
+`RESULTS/fig_scatter_zc6_n={78,180}/summary/*.dat` (a from-scratch copy of
+the script with the fix applied, run in this worktree — not the user's live
+checkout): `4_split2_subsplit1`, `8_split3_subsplit1` for both codes, plus
+`64_split3`/`128_split3` for n=180 (the separate, non-classifier-related gap
+noted above). All committed in this worktree; **not applied to the user's
+actual `/home/pj9034/aSCED` (v1.0.0) working copy** — that edit was blocked
+by design (this session's harness protects the user's live checkout from a
+different worktree's edits) and is the user's call to make.
