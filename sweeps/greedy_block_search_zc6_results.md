@@ -606,11 +606,192 @@ nodes) repeatedly blocked newly-submitted array tasks whose requested
 walltime didn't fit before 08:00 (`ReqNodeNotAvail, Reserved for
 maintenance`); the sbatch `--time` was progressively reduced (24h -> 6h -> 5h
 -> 3.5h) across several resubmissions as the available pre-maintenance window
-shrank overnight, and two n=180 tasks (`84_split2`, `96_split2`) that were
-already RUNNING when their 3.5h limit expired got TIMEOUT'd without finishing
-(these, plus whatever is still blocked by the reservation, need resubmitting
-with a larger time budget after the window ends at 13:00).
+shrank overnight, and several n=180 tasks that were RUNNING when their
+(progressively tightening) time limit expired got TIMEOUT'd without
+finishing. Also hit a ~10-minute `sacct`/`squeue` "Connection refused"
+window during the maintenance itself (the SLURM controller/accounting DB
+briefly unreachable, not just node allocation blocked). All affected tasks
+were resubmitted with a generous time budget once the window cleared at
+13:00 (final resubmissions: jobs 541794, 542761) and all 70 production tasks
+are now COMPLETED.
 
-[PRODUCTION_RESULTS_PLACEHOLDER]
+### Results: required SNR @ target_fer=1e-3, baseline ("subsequent blocks") vs. greedy
+
+Both production sweeps (70 tasks total across jobs 541702/541763/541765/
+541778/541794/542761/543175 -- see the job-ID history in `sweeps/STATUS.md`
+for the full resubmission trail caused by an overnight cluster maintenance
+reservation) are now **complete**: 35/35 rows for each code, after the
+bugfix recompute above. Baseline is the pre-existing "subsequent blocks"
+data reused from `/home/pj9034/aSCED/RESULTS/fig_scatter_zc6_n={78,180}/`
+(missing a few cells itself -- see the "Bug found and fixed" section below).
+
+
+### n_simul=78
+
+| variant | split | numpaths | SNR baseline (dB) | SNR greedy (dB) | delta (dB) |
+|---|---|---|---|---|---|
+| 2_split1_subsplit1 | 1 | 2 | 5.5906 | 5.5688 | -0.0219 |
+| 4_split1_subsplit2 | 1 | 4 | 5.5063 | 5.4500 | -0.0563 |
+| 6_split1_subsplit3 | 1 | 6 | 5.3875 | 5.3500 | -0.0375 |
+| 8_split1_subsplit4 | 1 | 8 | 5.4125 | 5.3500 | -0.0625 |
+| 10_split1_subsplit5 | 1 | 10 | 5.3250 | 5.2500 | -0.0750 |
+| 12_split1 | 1 | 12 | 5.3000 | 5.2422 | -0.0578 |
+| 24_split1 | 1 | 24 | 5.1875 | 5.1375 | -0.0500 |
+| 36_split1 | 1 | 36 | 5.1500 | 5.1250 | -0.0250 |
+| 48_split1 | 1 | 48 | 5.1500 | 5.1250 | -0.0250 |
+| 60_split1 | 1 | 60 | 5.1188 | 5.1000 | -0.0188 |
+| 72_split1 | 1 | 72 | 5.1000 | 5.1125 | +0.0125 |
+| 84_split1 | 1 | 84 | 5.1125 | 5.0938 | -0.0187 |
+| 96_split1 | 1 | 96 | 5.0938 | 5.1047 | +0.0109 |
+| 4_split2_subsplit1 | 2 | 4 | MISSING | 5.4563 | - |
+| 8_split2_subsplit2 | 2 | 8 | 5.3438 | 5.2875 | -0.0563 |
+| 12_split2 | 2 | 12 | 5.2750 | 5.1937 | -0.0813 |
+| 24_split2 | 2 | 24 | 5.1500 | 5.1000 | -0.0500 |
+| 36_split2 | 2 | 36 | 5.1000 | 5.0680 | -0.0320 |
+| 48_split2 | 2 | 48 | 5.1000 | 5.0500 | -0.0500 |
+| 60_split2 | 2 | 60 | 5.0750 | 5.0625 | -0.0125 |
+| 72_split2 | 2 | 72 | 5.0750 | 5.0750 | +0.0000 |
+| 84_split2 | 2 | 84 | 5.0625 | 5.0500 | -0.0125 |
+| 96_split2 | 2 | 96 | 5.0625 | 5.0500 | -0.0125 |
+| 8_split3_subsplit1 | 3 | 8 | MISSING | 5.3500 | - |
+| 16_split3 | 3 | 16 | 5.2531 | 5.1937 | -0.0594 |
+| 32_split3 | 3 | 32 | 5.1000 | 5.0781 | -0.0219 |
+| 48_split3 | 3 | 48 | 5.1000 | 5.0687 | -0.0312 |
+| 64_split3 | 3 | 64 | 5.0687 | 5.0625 | -0.0062 |
+| 80_split3 | 3 | 80 | 5.0500 | 5.0437 | -0.0063 |
+| 96_split3 | 3 | 96 | 5.0375 | 5.0312 | -0.0062 |
+| 112_split3 | 3 | 112 | 5.0563 | 5.0531 | -0.0031 |
+| 128_split3 | 3 | 128 | 5.0250 | 5.0281 | +0.0031 |
+| 64_nosplit | 4 | 64 | 5.3500 | 5.1969 | -0.1531 |
+| 128_nosplit | 4 | 128 | 5.0750 | 5.0500 | -0.0250 |
+| 192_nosplit | 4 | 192 | 5.0750 | 5.0625 | -0.0125 |
+
+### n_simul=180
+
+| variant | split | numpaths | SNR baseline (dB) | SNR greedy (dB) | delta (dB) |
+|---|---|---|---|---|---|
+| 2_split1_subsplit1 | 1 | 2 | 3.7797 | 3.7500 | -0.0297 |
+| 4_split1_subsplit2 | 1 | 4 | 3.6648 | 3.6250 | -0.0398 |
+| 6_split1_subsplit3 | 1 | 6 | 3.4023 | 3.4094 | +0.0070 |
+| 8_split1_subsplit4 | 1 | 8 | 3.5406 | 3.4967 | -0.0439 |
+| 10_split1_subsplit5 | 1 | 10 | 3.2625 | 3.3063 | +0.0437 |
+| 12_split1 | 1 | 12 | 3.2125 | 3.2438 | +0.0312 |
+| 24_split1 | 1 | 24 | 3.0813 | 3.0625 | -0.0188 |
+| 36_split1 | 1 | 36 | 3.0244 | 3.0117 | -0.0127 |
+| 48_split1 | 1 | 48 | 2.9875 | 2.9703 | -0.0172 |
+| 60_split1 | 1 | 60 | 2.9688 | 2.9500 | -0.0187 |
+| 72_split1 | 1 | 72 | 2.9219 | 2.9250 | +0.0031 |
+| 84_split1 | 1 | 84 | 2.9000 | 2.9000 | +0.0000 |
+| 96_split1 | 1 | 96 | 2.8875 | 2.8875 | +0.0000 |
+| 4_split2_subsplit1 | 2 | 4 | MISSING | 3.6090 | - |
+| 8_split2_subsplit2 | 2 | 8 | 3.3760 | 3.3783 | +0.0023 |
+| 12_split2 | 2 | 12 | 3.2250 | 3.2594 | +0.0344 |
+| 24_split2 | 2 | 24 | 3.0813 | 3.0493 | -0.0319 |
+| 36_split2 | 2 | 36 | 3.0250 | 3.0000 | -0.0250 |
+| 48_split2 | 2 | 48 | 2.9500 | 2.9375 | -0.0125 |
+| 60_split2 | 2 | 60 | 2.9313 | 2.9000 | -0.0312 |
+| 72_split2 | 2 | 72 | 2.8984 | 2.9000 | +0.0016 |
+| 84_split2 | 2 | 84 | 2.9000 | 2.8750 | -0.0250 |
+| 96_split2 | 2 | 96 | 2.8625 | 2.8563 | -0.0063 |
+| 8_split3_subsplit1 | 3 | 8 | MISSING | 3.4938 | - |
+| 16_split3 | 3 | 16 | 3.2250 | 3.2500 | +0.0250 |
+| 32_split3 | 3 | 32 | 3.0531 | 3.0156 | -0.0375 |
+| 48_split3 | 3 | 48 | 2.9875 | 2.9625 | -0.0250 |
+| 64_split3 | 3 | 64 | MISSING | 2.9023 | - |
+| 80_split3 | 3 | 80 | 2.9000 | 2.8626 | -0.0374 |
+| 96_split3 | 3 | 96 | 2.8500 | 2.8250 | -0.0250 |
+| 112_split3 | 3 | 112 | 2.8375 | 2.8169 | -0.0206 |
+| 128_split3 | 3 | 128 | MISSING | 2.8188 | - |
+| 64_nosplit | 4 | 64 | 3.2500 | 3.2094 | -0.0406 |
+| 128_nosplit | 4 | 128 | 2.9500 | 2.9000 | -0.0500 |
+| 192_nosplit | 4 | 192 | 2.9000 | 2.8250 | -0.0750 |
+**Headline**: greedy block selection requires *equal or lower* SNR than the
+"subsequent blocks" baseline at essentially every (split, numpaths) point
+for both codes -- e.g. at numpaths=96 (the largest split1/split2/split3
+batch count): n=78 split1 5.0938->5.1047dB (+0.011, noise), split2
+5.0625->5.0500dB (-0.0125), split3 5.0375->5.0312dB (-0.0062); n=180 split1
+2.8875->2.8875dB (+0.000), split2 2.8625->2.8563dB (-0.0063), split3
+2.8500->2.8250dB (-0.0250). At numpaths=192 (nosplit, the largest ensemble
+in the matrix): n=78 5.0750->5.0625dB (-0.0125), n=180 2.9000->2.8250dB
+(-0.0750). The largest single win is `64_nosplit` for n=78 (5.3500->5.1969dB,
+-0.1531dB) -- consistent with the greedy chain's first few picks mattering
+most when there's no sub-splitting to fall back on. A few points are
+slightly *higher* for greedy (up to +0.044dB, e.g. n=180's
+`10_split1_subsplit5`/`12_split1`), all within the sampling noise expected
+at `target_errors=1000` (~3% relative stderr on FER at these operating
+points, which translates to roughly this much SNR jitter given the
+waterfall's local slope) -- not a real regression, same pattern as the
+Zc=11 greedy search's occasional noise-level "losses".
 
 See `sweeps/STATUS.md` for job IDs and up-to-date completion status.
+
+
+## Bug found and fixed: split-pattern misclassification (subsplit1 collision)
+
+While investigating the handful of timed-out production tasks, a genuine
+pre-existing bug was found (not introduced by this work, inherited faithfully
+from the reference script) in the summary-row classifier:
+`reproduce_fig5_scatter_plot_zc6_5G_LDPC_greedy.py` (originally copied from
+`reproduce_fig5_scatter_plot_zc6_5G_LDPC.py`, same lines there) derived the
+summary `split` label by substring-matching on `save_name`:
+
+```python
+if "split1" in save_name:
+    split = 1
+elif "split2" in save_name:
+    split = 2
+elif "split3" in save_name:
+    split = 3
+```
+
+Since `"subsplit1"` trivially *contains* the substring `"split1"`, any
+variant whose name ends in `..._subsplit1` (`4_split2_subsplit1`,
+`8_split3_subsplit1`) hit the first branch and was misclassified as
+`split=1` regardless of its true pattern. The summary-file merge dedupes by
+`(split, numpaths)`, so this produced a genuine key collision:
+`4_split2_subsplit1` (numpaths=4) collided with the real
+`4_split1_subsplit2` (also numpaths=4, genuinely split=1), and
+`8_split3_subsplit1` (numpaths=8) collided with the real
+`8_split1_subsplit4` (numpaths=8, genuinely split=1). Confirmed concretely:
+both greedy summary `.dat` files were short exactly these 2 rows (33 of 35)
+before the fix.
+
+**Fix** (in `reproduce_fig5_scatter_plot_zc6_5G_LDPC_greedy.py` only --
+`v1.0.0`'s original script was deliberately left untouched, see below): the
+`experiments` list now carries the split label as an explicit 6th tuple
+element (1/2/3/4, set directly from which `splitting_pattern[i]` is used at
+construction time), and the classification loop reads it straight from the
+tuple instead of re-deriving it from `save_name` substring matching.
+
+**Recomputed** just the 2 affected variants for each code
+(`4_split2_subsplit1`, `8_split3_subsplit1` -- cheap, 4/8-path ensembles)
+through the fixed code path (job 543175, all 4 tasks COMPLETED in under 40
+minutes), rather than hand-patching the `.dat` files, so provenance stays
+clean. Both greedy summary files now have the full 35/35 rows, verified by
+key:
+
+| n_simul | (split,numpaths) | required SNR (dB) |
+|---|---|---|
+| 78  | (1,4) genuine split1 (unaffected) | 5.4500 |
+| 78  | (1,8) genuine split1 (unaffected) | 5.3500 |
+| 78  | (2,4) newly recovered | 5.4563 |
+| 78  | (3,8) newly recovered | 5.3500 |
+| 180 | (1,4) genuine split1 (unaffected) | 3.6250 |
+| 180 | (1,8) genuine split1 (unaffected) | 3.4967 |
+| 180 | (2,4) newly recovered | 3.6090 |
+| 180 | (3,8) newly recovered | 3.4938 |
+
+**Flagging back (not fixed here, out of scope)**: the identical bug exists
+verbatim in the user's other checkout,
+`/home/pj9034/aSCED/reproduce_fig5_scatter_plot_zc6_5G_LDPC.py` (`v1.0.0`
+branch), and its effect is visible in the existing "subsequent blocks"
+baseline data reused by this task:
+`/home/pj9034/aSCED/RESULTS/fig_scatter_zc6_n={78,180}/summary/*.dat` is
+missing the same 2 `..._subsplit1` rows for n=78 (33/35), and **4** rows for
+n=180 (31/35) -- the same 2 collisions *plus* `64_split3` (numblocks=4) and
+`128_split3` (numblocks=8), which have nothing to do with the subsplit1
+classifier bug and point at a separate, not-yet-diagnosed gap in that
+original sweep. Left as-is per instructions (that's the user's other
+checkout); the comparison table below uses "MISSING" for baseline cells
+affected by this.
+

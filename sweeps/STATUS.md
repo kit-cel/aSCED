@@ -741,3 +741,38 @@ Zc=11 greedy-search agent). Committed but not pushed -- needs merging into
 `claude_sequential` by the orchestrating session, and (per the "Worktree
 gotcha" note above) its `RESULTS/` directory needs to be manually copied over
 after merging since it's gitignored and this is an isolated worktree.
+
+### UPDATE (2026-10-07): production sweep complete, classifier bug found and fixed
+
+All 70 production tasks (35 variants x 2 codes) are now COMPLETED after
+several resubmission rounds (jobs 541702/541763/541765/541778/541794/542761
+-- see the maintenance-window/connection-refused saga above) plus one bugfix
+recompute (job 543175, 4 tasks).
+
+**Bug found while chasing the last few timed-out tasks**: the summary-row
+split-pattern classifier in `reproduce_fig5_scatter_plot_zc6_5G_LDPC_greedy.py`
+used fragile substring matching (`"split1" in save_name`) that misclassified
+any `..._subsplit1` variant (e.g. `4_split2_subsplit1`, `8_split3_subsplit1`)
+as `split=1`, causing a genuine key collision in the summary-file merge
+(dedup by `(split, numpaths)`) that silently dropped 2 of 35 rows per code.
+**This bug is pre-existing, inherited verbatim from the original
+`reproduce_fig5_scatter_plot_zc6_5G_LDPC.py` (both on this branch and on the
+user's other checkout, `/home/pj9034/aSCED`, `v1.0.0` branch) -- not
+introduced here.** It also affects the existing natural-order baseline data
+reused by this task: baseline is missing 2 rows for n=78 and **4** rows for
+n=180 (the same 2 collisions, plus 2 more -- `64_split3`/`128_split3` for
+n=180 -- that are unrelated to this classifier bug and point at a separate,
+undiagnosed gap in that original sweep). Flagged back for the user's
+awareness; **not fixed in `v1.0.0`** (out of scope, that's the other
+checkout) -- only fixed in this branch's `_greedy.py` copy, which now tracks
+the split label as an explicit field at construction time instead of
+re-deriving it from `save_name`. Full details, the recompute, and the
+final 35/35-row comparison tables (baseline vs. greedy, both codes):
+`sweeps/greedy_block_search_zc6_results.md`.
+
+**Headline result**: greedy block selection gives equal-or-lower required
+SNR @ target_fer=1e-3 than "subsequent blocks" across essentially the whole
+35-variant matrix for both codes (occasional +0.01-0.04dB blips are within
+`target_errors=1000` sampling noise). Largest win: n=78's `64_nosplit`,
+-0.153dB. At the largest ensemble size (192 paths, nosplit): n=78 -0.0125dB,
+n=180 -0.0750dB.

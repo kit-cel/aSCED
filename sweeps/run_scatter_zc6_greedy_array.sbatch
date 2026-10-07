@@ -3,7 +3,7 @@
 #SBATCH --partition=all
 #SBATCH --account=cel-assis
 #SBATCH --cpus-per-task=32
-#SBATCH --time=03:30:00
+#SBATCH --time=08:00:00
 #SBATCH --output=sweeps/logs/%x_%A_%a.out
 #SBATCH --error=sweeps/logs/%x_%A_%a.err
 

@@ -451,42 +451,60 @@ def search_target_fer(
     return high_snr, high_fer
 
 
+# 6th element of each tuple is the SPLIT LABEL (1/2/3/4 for
+# split1/split2/split3/nosplit respectively), tracked explicitly from the
+# splitting_pattern index used at construction time rather than re-derived
+# from `save_name` after the fact. This fixes a real pre-existing bug
+# (inherited faithfully from the original reference script,
+# reproduce_fig5_scatter_plot_zc6_5G_LDPC.py, lines ~887-900 there) where the
+# classifier did `if "split1" in save_name: split = 1 elif "split2" in
+# save_name: ... elif "split3" in save_name: ...` -- since "subsplit1"
+# trivially CONTAINS the substring "split1", every "..._subsplitN" variant
+# whose save_name happens to end in "subsplit1" (e.g.
+# "aSCED_12_split2_batch1_subsplit1", "aSCED_16_split3_batch1_subsplit1")
+# was silently misclassified as split=1 and hit the FIRST branch regardless
+# of its true pattern. Because the summary-file merge dedupes/overwrites by
+# (split, numpaths), this caused a genuine key collision with the real
+# split=1 variants of the same numpaths (4_split2_subsplit1 numpaths=4 collides with
+# the real 4_split1_subsplit2; 8_split3_subsplit1 numpaths=8 collides with
+# the real 8_split1_subsplit4) -- not a race, a deterministic
+# misclassification that silently drops one of the two colliding rows.
 experiments = [
-    (flag_aed_asced_2_split1_subsplit1, "aSCED_2_split1_batch1_subsplit1", splitting_pattern[0], 1, 1),
-    (flag_aed_asced_4_split1_subsplit2, "aSCED_4_split1_batch1_subsplit2", splitting_pattern[0], 1, 2),
-    (flag_aed_asced_6_split1_subsplit3, "aSCED_6_split1_batch1_subsplit3", splitting_pattern[0], 1, 3),
-    (flag_aed_asced_8_split1_subsplit4, "aSCED_8_split1_batch1_subsplit4", splitting_pattern[0], 1, 4),
-    (flag_aed_asced_10_split1_subsplit5, "aSCED_10_split1_batch1_subsplit5", splitting_pattern[0], 1, 5),
-    (flag_aed_asced_12_split1, "aSCED_12_split1_batch1", splitting_pattern[0], 1, None),
-    (flag_aed_asced_24_split1, "aSCED_24_split1_batch2", splitting_pattern[0], 2, None),
-    (flag_aed_asced_36_split1, "aSCED_36_split1_batch3", splitting_pattern[0], 3, None),
-    (flag_aed_asced_48_split1, "aSCED_48_split1_batch4", splitting_pattern[0], 4, None),
-    (flag_aed_asced_60_split1, "aSCED_60_split1_batch5", splitting_pattern[0], 5, None),
-    (flag_aed_asced_72_split1, "aSCED_72_split1_batch6", splitting_pattern[0], 6, None),
-    (flag_aed_asced_84_split1, "aSCED_84_split1_batch7", splitting_pattern[0], 7, None),
-    (flag_aed_asced_96_split1, "aSCED_96_split1_batch8", splitting_pattern[0], 8, None),
-    (flag_asced_4_split2_subsplit1, "aSCED_12_split2_batch1_subsplit1", splitting_pattern[1], 1, 1),
-    (flag_asced_8_split2_subsplit2, "aSCED_12_split2_batch1_subsplit2", splitting_pattern[1], 1, 2),
-    (flag_asced_12_split2, "aSCED_12_split2_batch1", splitting_pattern[1], 1, None),
-    (flag_asced_24_split2, "aSCED_24_split2_batch2", splitting_pattern[1], 2, None),
-    (flag_asced_36_split2, "aSCED_36_split2_batch3", splitting_pattern[1], 3, None),
-    (flag_asced_48_split2, "aSCED_48_split2_batch4", splitting_pattern[1], 4, None),
-    (flag_asced_60_split2, "aSCED_60_split2_batch5", splitting_pattern[1], 5, None),
-    (flag_asced_72_split2, "aSCED_72_split2_batch6", splitting_pattern[1], 6, None),
-    (flag_asced_84_split2, "aSCED_84_split2_batch7", splitting_pattern[1], 7, None),
-    (flag_asced_96_split2, "aSCED_96_split2_batch8", splitting_pattern[1], 8, None),
-    (flag_asced_8_split3_subsplit1, "aSCED_16_split3_batch1_subsplit1", splitting_pattern[2], 1, 1),
-    (flag_asced_16_split3, "aSCED_16_split3_batch1", splitting_pattern[2], 1, None),
-    (flag_asced_32_split3, "aSCED_16_split3_batch2", splitting_pattern[2], 2, None),
-    (flag_asced_48_split3, "aSCED_48_split3_batch3", splitting_pattern[2], 3, None),
-    (flag_asced_64_split3, "aSCED_64_split3_batch4", splitting_pattern[2], 4, None),
-    (flag_asced_80_split3, "aSCED_80_split3_batch5", splitting_pattern[2], 5, None),
-    (flag_asced_96_split3, "aSCED_96_split3_batch6", splitting_pattern[2], 6, None),
-    (flag_asced_112_split3, "aSCED_112_split3_batch6", splitting_pattern[2], 7, None),
-    (flag_asced_128_split3, "aSCED_128_split3_batch8", splitting_pattern[2], 8, None),
-    (flag_asced_64_nosplit, "aSCED_64_nosplit_batch1", [], 1, None),
-    (flag_asced_128_nosplit, "aSCED_128_nosplit_batch2", [], 2, None),
-    (flag_asced_192_nosplit, "aSCED_192_nosplit_batch3", [], 3, None),
+    (flag_aed_asced_2_split1_subsplit1, "aSCED_2_split1_batch1_subsplit1", splitting_pattern[0], 1, 1, 1),
+    (flag_aed_asced_4_split1_subsplit2, "aSCED_4_split1_batch1_subsplit2", splitting_pattern[0], 1, 2, 1),
+    (flag_aed_asced_6_split1_subsplit3, "aSCED_6_split1_batch1_subsplit3", splitting_pattern[0], 1, 3, 1),
+    (flag_aed_asced_8_split1_subsplit4, "aSCED_8_split1_batch1_subsplit4", splitting_pattern[0], 1, 4, 1),
+    (flag_aed_asced_10_split1_subsplit5, "aSCED_10_split1_batch1_subsplit5", splitting_pattern[0], 1, 5, 1),
+    (flag_aed_asced_12_split1, "aSCED_12_split1_batch1", splitting_pattern[0], 1, None, 1),
+    (flag_aed_asced_24_split1, "aSCED_24_split1_batch2", splitting_pattern[0], 2, None, 1),
+    (flag_aed_asced_36_split1, "aSCED_36_split1_batch3", splitting_pattern[0], 3, None, 1),
+    (flag_aed_asced_48_split1, "aSCED_48_split1_batch4", splitting_pattern[0], 4, None, 1),
+    (flag_aed_asced_60_split1, "aSCED_60_split1_batch5", splitting_pattern[0], 5, None, 1),
+    (flag_aed_asced_72_split1, "aSCED_72_split1_batch6", splitting_pattern[0], 6, None, 1),
+    (flag_aed_asced_84_split1, "aSCED_84_split1_batch7", splitting_pattern[0], 7, None, 1),
+    (flag_aed_asced_96_split1, "aSCED_96_split1_batch8", splitting_pattern[0], 8, None, 1),
+    (flag_asced_4_split2_subsplit1, "aSCED_12_split2_batch1_subsplit1", splitting_pattern[1], 1, 1, 2),
+    (flag_asced_8_split2_subsplit2, "aSCED_12_split2_batch1_subsplit2", splitting_pattern[1], 1, 2, 2),
+    (flag_asced_12_split2, "aSCED_12_split2_batch1", splitting_pattern[1], 1, None, 2),
+    (flag_asced_24_split2, "aSCED_24_split2_batch2", splitting_pattern[1], 2, None, 2),
+    (flag_asced_36_split2, "aSCED_36_split2_batch3", splitting_pattern[1], 3, None, 2),
+    (flag_asced_48_split2, "aSCED_48_split2_batch4", splitting_pattern[1], 4, None, 2),
+    (flag_asced_60_split2, "aSCED_60_split2_batch5", splitting_pattern[1], 5, None, 2),
+    (flag_asced_72_split2, "aSCED_72_split2_batch6", splitting_pattern[1], 6, None, 2),
+    (flag_asced_84_split2, "aSCED_84_split2_batch7", splitting_pattern[1], 7, None, 2),
+    (flag_asced_96_split2, "aSCED_96_split2_batch8", splitting_pattern[1], 8, None, 2),
+    (flag_asced_8_split3_subsplit1, "aSCED_16_split3_batch1_subsplit1", splitting_pattern[2], 1, 1, 3),
+    (flag_asced_16_split3, "aSCED_16_split3_batch1", splitting_pattern[2], 1, None, 3),
+    (flag_asced_32_split3, "aSCED_16_split3_batch2", splitting_pattern[2], 2, None, 3),
+    (flag_asced_48_split3, "aSCED_48_split3_batch3", splitting_pattern[2], 3, None, 3),
+    (flag_asced_64_split3, "aSCED_64_split3_batch4", splitting_pattern[2], 4, None, 3),
+    (flag_asced_80_split3, "aSCED_80_split3_batch5", splitting_pattern[2], 5, None, 3),
+    (flag_asced_96_split3, "aSCED_96_split3_batch6", splitting_pattern[2], 6, None, 3),
+    (flag_asced_112_split3, "aSCED_112_split3_batch6", splitting_pattern[2], 7, None, 3),
+    (flag_asced_128_split3, "aSCED_128_split3_batch8", splitting_pattern[2], 8, None, 3),
+    (flag_asced_64_nosplit, "aSCED_64_nosplit_batch1", [], 1, None, 4),
+    (flag_asced_128_nosplit, "aSCED_128_nosplit_batch2", [], 2, None, 4),
+    (flag_asced_192_nosplit, "aSCED_192_nosplit_batch3", [], 3, None, 4),
 ]
 
 summary = []
@@ -494,7 +512,7 @@ summary = []
 if flag_nmsa or flag_aed:
     raise ValueError("nmsa/aed are not part of the block-selection search; use the baseline (non-greedy) script for those.")
 
-for enabled, save_name, split_pattern, num_blocks, subsplit in experiments:
+for enabled, save_name, split_pattern, num_blocks, subsplit, split in experiments:
 
     if not enabled:
         continue
@@ -507,20 +525,10 @@ for enabled, save_name, split_pattern, num_blocks, subsplit in experiments:
         target_fer,
     )
 
-    if "split1" in save_name:
-        split = 1
-    elif "split2" in save_name:
-        split = 2
-    elif "split3" in save_name:
-        split = 3
-    elif "nosplit" in save_name:
-        split = 4
-    else:
-        split = -1
-    if "subsplit" in save_name:
-        subsplit_out = 1
-    else:
-        subsplit_out = 0
+    # split label comes directly from the experiments tuple now (see the
+    # comment above the experiments list) -- NOT re-derived from save_name
+    # substring matching, which was the source of the collision bug.
+    subsplit_out = 1 if subsplit is not None else 0
 
     summary.append(
         {
