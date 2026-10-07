@@ -1,0 +1,163 @@
+<title>Zc=6 greedy block scatter</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--ink:#14171c;--ink-2:#4a505a;--ink-3:#737a85;--rule:#dfe2e7;--grid:#e7e9ed;
+      --c-a:#2a78d6;--c-b:#eb6834;--c-base:#1baf7a;--c-extra:#4a3aa7;--c-ref:#14171c}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#121417;--panel:#1a1d21;
+      --ink:#eef0f3;--ink-2:#b4bac3;--ink-3:#8a909a;--rule:#2c3036;--grid:#262a30;
+      --c-a:#3987e5;--c-b:#d95926;--c-base:#199e70;--c-extra:#9085e9;--c-ref:#eef0f3}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#121417;--panel:#1a1d21;
+      --ink:#eef0f3;--ink-2:#b4bac3;--ink-3:#8a909a;--rule:#2c3036;--grid:#262a30;
+      --c-a:#3987e5;--c-b:#d95926;--c-base:#199e70;--c-extra:#9085e9;--c-ref:#eef0f3}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;
+     padding:0 16px 48px;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto}
+h1{font-size:1.35rem;font-weight:600;margin:28px 0 6px;letter-spacing:-.01em}
+.lede{color:var(--ink-2);max-width:78ch;margin:0 0 20px;font-size:.92rem}
+.mono{font-family:'IBM Plex Mono',monospace}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:18px 20px 22px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+button{font:inherit;font-size:.82rem;padding:6px 14px;border-radius:999px;border:1px solid var(--rule);
+       background:var(--bg);color:var(--ink-2);cursor:pointer}
+button:hover{border-color:var(--ink-3);color:var(--ink)}
+#legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin-bottom:14px;font-size:.8rem}
+.pill{display:flex;align-items:center;gap:5px;cursor:pointer;padding:3px 9px;border-radius:999px;
+      border:1px solid var(--rule);user-select:none;color:var(--ink-2)}
+.pill:hover{border-color:var(--ink-3)}
+.swatch{width:9px;height:9px;display:inline-block;flex:none}
+.plotwrap{position:relative;width:100%;height:460px}
+.note{font-size:.78rem;color:var(--ink-3);max-width:80ch;margin-top:14px}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+<div class="wrap">
+  <h1>Required E<sub>b</sub>/N<sub>0</sub> vs. number of paths &mdash; Zc=6, target FER=10<sup>&minus;3</sup></h1>
+  <p class="lede">
+    Extends Fig. 5 of the paper (5G LDPC codes C<sub>5G</sub>(78,60) and C<sub>5G</sub>(180,60), Zc=6, RL structure)
+    with a greedy RL/QC-block selection in place of "subsequent blocks." Circles = original selection, triangles =
+    greedy selection. Click a legend pill to toggle one series, or use the buttons to compare the two wholesale.
+  </p>
+  <div class="card">
+    <div class="controls">
+      <button id="btnOrig">Show only original</button>
+      <button id="btnGreedy">Show only greedy</button>
+      <button id="btnBoth">Show both</button>
+    </div>
+    <div id="legend"></div>
+    <div class="plotwrap">
+      <canvas id="fig5chart" role="img" aria-label="Scatter plot: x axis required Eb/N0 in dB for target FER 1e-3, y axis number of decoding paths on a log scale, toggleable series for original and greedy block selection across six decoder families and two codes (n=78, n=180)"></canvas>
+    </div>
+    <p class="note">
+      Both codes share one axis (OSD-2 reference for n=78 is near 5.0dB; OSD-4 for n=180 near 2.7dB, per the paper's
+      Fig. 5). The classifier bug described in <span class="mono">sweeps/STATUS.md</span> (silent mislabeling of
+      "..._subsplit1" variants, not just data loss &mdash; verified via 4 independent re-runs) has been corrected
+      here; a separate, unrelated 0.6dB outlier in the original n=180 reference data (&Delta;=3 @ 64 paths) was
+      excluded pending its own investigation.
+    </p>
+  </div>
+</div>
+
+<script>
+const DATA = {"78": {"old": [{"x": 5.6734375, "y": 1, "fam": "NMSA"}, {"x": 5.590625000000001, "y": 2, "fam": "D1"}, {"x": 5.45, "y": 4, "fam": "D1"}, {"x": 5.3875, "y": 6, "fam": "D1"}, {"x": 5.3375, "y": 8, "fam": "D1"}, {"x": 5.325000000000001, "y": 10, "fam": "D1"}, {"x": 5.300000000000001, "y": 12, "fam": "D1"}, {"x": 5.1875, "y": 24, "fam": "D1"}, {"x": 5.15, "y": 36, "fam": "D1"}, {"x": 5.15, "y": 48, "fam": "D1"}, {"x": 5.11875, "y": 60, "fam": "D1"}, {"x": 5.1, "y": 72, "fam": "D1"}, {"x": 5.1125, "y": 84, "fam": "D1"}, {"x": 5.09375, "y": 96, "fam": "D1"}, {"x": 5.34375, "y": 8, "fam": "D2"}, {"x": 5.275, "y": 12, "fam": "D2"}, {"x": 5.15, "y": 24, "fam": "D2"}, {"x": 5.1, "y": 36, "fam": "D2"}, {"x": 5.1, "y": 48, "fam": "D2"}, {"x": 5.074999999999999, "y": 60, "fam": "D2"}, {"x": 5.074999999999999, "y": 72, "fam": "D2"}, {"x": 5.0625, "y": 84, "fam": "D2"}, {"x": 5.0625, "y": 96, "fam": "D2"}, {"x": 5.253125, "y": 16, "fam": "D3"}, {"x": 5.1, "y": 32, "fam": "D3"}, {"x": 5.1, "y": 48, "fam": "D3"}, {"x": 5.06875, "y": 64, "fam": "D3"}, {"x": 5.05, "y": 80, "fam": "D3"}, {"x": 5.0375, "y": 96, "fam": "D3"}, {"x": 5.05625, "y": 112, "fam": "D3"}, {"x": 5.025, "y": 128, "fam": "D3"}, {"x": 5.3500000000000005, "y": 64, "fam": "D6"}, {"x": 5.074999999999999, "y": 128, "fam": "D6"}, {"x": 5.074999999999999, "y": 192, "fam": "D6"}, {"x": 5.53671875, "y": 6, "fam": "AED"}, {"x": 5.507421875, "y": 4, "fam": "D2"}, {"x": 5.450000000000001, "y": 8, "fam": "D3"}], "new": [{"x": 5.5687500000000005, "y": 2, "fam": "D1"}, {"x": 5.45, "y": 4, "fam": "D1"}, {"x": 5.35, "y": 6, "fam": "D1"}, {"x": 5.35, "y": 8, "fam": "D1"}, {"x": 5.25, "y": 10, "fam": "D1"}, {"x": 5.2421875, "y": 12, "fam": "D1"}, {"x": 5.137499999999999, "y": 24, "fam": "D1"}, {"x": 5.125, "y": 36, "fam": "D1"}, {"x": 5.125, "y": 48, "fam": "D1"}, {"x": 5.1, "y": 60, "fam": "D1"}, {"x": 5.1125, "y": 72, "fam": "D1"}, {"x": 5.09375, "y": 84, "fam": "D1"}, {"x": 5.104687499999999, "y": 96, "fam": "D1"}, {"x": 5.456250000000001, "y": 4, "fam": "D2"}, {"x": 5.2875, "y": 8, "fam": "D2"}, {"x": 5.19375, "y": 12, "fam": "D2"}, {"x": 5.1, "y": 24, "fam": "D2"}, {"x": 5.06796875, "y": 36, "fam": "D2"}, {"x": 5.05, "y": 48, "fam": "D2"}, {"x": 5.0625, "y": 60, "fam": "D2"}, {"x": 5.074999999999999, "y": 72, "fam": "D2"}, {"x": 5.05, "y": 84, "fam": "D2"}, {"x": 5.05, "y": 96, "fam": "D2"}, {"x": 5.35, "y": 8, "fam": "D3"}, {"x": 5.19375, "y": 16, "fam": "D3"}, {"x": 5.078124999999999, "y": 32, "fam": "D3"}, {"x": 5.06875, "y": 48, "fam": "D3"}, {"x": 5.0625, "y": 64, "fam": "D3"}, {"x": 5.043749999999999, "y": 80, "fam": "D3"}, {"x": 5.03125, "y": 96, "fam": "D3"}, {"x": 5.053125, "y": 112, "fam": "D3"}, {"x": 5.028125, "y": 128, "fam": "D3"}, {"x": 5.196875, "y": 64, "fam": "D6"}, {"x": 5.05, "y": 128, "fam": "D6"}, {"x": 5.0625, "y": 192, "fam": "D6"}]}, "180": {"old": [{"x": 3.9234375000000017, "y": 1, "fam": "NMSA"}, {"x": 3.779687500000001, "y": 2, "fam": "D1"}, {"x": 3.550000000000001, "y": 4, "fam": "D1"}, {"x": 3.402343750000001, "y": 6, "fam": "D1"}, {"x": 3.328125000000001, "y": 8, "fam": "D1"}, {"x": 3.262500000000001, "y": 10, "fam": "D1"}, {"x": 3.2125000000000004, "y": 12, "fam": "D1"}, {"x": 3.0812500000000007, "y": 24, "fam": "D1"}, {"x": 3.0244140625000004, "y": 36, "fam": "D1"}, {"x": 2.9875000000000003, "y": 48, "fam": "D1"}, {"x": 2.96875, "y": 60, "fam": "D1"}, {"x": 2.921875, "y": 72, "fam": "D1"}, {"x": 2.9000000000000004, "y": 84, "fam": "D1"}, {"x": 2.8875, "y": 96, "fam": "D1"}, {"x": 3.2250000000000005, "y": 12, "fam": "D2"}, {"x": 3.0812500000000007, "y": 24, "fam": "D2"}, {"x": 3.0250000000000004, "y": 36, "fam": "D2"}, {"x": 2.95, "y": 48, "fam": "D2"}, {"x": 2.9312500000000004, "y": 60, "fam": "D2"}, {"x": 2.8984375, "y": 72, "fam": "D2"}, {"x": 2.9000000000000004, "y": 84, "fam": "D2"}, {"x": 2.8625000000000007, "y": 96, "fam": "D2"}, {"x": 3.2250000000000005, "y": 16, "fam": "D3"}, {"x": 3.0531250000000005, "y": 32, "fam": "D3"}, {"x": 2.9875000000000003, "y": 48, "fam": "D3"}, {"x": 2.9000000000000004, "y": 80, "fam": "D3"}, {"x": 2.8500000000000005, "y": 96, "fam": "D3"}, {"x": 2.8375000000000004, "y": 112, "fam": "D3"}, {"x": 2.8125, "y": 128, "fam": "D3"}, {"x": 3.250000000000001, "y": 64, "fam": "D6"}, {"x": 2.95, "y": 128, "fam": "D6"}, {"x": 2.9000000000000004, "y": 192, "fam": "D6"}, {"x": 3.457031250000001, "y": 6, "fam": "AED"}, {"x": 3.657812500000001, "y": 4, "fam": "D2"}, {"x": 3.5505859375000006, "y": 8, "fam": "D3"}], "new": [{"x": 3.750000000000001, "y": 2, "fam": "D1"}, {"x": 3.625000000000001, "y": 4, "fam": "D1"}, {"x": 3.4093750000000003, "y": 6, "fam": "D1"}, {"x": 3.4966796875000004, "y": 8, "fam": "D1"}, {"x": 3.306250000000001, "y": 10, "fam": "D1"}, {"x": 3.2437500000000004, "y": 12, "fam": "D1"}, {"x": 3.0625, "y": 24, "fam": "D1"}, {"x": 3.01171875, "y": 36, "fam": "D1"}, {"x": 2.9703125, "y": 48, "fam": "D1"}, {"x": 2.95, "y": 60, "fam": "D1"}, {"x": 2.9250000000000003, "y": 72, "fam": "D1"}, {"x": 2.9000000000000004, "y": 84, "fam": "D1"}, {"x": 2.8875, "y": 96, "fam": "D1"}, {"x": 3.608984375000001, "y": 4, "fam": "D2"}, {"x": 3.3783203125000005, "y": 8, "fam": "D2"}, {"x": 3.2593750000000004, "y": 12, "fam": "D2"}, {"x": 3.0493164062500004, "y": 24, "fam": "D2"}, {"x": 3.0, "y": 36, "fam": "D2"}, {"x": 2.9375, "y": 48, "fam": "D2"}, {"x": 2.9000000000000004, "y": 60, "fam": "D2"}, {"x": 2.9000000000000004, "y": 72, "fam": "D2"}, {"x": 2.875, "y": 84, "fam": "D2"}, {"x": 2.85625, "y": 96, "fam": "D2"}, {"x": 3.4937500000000004, "y": 8, "fam": "D3"}, {"x": 3.2500000000000004, "y": 16, "fam": "D3"}, {"x": 3.015625, "y": 32, "fam": "D3"}, {"x": 2.9625000000000004, "y": 48, "fam": "D3"}, {"x": 2.90234375, "y": 64, "fam": "D3"}, {"x": 2.86259765625, "y": 80, "fam": "D3"}, {"x": 2.825, "y": 96, "fam": "D3"}, {"x": 2.81689453125, "y": 112, "fam": "D3"}, {"x": 2.81875, "y": 128, "fam": "D3"}, {"x": 3.2093750000000005, "y": 64, "fam": "D6"}, {"x": 2.9000000000000004, "y": 128, "fam": "D6"}, {"x": 2.825, "y": 192, "fam": "D6"}]}};
+const tok = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const COLORS = {NMSA:'--ink-3', AED:'--c-extra', D1:'--c-a', D2:'--c-base', D3:'--c-b', D6:'--c-ref'};
+const LABELS = {NMSA:'NMSA', AED:'AED', D1:'Δ1', D2:'Δ2', D3:'Δ3', D6:'Δ6'};
+const FAMS = ['NMSA','AED','D1','D2','D3','D6'];
+
+function buildChart() {
+  const datasets = [];
+  for (const fam of FAMS) {
+    for (const ver of ['old','new']) {
+      const pts = [];
+      for (const code of ['78','180']) for (const p of DATA[code][ver]) if (p.fam === fam) pts.push({x:p.x, y:p.y});
+      if (!pts.length) continue;
+      const col = tok(COLORS[fam]);
+      datasets.push({
+        label: LABELS[fam] + (ver==='new' ? ' · greedy' : ' · original'),
+        fam, ver,
+        data: pts,
+        backgroundColor: col,
+        borderColor: col,
+        pointStyle: ver==='new' ? 'triangle' : 'circle',
+        pointRadius: ver==='new' ? 7 : 5,
+        pointHoverRadius: 9,
+        showLine: false,
+      });
+    }
+  }
+  const grid = tok('--grid'), ink2 = tok('--ink-2'), ink3 = tok('--ink-3'), panel = tok('--panel'), ink = tok('--ink');
+  return new Chart(document.getElementById('fig5chart'), {
+    type: 'scatter',
+    data: { datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { type:'linear', min:2.1, max:5.85,
+             title:{display:true, text:'Required Eb/N0 (dB) for target FER 1e-3', color:ink2, font:{family:"IBM Plex Sans"}},
+             grid:{color:grid}, ticks:{color:ink3, font:{family:"IBM Plex Mono"}} },
+        y: { type:'logarithmic', min:1, max:220,
+             title:{display:true, text:'Number of paths', color:ink2, font:{family:"IBM Plex Sans"}},
+             grid:{color:grid}, ticks:{color:ink3, font:{family:"IBM Plex Mono"}, callback:v=>[1,2,4,8,16,32,64,128,192].includes(v)?v:null} },
+      },
+      plugins: {
+        legend: { display:false },
+        tooltip: { backgroundColor:panel, titleColor:ink, bodyColor:ink, borderColor:grid, borderWidth:1,
+                   bodyFont:{family:"IBM Plex Mono"}, titleFont:{family:"IBM Plex Sans"},
+                   callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + ' paths @ ' + ctx.parsed.x.toFixed(3) + ' dB' } }
+      }
+    }
+  });
+}
+
+let chart = buildChart();
+const legendEl = document.getElementById('legend');
+
+function renderLegend() {
+  legendEl.innerHTML = '';
+  chart.data.datasets.forEach((ds, i) => {
+    const pill = document.createElement('span');
+    pill.className = 'pill';
+    const swatch = document.createElement('span');
+    swatch.className = 'swatch';
+    swatch.style.background = ds.backgroundColor;
+    swatch.style.borderRadius = ds.ver === 'new' ? '2px' : '50%';
+    const text = document.createElement('span');
+    text.textContent = ds.label;
+    pill.appendChild(swatch); pill.appendChild(text);
+    pill.style.opacity = chart.isDatasetVisible(i) ? '1' : '0.35';
+    pill.addEventListener('click', () => {
+      chart.setDatasetVisibility(i, !chart.isDatasetVisible(i));
+      chart.update();
+      pill.style.opacity = chart.isDatasetVisible(i) ? '1' : '0.35';
+    });
+    legendEl.appendChild(pill);
+  });
+}
+renderLegend();
+
+function setGroup(pred) {
+  chart.data.datasets.forEach((ds, i) => chart.setDatasetVisibility(i, pred(ds)));
+  chart.update();
+  renderLegend();
+}
+document.getElementById('btnOrig').addEventListener('click', () => setGroup(ds => ds.ver === 'old'));
+document.getElementById('btnGreedy').addEventListener('click', () => setGroup(ds => ds.ver === 'new'));
+document.getElementById('btnBoth').addEventListener('click', () => setGroup(() => true));
+
+let redrawing = false;
+function redraw() {
+  if (redrawing) return;
+  redrawing = true;
+  const hiddenState = chart.data.datasets.map((_, i) => chart.isDatasetVisible(i));
+  chart.destroy();
+  chart = buildChart();
+  hiddenState.forEach((vis, i) => chart.setDatasetVisibility(i, vis));
+  chart.update();
+  renderLegend();
+  redrawing = false;
+}
+try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw); } catch (e) {}
+new MutationObserver(redraw).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+</script>
