@@ -646,3 +646,133 @@ keys/row-counts present), and the inline `<script>` parsed with
 the `table()` helper -- esprima's parser predates ES2020 and already failed
 on this same line in the previously-published, working version; confirmed by
 checking out the old commit, not a regression from this change).
+
+## Greedy RL/QC-block selection search, Zc=6 Fig. 5 codes (2026-10-05/06)
+
+Extends the Zc=11 greedy block-selection search (see the section above) to
+the two Zc=6 codes from Fig. 5 of the paper: `C_5G(78,60)` (37 candidate
+RL/QC blocks) and `C_5G(180,60)` (20 candidate blocks). Full write-up:
+`sweeps/greedy_block_search_zc6_results.md`.
+
+Pulled in the Fig. 5 scripts from `origin/v1.0.0`
+(`reproduce_fig5_scatter_plot_zc6_5G_LDPC.py`, `scatter_zc6_n_{78,180}.sh`,
+`post_process_scatter.py`, `Codes/TCOM_aSCED/5G_zc=6/`) -- this branch didn't
+have them. Reused existing baseline data at
+`/home/pj9034/aSCED/RESULTS/fig_scatter_zc6_n={78,180}/summary/*.dat` (the
+"subsequent blocks" natural-order baseline, spot-checked: dimensions/FER
+sane, required_snr mostly monotonically decreasing with path count, modulo
+small sampling-noise blips) rather than regenerating it.
+
+Ran `uv lock -P channel-code-lib2 && uv sync` first per the task's
+instructions (picked up `channel-code-lib2` at commit `c0fd4c1` -- same
+commit already pinned, so the parallel segfault-fix work hadn't landed a new
+commit yet at the time this ran). Notably, **no segfaults were hit anywhere
+in this search** (unlike the Zc=11 search's 2 reproducibly-crashing
+degree-1-check-row blocks) -- all 37+20 candidate blocks across all 16
+rounds (8 per code) evaluated cleanly.
+
+**Scouting** (no pre-existing cheap-budget baseline to read operating points
+off, unlike Zc=11): built a "subsequent blocks", split3 (Delta=3), L=4-block
+baseline (64 paths) and used the reference script's own `search_target_fer()`
+to find SNR @ FER=0.1 and FER=1e-3 (cheap budget: `target_errors=50,
+max_transmissions=2e5`):
+- n_simul=78: 3.000dB (FER=0.0995), 5.0605dB (FER=0.001015)
+- n_simul=180: 1.3696dB (FER=0.1005), 2.9531dB (FER=0.000990)
+
+**Greedy chain** (8 rounds each, split3/Delta=3 evaluation only, same
+cheap budget, ranking = summed per-SNR rank at the two scouted points):
+- n_simul=78 winning order: **`[11, 31, 29, 6, 27, 18, 10, 24]`**
+- n_simul=180 winning order: **`[7, 0, 6, 3, 5, 19, 14, 2]`**
+
+Only block 6 is common to both (n=78's 4th pick, n=180's 3rd) -- otherwise
+disjoint, as expected (different candidate pools/PCMs).
+
+**New files**: `sweeps/scout_zc6_fer_targets.py`, `sweeps/scout_zc6_array.sbatch`,
+`sweeps/greedy_block_search_zc6.py` (per-candidate cheap-eval driver, CLI
+`<n_simul> <fixed_blocks> <candidate_block> <snr>`),
+`sweeps/run_greedy_search_zc6.py` (orchestrator, CLI `<n_simul> <num_rounds>
+[array_concurrency]`), `sweeps/run_greedy_search_zc6_array.sbatch`,
+`reproduce_fig5_scatter_plot_zc6_5G_LDPC_greedy.py` (production validation
+script, reads the winning block order from
+`sweeps/greedy_search_state_zc6_n<n_simul>.json`, same CLI as the reference
+script), `sweeps/generate_scatter_zc6_greedy_manifest.py` ->
+`sweeps/scatter_zc6_greedy_manifest{,_n78,_n180}.csv`,
+`sweeps/run_scatter_zc6_greedy_array.sbatch`.
+
+**Production validation sweep**: full experiment matrix (35 variants per
+code: split1 L=1-8 + 5 subsplit, split2 L=1-8, split3 L=1-8, nosplit L=1-3),
+using the greedy block order in place of `block_offset=0`, via
+`search_target_fer()` (target_fer=1e-3, matching Fig. 5's own methodology)
+with `target_errors=1000` (reference default) and a deliberately added
+`max_transmissions=int(2e6)` cap (the original script has none -- documented
+deviation, same convention as the Zc=11 production sweeps). Output root:
+`RESULTS/fig_scatter_zc6_n={78,180}/greedy/<variant>/`, summary file
+`RESULTS/fig_scatter_zc6_n={78,180}/summary/n{78,180}_paths_vs_required_snr_greedy.dat`
+(parallel to, not overwriting, the existing natural-order `.dat`).
+
+Jobs: 541702 (n=78, 35 tasks), 541763/541765/541778 (n=180, 35 tasks across
+several resubmissions -- see below). **Cluster scheduling gotcha hit**: a
+scheduled maintenance reservation (`first_tuesday_maint_2026_10`,
+2026-10-06 08:00-13:00 CEST, all compute nodes) repeatedly blocked
+newly-submitted array tasks whose requested SLURM `--time` didn't fit before
+08:00 (`ReqNodeNotAvail, Reserved for maintenance`); had to progressively
+shrink `--time` (24h -> 6h -> 5h -> 3.5h) across several resubmissions
+overnight as the pre-maintenance window shrank. (Already-running jobs were
+NOT killed by the reservation itself -- `IGNORE_JOBS` flag -- and in practice
+also were not strictly killed by their own `--time` limit either: task
+541778_22 completed successfully at 3:49:49 elapsed against a 3:30:00
+requested limit.) As of this writing, 12 of the 70 production tasks
+(`541778_[24-35]`, all n=180) remain PENDING behind the reservation and will
+start once it clears at 13:00; check `sacct -j 541702,541763,541765,541778`
+for current status. **If still incomplete when you read this**, resubmit the
+remaining rows from `sweeps/scatter_zc6_greedy_manifest_n180.csv` (1-indexed,
+matching the pending array indices) via
+`sbatch --array=<missing indices> sweeps/run_scatter_zc6_greedy_array.sbatch sweeps/scatter_zc6_greedy_manifest_n180.csv`,
+with a generous `--time` (no known reservation blocks after 2026-10-06 13:00
+until 2026-11-03) before trusting the summary `.dat` file to be complete --
+same per-row completeness-check discipline as every other sweep in this
+effort.
+
+Worktree for all of the above: `/home/pj9034/aSCED/.claude/worktrees/agent-a5559d2ec565bdf8f`
+(this worktree's own branch, `worktree-agent-a5559d2ec565bdf8f`, had to be
+reset to this session's `claude_sequential` tip at the start of the task
+since it had been created from a stale base -- same gotcha as the earlier
+Zc=11 greedy-search agent). Committed but not pushed -- needs merging into
+`claude_sequential` by the orchestrating session, and (per the "Worktree
+gotcha" note above) its `RESULTS/` directory needs to be manually copied over
+after merging since it's gitignored and this is an isolated worktree.
+
+### UPDATE (2026-10-07): production sweep complete, classifier bug found and fixed
+
+All 70 production tasks (35 variants x 2 codes) are now COMPLETED after
+several resubmission rounds (jobs 541702/541763/541765/541778/541794/542761
+-- see the maintenance-window/connection-refused saga above) plus one bugfix
+recompute (job 543175, 4 tasks).
+
+**Bug found while chasing the last few timed-out tasks**: the summary-row
+split-pattern classifier in `reproduce_fig5_scatter_plot_zc6_5G_LDPC_greedy.py`
+used fragile substring matching (`"split1" in save_name`) that misclassified
+any `..._subsplit1` variant (e.g. `4_split2_subsplit1`, `8_split3_subsplit1`)
+as `split=1`, causing a genuine key collision in the summary-file merge
+(dedup by `(split, numpaths)`) that silently dropped 2 of 35 rows per code.
+**This bug is pre-existing, inherited verbatim from the original
+`reproduce_fig5_scatter_plot_zc6_5G_LDPC.py` (both on this branch and on the
+user's other checkout, `/home/pj9034/aSCED`, `v1.0.0` branch) -- not
+introduced here.** It also affects the existing natural-order baseline data
+reused by this task: baseline is missing 2 rows for n=78 and **4** rows for
+n=180 (the same 2 collisions, plus 2 more -- `64_split3`/`128_split3` for
+n=180 -- that are unrelated to this classifier bug and point at a separate,
+undiagnosed gap in that original sweep). Flagged back for the user's
+awareness; **not fixed in `v1.0.0`** (out of scope, that's the other
+checkout) -- only fixed in this branch's `_greedy.py` copy, which now tracks
+the split label as an explicit field at construction time instead of
+re-deriving it from `save_name`. Full details, the recompute, and the
+final 35/35-row comparison tables (baseline vs. greedy, both codes):
+`sweeps/greedy_block_search_zc6_results.md`.
+
+**Headline result**: greedy block selection gives equal-or-lower required
+SNR @ target_fer=1e-3 than "subsequent blocks" across essentially the whole
+35-variant matrix for both codes (occasional +0.01-0.04dB blips are within
+`target_errors=1000` sampling noise). Largest win: n=78's `64_nosplit`,
+-0.153dB. At the largest ensemble size (192 paths, nosplit): n=78 -0.0125dB,
+n=180 -0.0750dB.
