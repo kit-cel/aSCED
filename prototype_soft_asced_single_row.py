@@ -197,10 +197,19 @@ def sanity_check_1_bias_applied():
     return bias0_agree, bias_changes_outcome
 
 
-def sanity_check_2_hard_limit_equivalence(num_samples=200, snr_db=2.0):
+def sanity_check_2_hard_limit_equivalence(num_samples=3000, snr_db=2.0):
     """On samples with a KNOWN true splitter bit, pattern = true bit with
     bias saturated at +/-30 (via syndrome_vn_bias=30) should (nearly) agree
-    with the existing hard-aSCED path using that same correct guess."""
+    with the existing hard-aSCED path using that same correct guess.
+
+    NOTE (per the soft-aSCED expert's methodological correction): agreement
+    on N trials only bounds the DISAGREEMENT rate, it does not establish
+    exact equivalence -- 0 disagreements in N trials bounds the true
+    disagreement rate at < 3/N (95%, "rule of three"). num_samples=3000
+    (vs. the original 200) tightens that bound to <0.1%. Non-converged-hard
+    trials are intentionally included in the unconditional count (not just
+    both-converged), since that's exactly where saturation (+/-30) and a
+    hard-fixed bit could plausibly differ."""
     print("\n--- Sanity check 2: hard-limit equivalence (bias=30 saturation vs. hard aSCED) ---")
     rng = np.random.default_rng(2)
     agreements = 0
@@ -231,15 +240,19 @@ def sanity_check_2_hard_limit_equivalence(num_samples=200, snr_db=2.0):
             if hard_cw == soft_cw:
                 both_converged_agreements += 1
 
+    disagreements = num_samples - agreements
     agreement_rate = agreements / num_samples
+    disagreement_ci = wilson_interval(disagreements, num_samples)
     conditional_rate = (
         both_converged_agreements / both_converged_count if both_converged_count else float("nan")
     )
     print(f"  overall decision agreement (correct guess, bias=30 vs. hard): "
           f"{agreement_rate:.4f} ({agreements}/{num_samples})")
+    print(f"  => disagreement rate 95% CI: [{disagreement_ci[0]:.5f}, {disagreement_ci[1]:.5f}] "
+          f"({disagreements} observed disagreements)")
     print(f"  agreement given BOTH converged: {conditional_rate:.4f} "
           f"({both_converged_agreements}/{both_converged_count})")
-    return agreement_rate, conditional_rate
+    return agreement_rate, conditional_rate, disagreement_ci, num_samples
 
 
 def sanity_check_3_reused_decoder(num_samples=50, snr_db=2.0):
@@ -278,9 +291,116 @@ def sanity_check_3_reused_decoder(num_samples=50, snr_db=2.0):
     return identical
 
 
+def sanity_check_4_effort_mechanism(num_samples=500, snr_db=2.0, bias=10.0):
+    """Direct, per-path evidence for WHY soft aSCED's effort/latency drops
+    (per the coordinator's follow-up question -- confirm this is really the
+    'wrong' path converging earlier, not some other confound). Splits each
+    path's own BP iteration count (`decoding_effort`) and convergence flag
+    by whether that path's guess matches the true splitter bit or not,
+    separately for hard and soft (same bias/SNR as used elsewhere)."""
+    print("\n--- Sanity check 4: per-path effort/convergence, correct vs. wrong guess ---")
+    rng = np.random.default_rng(4)
+    buckets = {
+        "hard_correct": ([], []), "hard_wrong": ([], []),
+        "soft_correct": ([], []), "soft_wrong": ([], []),
+    }
+    for _ in range(num_samples):
+        _, codeword = encode_random_message(rng)
+        true_bit = int((s[0] @ codeword) % 2)
+        wrong_bit = 1 - true_bit
+        llrs = awgn_llrs(codeword, snr_db=snr_db, rng=rng)
+
+        for guess, key in [(true_bit, "hard_correct"), (wrong_bit, "hard_wrong")]:
+            offset = np.zeros(m + 1, dtype=int)
+            offset[-1] = guess
+            dec = ccl.build_decoder(make_hard_bp_config(offset))
+            dec.decode(llrs)
+            buckets[key][0].append(dec.decoding_effort)
+            buckets[key][1].append(bool(dec.converged))
+
+        for guess, key in [(true_bit, "soft_correct"), (wrong_bit, "soft_wrong")]:
+            dec = ccl.build_decoder(make_soft_bp_config(guess, bias))
+            dec.decode(llrs)
+            buckets[key][0].append(dec.decoding_effort)
+            buckets[key][1].append(bool(dec.converged))
+
+    summary = {}
+    for key, (effort, conv) in buckets.items():
+        mean_effort = sum(effort) / len(effort)
+        converged_frac = sum(conv) / len(conv)
+        summary[key] = {"mean_effort": mean_effort, "converged_frac": converged_frac}
+        print(f"  {key:14s} mean_effort={mean_effort:6.2f}  converged_frac={converged_frac:.3f}")
+    return summary
+
+
+# --------------------------------------------------------------------------
+# Equal-K comparison: same path BUDGET (K=2), spent either as 2 patterns on
+# 1 matrix (our headline comparison) or 1 pattern (0 only) on 2 DIFFERENT
+# matrices (2 independently-built splitter rows). Per the soft-aSCED
+# expert's correction: this -- not our original 1-path-vs-2-path comparison
+# -- is the actual like-for-like test of "spend K on patterns vs. matrices",
+# and on their side it was code-dependent (helped some codes, hurt others).
+# --------------------------------------------------------------------------
+
+s2 = candidate_rows[1:2, :]  # second splitter row candidate, for the equal-K check
+H_l_2 = np.vstack([H, s2]).astype(int)
+assert np.linalg.matrix_rank(gf2(H_l_2)) == m + 1, "second splitter row must be linearly independent of H"
+col_2 = np.zeros((m + 1, 1), dtype=int)
+col_2[-1, 0] = 1
+H_soft_2 = np.hstack([H_l_2, col_2]).astype(int)
+
+
+def make_soft_bp_config_matrix2(pattern, bias):
+    cfg = ccl.BP_config(H_soft_2)
+    cfg.early_stopping = True
+    cfg.max_iterations = 32
+    cfg.cn_update_type = "msa"
+    cfg.scheduling_type = "flooding"
+    cfg.norm_factor = 0.75
+    cfg.use_avns = True
+    cfg.num_syndrome_vns = 1
+    cfg.syndrome_vn_pattern = [pattern]
+    cfg.syndrome_vn_bias = float(bias)
+    cfg.set_H0(H)
+    return cfg
+
+
+def make_equal_k_two_matrices_config(bias):
+    """K=2: pattern 0 only, on 2 DIFFERENT splitter-row matrices."""
+    path_m1 = make_soft_bp_config(0, bias)
+    path_m2 = make_soft_bp_config_matrix2(0, bias)
+    return ccl.Ensemble_config(H, [path_m1, path_m2])
+
+
 # --------------------------------------------------------------------------
 # Main bias sweep / hard-vs-soft FER comparison
 # --------------------------------------------------------------------------
+
+def _lookup_by_snr(d, snr):
+    # decoder_stats.json / stats.json keys are produced by the C++ side's own
+    # double_to_string (e.g. "2" for 2.0, "2.5" for 2.5) -- match by parsed
+    # float value instead of assuming a particular string format.
+    for k_str, v in d.items():
+        if abs(float(k_str) - snr) < 1e-9:
+            return v
+    return None
+
+
+def wilson_interval(num_events, num_trials, z=1.96):
+    """Wilson score interval for a binomial proportion (95% by default).
+    Falls back to the "rule of three" upper bound when num_events == 0,
+    since Wilson degenerates to (0, ~0) there and understates the true
+    uncertainty for small/zero counts."""
+    if num_trials == 0:
+        return (float("nan"), float("nan"))
+    if num_events == 0:
+        return (0.0, 3.0 / num_trials)
+    phat = num_events / num_trials
+    denom = 1 + z**2 / num_trials
+    center = (phat + z**2 / (2 * num_trials)) / denom
+    half = z * np.sqrt(phat * (1 - phat) / num_trials + z**2 / (4 * num_trials**2)) / denom
+    return (max(0.0, center - half), min(1.0, center + half))
+
 
 def run_sim(ensemble_cfg, snr_points, save_dir, target_errors=200, max_transmissions=int(1e5)):
     sim = ccl.Simulation_Env(k, n, "all")
@@ -297,27 +417,37 @@ def run_sim(ensemble_cfg, snr_points, save_dir, target_errors=200, max_transmiss
     sim.get_error_rates(np.array(snr_points, dtype=float))
 
     fer = dict(sim.error_rates["FER-SNR"])
-    stats_path = os.path.join(save_dir, "decoder_stats.json")
     effort = {}
     latency = {}
+    counts = {}  # snr -> (frame_errors, trials), for CIs
+
+    decoder_stats_path = os.path.join(save_dir, "decoder_stats.json")
+    if os.path.exists(decoder_stats_path):
+        with open(decoder_stats_path) as f:
+            stats = json.load(f)
+        for snr in snr_points:
+            effort[snr] = _lookup_by_snr(stats.get("average_ensemble_effort", {}), snr)
+            latency[snr] = _lookup_by_snr(stats.get("average_ensemble_latency", {}), snr)
+
+    stats_path = os.path.join(save_dir, "stats.json")
     if os.path.exists(stats_path):
         with open(stats_path) as f:
             stats = json.load(f)
-
-        def _lookup(d, snr):
-            # decoder_stats.json keys are produced by the C++ side's own
-            # double_to_string (e.g. "2" for 2.0, "2.5" for 2.5) -- match by
-            # parsed float value instead of assuming a particular string
-            # format.
-            for k_str, v in d.items():
-                if abs(float(k_str) - snr) < 1e-9:
-                    return v
-            return None
-
         for snr in snr_points:
-            effort[snr] = _lookup(stats.get("average_ensemble_effort", {}), snr)
-            latency[snr] = _lookup(stats.get("average_ensemble_latency", {}), snr)
-    return fer, effort, latency
+            fe = _lookup_by_snr(stats.get("frame_errors", {}), snr)
+            tr = _lookup_by_snr(stats.get("trials", {}), snr)
+            counts[snr] = (fe, tr)
+
+    return fer, effort, latency, counts
+
+
+def _fer_ci_str(fer_by_snr, counts_by_snr, snr):
+    fe_tr = counts_by_snr.get(snr)
+    if not fe_tr or fe_tr[0] is None:
+        return f"{fer_by_snr.get(snr)}"
+    fe, tr = fe_tr
+    lo, hi = wilson_interval(fe, tr)
+    return f"{fer_by_snr.get(snr):.5f} [{lo:.5f}, {hi:.5f}] ({fe} err / {tr} trials)"
 
 
 def main():
@@ -325,8 +455,9 @@ def main():
     print("Soft-aSCED single-row (Delta=1) prototype -- sanity checks")
     print("=" * 70)
     b0_ok, bchange_ok = sanity_check_1_bias_applied()
-    agree_rate, cond_agree_rate = sanity_check_2_hard_limit_equivalence()
+    agree_rate, cond_agree_rate, disagree_ci, hard_limit_n = sanity_check_2_hard_limit_equivalence()
     reuse_ok = sanity_check_3_reused_decoder()
+    effort_mechanism = sanity_check_4_effort_mechanism()
 
     print("\n" + "=" * 70)
     print("Main sweep: hard aSCED (2 paths) vs. soft aSCED (2 paths, bias swept)")
@@ -338,10 +469,11 @@ def main():
 
     print("\nRunning hard aSCED baseline...")
     hard_cfg = make_hard_ensemble_config()
-    hard_fer, hard_effort, hard_latency = run_sim(
+    hard_fer, hard_effort, hard_latency, hard_counts = run_sim(
         hard_cfg, snr_points, os.path.join(results_root, "hard")
     )
-    print(f"  hard FER: {hard_fer}")
+    for snr in snr_points:
+        print(f"  hard FER @ {snr}dB: {_fer_ci_str(hard_fer, hard_counts, snr)}")
     print(f"  hard avg ensemble effort: {hard_effort}")
     print(f"  hard avg ensemble latency: {hard_latency}")
 
@@ -350,13 +482,34 @@ def main():
     for bias in bias_values:
         print(f"\nRunning soft aSCED, bias={bias}...")
         soft_cfg = make_soft_ensemble_config(bias)
-        fer, effort, latency = run_sim(
+        fer, effort, latency, counts = run_sim(
             soft_cfg, snr_points, os.path.join(results_root, f"soft_bias{bias}")
         )
-        soft_results[bias] = {"fer": fer, "effort": effort, "latency": latency}
-        print(f"  soft(bias={bias}) FER: {fer}")
+        soft_results[bias] = {"fer": fer, "effort": effort, "latency": latency, "counts": counts}
+        for snr in snr_points:
+            print(f"  soft(bias={bias}) FER @ {snr}dB: {_fer_ci_str(fer, counts, snr)}")
         print(f"  soft(bias={bias}) avg ensemble effort: {effort}")
         print(f"  soft(bias={bias}) avg ensemble latency: {latency}")
+
+    print("\n" + "=" * 70)
+    print("Equal-K check (K=2): 2 patterns on 1 matrix vs. pattern-0-only on 2 matrices")
+    print("(per the soft-aSCED expert's correction -- this, not 1-path-vs-2-path, is")
+    print(" the actual like-for-like 'spend K on patterns vs. matrices' comparison)")
+    print("=" * 70)
+    equal_k_bias = 10  # the expert's recommended starting point
+    print(f"\nRunning 2-patterns-1-matrix (our headline config) at bias={equal_k_bias}...")
+    two_patterns_cfg = make_soft_ensemble_config(equal_k_bias)
+    tp_fer, tp_effort, tp_latency, tp_counts = run_sim(
+        two_patterns_cfg, snr_points, os.path.join(results_root, "equalk_2patterns_1matrix")
+    )
+    print(f"\nRunning pattern-0-only-2-matrices at bias={equal_k_bias}...")
+    two_matrices_cfg = make_equal_k_two_matrices_config(equal_k_bias)
+    tm_fer, tm_effort, tm_latency, tm_counts = run_sim(
+        two_matrices_cfg, snr_points, os.path.join(results_root, "equalk_pattern0_2matrices")
+    )
+    for snr in snr_points:
+        print(f"  2-patterns/1-matrix  FER @ {snr}dB: {_fer_ci_str(tp_fer, tp_counts, snr)}")
+        print(f"  pattern0/2-matrices  FER @ {snr}dB: {_fer_ci_str(tm_fer, tm_counts, snr)}")
 
     summary = {
         "sanity_checks": {
@@ -364,11 +517,19 @@ def main():
             "bias_changes_outcome": bool(bchange_ok),
             "hard_limit_agreement_rate": agree_rate,
             "hard_limit_conditional_agreement_rate": cond_agree_rate,
+            "hard_limit_disagreement_rate_95ci": list(disagree_ci),
+            "hard_limit_num_samples": hard_limit_n,
             "reused_decoder_matches_fresh": bool(reuse_ok),
+            "effort_mechanism_by_guess_correctness": effort_mechanism,
         },
         "snr_points": snr_points,
-        "hard": {"fer": hard_fer, "effort": hard_effort, "latency": hard_latency},
+        "hard": {"fer": hard_fer, "effort": hard_effort, "latency": hard_latency, "counts": hard_counts},
         "soft": soft_results,
+        "equal_k_check": {
+            "bias": equal_k_bias,
+            "two_patterns_one_matrix": {"fer": tp_fer, "effort": tp_effort, "latency": tp_latency, "counts": tp_counts},
+            "pattern0_two_matrices": {"fer": tm_fer, "effort": tm_effort, "latency": tm_latency, "counts": tm_counts},
+        },
         "splitter_row_weight": int(s.sum()),
         "syndrome_vn_degree": 1,  # see design-decision note: M_l = identity for this Delta=1 prototype
     }
