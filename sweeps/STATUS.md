@@ -883,11 +883,16 @@ K split differently. The actual like-for-like test (K=2: both patterns on
 patterns-on-1-matrix clearly better on `C_5G(132,66)` (non-overlapping 95%
 CIs both SNRs) — opposite of what helped some of the expert's own codes,
 consistent with their "code-dependent" framing. Repeated over 6 more
-independent splitter-row pairs per the expert's variance concern: wins
-all 12/12 (6 pairs × 2 SNRs) — a robust effect, not a fluke of one pair.
-Also reported agreement specifically on the hard-not-converged subset of
-the hard-limit check (494/3000 trials, the only place saturation and a
-hard-fixed bit could differ): 494/494 (100%), CI [0, 0.0061]. (2) This prototype's main
+independent splitter-row pairs per the expert's variance concern: **6/6
+pairs** favor patterns-on-1-matrix (sign-test p≈0.03) — correctly counted
+as 6 independent pairs, not "12/12" (the 2 SNRs per pair aren't independent
+samples; an earlier draft overstated this). Also reported agreement
+specifically on the hard-not-converged subset of the hard-limit check
+(494/3000 trials, the only place saturation and a hard-fixed bit could
+differ): 494/494 (100%), CI [0, 0.0061]. The effort-mechanism finding is
+the same *mechanism* as the expert's QEC guess-violation study but a
+code-dependent *size* (none on Toric_128, ~3.5x on GB_254) — not a
+"universal" effect, an earlier framing corrected per their review. (2) This prototype's main
 sweep uses a bare 2-path full-parallel ensemble only — it has **not** been
 combined with this project's members-per-group / `MConvergedPolicy`
 ensemble-level early-stopping (used throughout Sweep A/B etc. elsewhere in
