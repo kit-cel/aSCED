@@ -856,18 +856,38 @@ check — caught by a failing test, fixed, full test suite re-verified green.
 
 **Headline result**, validated on aSCED-48's underlying code
 (`C_5G(132,66)`, n_simul=132), one freshly-built splitter row, hard aSCED
-(2 paths) vs. soft aSCED (2 paths — one per syndrome-VN pattern, matching
-hard's path count exactly), bias swept in {1,2,3,5,10,20,30,35}, 2.0/3.0dB:
-soft aSCED's FER matches hard aSCED's within Monte-Carlo noise across the
-whole bias sweep, while decoding effort drops 35–43% (2.0dB) / 62–68%
-(3.0dB) and latency drops 47–59% (2.0dB) / 73–81% (3.0dB). The saving is
-structural (the guess-correction `H0`-only validity check is strictly
-easier to satisfy than hard aSCED's full-extended-system check), not just
-"weak bias gives up early" — a new finding, not in the original design
-spec. Three requested sanity checks all passed, including new empirical
-evidence (200/200 decision agreement) for the previously-unverified
-bias→∞ equivalence to hard aSCED — not previously verified even on the
-sibling QEC project.
+(2 paths) vs. soft aSCED (2 paths — one per syndrome-VN pattern, both
+signs of the push always included, matching hard's path count exactly),
+bias swept in {1,2,3,5,10,20,30,35}, 2.0/3.0dB, with proper error
+counts/Wilson 95% CIs per point (~1100-1300 errors, 7k-78k trials each):
+soft aSCED's FER 95% CI overlaps hard aSCED's at every point — genuinely
+indistinguishable, not just "close" — while decoding effort drops 35–43%
+(2.0dB) / 62–68% (3.0dB) and latency drops 47–59% (2.0dB) / 73–81%
+(3.0dB). **Direct per-path evidence, not just an aggregate inference**: a
+hard-fixed wrong guess converges 0.4% of the time at the full 32-iteration
+budget; a soft wrong-guess path converges 70% of the time at ~half the
+iterations, via guess-correction — confirmed this is exactly where the
+saving comes from (`sanity_check_4_effort_mechanism`, committed in the
+script). Three requested sanity checks all passed, including the
+previously-unverified bias→∞ equivalence to hard aSCED: reran at N=3000
+(up from 200, per the expert's methodological correction that 0/200 only
+bounds disagreement at <1.5%) — 0 disagreements, 95% CI [0, 0.001] — not
+previously verified even on the sibling QEC project.
+
+**Caveats added after the expert's review** (both corrected in the results
+doc, not just noted here): (1) the original "single-pattern/1-path is the
+weakest configuration, matching the sibling project's Delta=1 finding"
+claim was wrong — that compared *different K* (1 path vs. 2), not the same
+K split differently. The actual like-for-like test (K=2: both patterns on
+1 matrix vs. pattern-0-only on 2 matrices) was added and found
+patterns-on-1-matrix clearly better on `C_5G(132,66)` (non-overlapping 95%
+CIs both SNRs) — opposite of what helped some of the expert's own codes,
+consistent with their "code-dependent" framing. (2) This prototype's main
+sweep uses a bare 2-path full-parallel ensemble only — it has **not** been
+combined with this project's members-per-group / `MConvergedPolicy`
+ensemble-level early-stopping (used throughout Sweep A/B etc. elsewhere in
+this project). Whether combining the two compounds the savings or overlaps
+with them is an open question, not yet tested.
 
 **Infrastructure note**: the implementing background agent's worktree
 branched from a stale `main` ref instead of `claude_sequential` (its
