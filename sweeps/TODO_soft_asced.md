@@ -123,6 +123,31 @@ injected into the syndrome or check targets.
   config in `init()`; Serial-VN iteration counter not reset between
   trials; resumable `decode(k)` skipping an iteration per chunk boundary.
 
+## Soft + members-per-group/MConverged compounding (expert session, 2026-10-10)
+
+For when we test combining soft-aSCED with this project's existing
+members-per-group/`MConvergedPolicy` ensemble-level stopping (currently
+untested, see STATUS.md "open question"): on the QEC side, stopping ran on
+top of already-soft configurations and found (CPU vs. the soft baseline,
+at the benchmark LER):
+- GB_126 soft K64 MW, groups of 8, M=4: 6-9x.
+- GB_254 soft K16 MW, groups of 2, M=1: 4-6x.
+- BB_288 soft K16 + ELC-B, groups of 2, M=1: ~3.5x.
+- BB_144 soft K16 + ELC-B, M=8=K/2: only ~2x (ELC needs many converged paths).
+- GB_46 soft K64 MW: no free saving (many paths converge in the same
+  iteration; the minimum-weight one is often in a later group).
+
+Caveats from the expert: this is "stopping still saved a lot on top of
+soft", not a measured product of two independent factors (no hard-vs-soft
+comparison WITH stopping at equal K was run on the same code); the two
+mechanisms overlap in principle (soft already makes wrong-guess paths
+cheap, so stopping's extra saving is smaller after soft than after hard).
+**At K=2 (our current Delta=1 prototype) there is nothing to gain**: the
+only grouping option is groups of 1/M=1, i.e. "run path 0, run path 1 only
+if path 0 fails" -- saves at most the second path, costs FER whenever path
+1 would've been the better codeword. Worth testing only once K>=8 (i.e.
+once we've generalized past Delta=1 or run multiple matrices).
+
 ## Reference
 
 - Quantum analog repo granted read access 2026-10-09:
