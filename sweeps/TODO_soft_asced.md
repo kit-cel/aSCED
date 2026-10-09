@@ -34,11 +34,14 @@ user, for implementation details before starting.
 
 - [x] Scope soft-aSCED for Wireless (channel-code-lib2 / aSCED) — scoped
       2026-10-09, see "Design spec" and "Scope decisions" below.
-- [ ] Implement single-splitter (Delta=1) soft-aSCED prototype on aSCED-48
-      — in progress, background agent launched 2026-10-09 on
-      `channel-code-lib2` branch `soft_asced_wireless` (worktree
-      `/home/pj9034/channel-code-lib2/.claude/worktrees/soft_asced_wireless`,
-      off `claude_sequential` @ e5f69b5) + a matching aSCED agent worktree.
+- [x] Implement single-splitter (Delta=1) soft-aSCED prototype on aSCED-48
+      — done 2026-10-09. `channel-code-lib2` branch `soft_asced_wireless`
+      (off `claude_sequential` @ e5f69b5, pushed @ 21d31b7); `aSCED` branch
+      `soft_asced_wireless` (off `claude_sequential`). FER matches hard
+      aSCED within noise; effort/latency drop 35-68%/47-81%. Independently
+      verified (reran tests + sanity checks + a spot-check sweep). Full
+      results: `sweeps/soft_asced_single_row_results.md`. Not merged into
+      `claude_sequential` — stays a separate exploratory branch.
 - [ ] Generalize to Delta>1 splitters.
 - [ ] Once soft-aSCED is implemented: interpret the RL (raptor-like)
       codebits as syndrome VNs (variable nodes), per the soft idea above —

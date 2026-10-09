@@ -820,3 +820,67 @@ noted above). All committed in this worktree; **not applied to the user's
 actual `/home/pj9034/aSCED` (v1.0.0) working copy** — that edit was blocked
 by design (this session's harness protects the user's live checkout from a
 different worktree's edits) and is the user's call to make.
+
+## Soft-aSCED, single-splitter (Delta=1) prototype (2026-10-09)
+
+New project: **soft-aSCED**, started after the previous compaction. Design
+spec, scope decisions, and full writeup live in `sweeps/TODO_soft_asced.md`
+(scoping + design) and `sweeps/soft_asced_single_row_results.md` (results),
+both on this branch. Short version:
+
+**Idea**: hard aSCED bakes a guessed subcode bit directly into an extended
+syndrome, needing one full BP path per guess. Soft-aSCED instead represents
+that guess as the prior LLR of an extra ordinary binary variable node (a
+"syndrome VN"); a path can still converge to a codeword that violates its
+own guess ("guess correction"), which is why soft is cheaper than hard.
+Design relayed from a sibling QEC project (quantum-error-correction repo)
+that already implements the same mechanism for GF4 — the wireless/binary
+case needed none of their GF4-specific machinery (an ordinary binary VN with
+a prior, handled by the existing generic `variable_node_update`).
+
+**Implementation**: `channel-code-lib2` branch `soft_asced_wireless` (off
+`claude_sequential` @ `e5f69b5`, pushed @ `21d31b7`) adds `BP_config`/
+`BP_Decoder` fields `num_syndrome_vns`/`syndrome_vn_pattern`/
+`syndrome_vn_bias`/`H0`, gated entirely behind `num_syndrome_vns > 0` so
+hard aSCED/plain BP are provably unchanged by default. `aSCED` branch
+`soft_asced_wireless` (off `claude_sequential`) adds
+`prototype_soft_asced_single_row.py`, pinned to the above via a `git`+
+`branch` source.
+
+**Bug found and fixed** (all three BP scheduling classes — Flooding,
+Row_Layered, Column_Layered): the "initial hard-decision already satisfies
+the syndrome" early-return path left `bp_converged`/`iteration_count` stale
+instead of reporting correct immediate convergence. Pre-existing, rarely hit
+by hard aSCED, but hit constantly by soft-aSCED's cheaper guess-correction
+check — caught by a failing test, fixed, full test suite re-verified green.
+
+**Headline result**, validated on aSCED-48's underlying code
+(`C_5G(132,66)`, n_simul=132), one freshly-built splitter row, hard aSCED
+(2 paths) vs. soft aSCED (2 paths — one per syndrome-VN pattern, matching
+hard's path count exactly), bias swept in {1,2,3,5,10,20,30,35}, 2.0/3.0dB:
+soft aSCED's FER matches hard aSCED's within Monte-Carlo noise across the
+whole bias sweep, while decoding effort drops 35–43% (2.0dB) / 62–68%
+(3.0dB) and latency drops 47–59% (2.0dB) / 73–81% (3.0dB). The saving is
+structural (the guess-correction `H0`-only validity check is strictly
+easier to satisfy than hard aSCED's full-extended-system check), not just
+"weak bias gives up early" — a new finding, not in the original design
+spec. Three requested sanity checks all passed, including new empirical
+evidence (200/200 decision agreement) for the previously-unverified
+bias→∞ equivalence to hard aSCED — not previously verified even on the
+sibling QEC project.
+
+**Infrastructure note**: the implementing background agent's worktree
+branched from a stale `main` ref instead of `claude_sequential` (its
+`channel-code-lib2` branch was correctly based; only the `aSCED`-side
+worktree was affected). Rather than merge 38 mostly-unrelated historical
+commits, the agent's actual new commit was re-extracted onto a freshly
+and correctly based `soft_asced_wireless` branch. Before doing so: reran
+the full C++ test suite directly (all green), independently reran all
+three sanity checks fresh (same qualitative results), and independently
+reran a reduced spot-check of the main sweep (`target_errors=50`, bias in
+{3, 20}) — FER and the effort/latency reduction both reproduced within
+Monte-Carlo noise. Not merged into `claude_sequential` — this stays a
+separate, opt-in exploratory branch until/unless the user decides
+otherwise. Next step (generalizing to Delta>1) is scoped in
+`sweeps/soft_asced_single_row_results.md`'s final section; the
+RL-codebit-derived-bias idea remains a separate, later TODO item.
