@@ -8,7 +8,9 @@ dependencies = [
     "channel-code-lib2",
 ]
 
-# use for sync with git 
+# use for sync with git
+# Soft-aSCED prototype: pinned to the channel-code-lib2 `soft_asced_wireless`
+# branch (off claude_sequential @ e5f69b5), now pushed to origin.
 [tool.uv.sources]
-channel-code-lib2 = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2",  branch = "claude_sequential"}
+channel-code-lib2 = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2", branch = "soft_asced_wireless" }
 
