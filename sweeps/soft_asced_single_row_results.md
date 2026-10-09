@@ -252,8 +252,8 @@ matches the true splitter bit or not:
 
 This directly confirms the mechanism, not just the aggregate effort number:
 a hard-fixed wrong guess essentially never converges and burns the entire
-iteration budget every time (0.2% convergence); a soft wrong-guess path
-still converges to a *valid* codeword two-thirds of the time, at much
+iteration budget every time (0.4% convergence); a soft wrong-guess path
+still converges to a *valid* codeword 70% of the time, at much
 lower average effort, because `syndrome_check` only checks the physical
 part against `H0` -- it doesn't care what the syndrome VN itself settled
 on. The correct-guess paths are statistically identical between hard and
@@ -262,6 +262,19 @@ behaves like a hard fix). **The entire effort/latency saving comes from
 the wrong-guess path, via guess correction** -- exactly the claimed
 mechanism, now demonstrated per-path rather than only inferred from
 aggregate statistics.
+
+**Caveat (per the soft-aSCED expert's correction)**: this is the same
+*mechanism* observed in their QEC guess-violation study (soft wrong-guess
+paths converging where hard ones don't), but the *size* of the saving is
+code-dependent, not universal -- on their side, Toric_128's hard
+wrong-guess paths already converge in ~3.3 iterations 98% of the time
+(degenerate equivalents), so soft saves essentially nothing there; GB_254
+is the opposite extreme (hard wrong-guess convergence ~0%, soft ~99%,
+~3.5x saving); BB_144 is in between. Also note their closest published
+number (BB_144, 72-83% of soft wrong-guess paths whose *estimate violates
+the guess*) is a different statistic than our 70% (share that *converge*)
+-- not directly comparable despite both measuring the same underlying
+guess-correction effect.
 
 ### Open question: not yet combined with members-per-group / `MConvergedPolicy`
 
@@ -356,13 +369,18 @@ number):
 | 4 (66, 206)  | 0.1581 vs 0.1748 | 0.0156 vs 0.0185 |
 | 5 (240, 368) | 0.1520 vs 0.1733 | 0.0141 vs 0.0204 |
 
-**2-patterns/1-matrix wins all 12/12 comparisons** (6 pairs x 2 SNRs), with
-a consistent relative margin (roughly 10-25% worse FER for pattern0/2-
-matrices each time) -- this is not a fluke of the original pair, it is a
-robust, repeatable effect on this code. The expert's suggested K=8
+**Correction (per the soft-aSCED expert)**: the 2 SNR points per pair reuse
+the same matrix pair, so they are NOT independent samples -- this is **6
+independent pairs**, not "12 independent comparisons". At `target_errors=100`
+each individual point has a CI of roughly +/-20%, so no single pair's
+10-25% margin is significant on its own; the right statistic is a sign
+test over the 6 pairs, not the per-pair margins. **2-patterns/1-matrix was
+the direction favored in all 6/6 pairs** (consistently at both SNRs within
+each pair) -- a two-sided sign test gives p ~= 0.03, which does support a
+repeatable effect on this code, just not with the overstated "12/12"
+framing from an earlier draft of this doc. The expert's suggested K=8
 extension (4 two-pattern matrices vs. 8 single-pattern matrices) was not
-run -- left as a further option if finer resolution at larger K is wanted,
-but the K=2, 6-pair result already answers the variance concern directly.
+run -- left as a further option if finer resolution at larger K is wanted.
 
 ## Design decisions / assumptions flagged for the user
 

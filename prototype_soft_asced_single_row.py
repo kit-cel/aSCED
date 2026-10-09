@@ -470,24 +470,44 @@ def equal_k_multi_pair_check(num_pairs=6, bias=10.0, snr_points=(2.0, 3.0),
                   f"2pat/1mat={_fer_ci_str(tp_fer, tp_counts, snr)}  |  "
                   f"pat0/2mat={_fer_ci_str(tm_fer, tm_counts, snr)}")
 
-    wins_2pat = 0
-    wins_2mat = 0
-    ties = 0
+    # Per the soft-aSCED expert's correction: the SNR points within one pair
+    # reuse the same matrix pair, so they are NOT independent samples. Count
+    # independent PAIRS (does 2-patterns/1-matrix win at every SNR in this
+    # pair?), not pair x SNR combinations, and report a sign test over the
+    # pairs rather than treating per-pair FER margins as individually
+    # significant (at this target_errors budget each point's own CI is wide).
+    pair_winners = []  # +1 = 2pat/1mat wins this pair (all SNRs agree), -1 = 2mat wins, 0 = mixed/tie
     for r in results:
+        signs = []
         for snr in snr_points:
             tp = r["two_patterns"]["fer"].get(snr) or r["two_patterns"]["fer"].get(str(snr))
             tm = r["pattern0_two_matrices"]["fer"].get(snr) or r["pattern0_two_matrices"]["fer"].get(str(snr))
             if tp is None or tm is None:
                 continue
-            if tp < tm:
-                wins_2pat += 1
-            elif tm < tp:
-                wins_2mat += 1
-            else:
-                ties += 1
-    print(f"\n  Across {num_pairs} pairs x {len(snr_points)} SNRs: "
-          f"2-patterns/1-matrix better in {wins_2pat}, pattern0/2-matrices better in {wins_2mat}, ties {ties}")
-    return results
+            signs.append(1 if tp < tm else (-1 if tm < tp else 0))
+        if signs and all(sgn == signs[0] for sgn in signs):
+            pair_winners.append(signs[0])
+        else:
+            pair_winners.append(0)  # mixed across SNRs within this pair -> ambiguous
+
+    n_decided = sum(1 for w in pair_winners if w != 0)
+    n_2pat = sum(1 for w in pair_winners if w == 1)
+    n_2mat = sum(1 for w in pair_winners if w == -1)
+    # Exact two-sided binomial sign-test p-value under H0: each decided pair
+    # independently favors either side with probability 0.5.
+    import math
+    k = max(n_2pat, n_2mat)
+    if n_decided > 0:
+        tail = sum(math.comb(n_decided, i) for i in range(k, n_decided + 1)) / (2 ** n_decided)
+        sign_test_p = min(1.0, 2 * tail)
+    else:
+        sign_test_p = float("nan")
+    print(f"\n  Across {num_pairs} INDEPENDENT pairs (not pair x SNR): "
+          f"2-patterns/1-matrix favored in {n_2pat}/{n_decided} decided pairs, "
+          f"pattern0/2-matrices in {n_2mat}/{n_decided} "
+          f"({num_pairs - n_decided} pair(s) mixed across SNRs)")
+    print(f"  Two-sided sign-test p-value: {sign_test_p:.4f}")
+    return {"pair_results": results, "pair_winners": pair_winners, "sign_test_p": sign_test_p}
 
 
 # --------------------------------------------------------------------------
