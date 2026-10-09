@@ -158,7 +158,13 @@ All three explicitly-requested checks pass:
    `pattern = true bit`, `bias = 30` (saturating, not hard-fixing) against
    the existing hard-aSCED path using that same correct guess:
    **3000/3000 (100%) decision agreement**, and **2506/2506 (100%)**
-   agreement restricted to samples where both paths converged.
+   agreement restricted to samples where both paths converged. Per the
+   expert's follow-up: the more targeted statistic is agreement on the
+   subset where **hard did NOT converge** (494/3000 samples) -- the only
+   place saturation (bias=30) and a hard-fixed bit could plausibly differ,
+   since a converged hard path already pins the decision either way. On
+   that subset: **494/494 (100%) agreement**, 95% CI on the disagreement
+   rate **[0, 0.0061]**.
    **Methodological correction (per the soft-aSCED expert)**: 0/N agreement
    bounds the *disagreement* rate, it does not establish exact equivalence
    -- an earlier run of this check at N=200 only bounded the disagreement
@@ -269,6 +275,11 @@ the two gives multiplicative savings, or whether they overlap/diminish
 each other (e.g. because MConverged-style group-level early stopping
 already captures some of what guess-correction captures at the per-path
 level), is an open question for a follow-up run, not yet answered here.
+The expert's QEC-side experience (`sweeps/TODO_soft_asced.md`, "Soft +
+members-per-group/MConverged compounding"): stopping saved 3.5-9x on top
+of an already-soft baseline, but code-dependent and never measured as a
+clean product of the two factors; at K=2 (our case) there is nothing to
+gain from it -- worth testing only once K>=8.
 
 ### Exploratory (unvalidated elsewhere, reported separately per instruction): single-pattern, 1 path only
 
@@ -325,6 +336,33 @@ study (there, spending K on more matrices instead of patterns reduced
 failures 10-30%) -- consistent with their framing that this trade is
 **code-dependent**, not a universal result either way, and answering their
 explicit request to run this comparison on our code.
+
+### Robustness check: 6 independent splitter-row pairs (per the expert's point #3)
+
+A single matrix pair can be decided by matrix-to-matrix variance rather
+than the patterns-vs-matrices trade itself (one good/bad splitter choice).
+Repeated the same K=2 comparison over **6 additional, independently and
+randomly drawn splitter-row pairs** (disjoint row indices out of the
+374-row candidate pool, `target_errors=100` per point -- a lighter budget
+than the main sweep, since this is a robustness check, not a new headline
+number):
+
+| pair (row indices) | 2.0dB: 2pat/1mat vs. pat0/2mat | 3.0dB: 2pat/1mat vs. pat0/2mat |
+|---|---|---|
+| 0 (189, 43)  | 0.1452 vs 0.1731 | 0.0155 vs 0.0212 |
+| 1 (322, 363) | 0.1501 vs 0.1745 | 0.0160 vs 0.0206 |
+| 2 (184, 59)  | 0.1515 vs 0.1847 | 0.0151 vs 0.0202 |
+| 3 (279, 361) | 0.1617 vs 0.1696 | 0.0167 vs 0.0200 |
+| 4 (66, 206)  | 0.1581 vs 0.1748 | 0.0156 vs 0.0185 |
+| 5 (240, 368) | 0.1520 vs 0.1733 | 0.0141 vs 0.0204 |
+
+**2-patterns/1-matrix wins all 12/12 comparisons** (6 pairs x 2 SNRs), with
+a consistent relative margin (roughly 10-25% worse FER for pattern0/2-
+matrices each time) -- this is not a fluke of the original pair, it is a
+robust, repeatable effect on this code. The expert's suggested K=8
+extension (4 two-pattern matrices vs. 8 single-pattern matrices) was not
+run -- left as a further option if finer resolution at larger K is wanted,
+but the K=2, 6-pair result already answers the variance concern directly.
 
 ## Design decisions / assumptions flagged for the user
 

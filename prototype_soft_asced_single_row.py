@@ -215,6 +215,8 @@ def sanity_check_2_hard_limit_equivalence(num_samples=3000, snr_db=2.0):
     agreements = 0
     both_converged_agreements = 0
     both_converged_count = 0
+    hard_not_converged_count = 0
+    hard_not_converged_agreements = 0
     for _ in range(num_samples):
         _, codeword = encode_random_message(rng)
         true_bit = int((s[0] @ codeword) % 2)
@@ -233,12 +235,20 @@ def sanity_check_2_hard_limit_equivalence(num_samples=3000, snr_db=2.0):
         soft_dec.decode(llrs)
         soft_cw = soft_dec.get_codeword()
 
-        if hard_cw == soft_cw:
+        agree = hard_cw == soft_cw
+        if agree:
             agreements += 1
         if hard_dec.converged and soft_dec.converged:
             both_converged_count += 1
-            if hard_cw == soft_cw:
+            if agree:
                 both_converged_agreements += 1
+        if not hard_dec.converged:
+            # Per the soft-aSCED expert: this is the ONLY subset where
+            # saturation (bias=30) and a hard-fixed bit could plausibly
+            # differ, since a converged hard path already pins the decision.
+            hard_not_converged_count += 1
+            if agree:
+                hard_not_converged_agreements += 1
 
     disagreements = num_samples - agreements
     agreement_rate = agreements / num_samples
@@ -246,13 +256,27 @@ def sanity_check_2_hard_limit_equivalence(num_samples=3000, snr_db=2.0):
     conditional_rate = (
         both_converged_agreements / both_converged_count if both_converged_count else float("nan")
     )
+    hard_not_converged_agreement_rate = (
+        hard_not_converged_agreements / hard_not_converged_count
+        if hard_not_converged_count else float("nan")
+    )
+    hard_not_converged_disagree_ci = wilson_interval(
+        hard_not_converged_count - hard_not_converged_agreements, hard_not_converged_count
+    )
     print(f"  overall decision agreement (correct guess, bias=30 vs. hard): "
           f"{agreement_rate:.4f} ({agreements}/{num_samples})")
     print(f"  => disagreement rate 95% CI: [{disagreement_ci[0]:.5f}, {disagreement_ci[1]:.5f}] "
           f"({disagreements} observed disagreements)")
     print(f"  agreement given BOTH converged: {conditional_rate:.4f} "
           f"({both_converged_agreements}/{both_converged_count})")
-    return agreement_rate, conditional_rate, disagreement_ci, num_samples
+    print(f"  agreement given HARD DID NOT CONVERGE (the subset where saturation vs. "
+          f"hard-fixed CAN differ): {hard_not_converged_agreement_rate:.4f} "
+          f"({hard_not_converged_agreements}/{hard_not_converged_count}); "
+          f"disagreement 95% CI [{hard_not_converged_disagree_ci[0]:.5f}, "
+          f"{hard_not_converged_disagree_ci[1]:.5f}]")
+    return (agreement_rate, conditional_rate, disagreement_ci, num_samples,
+            hard_not_converged_agreement_rate, hard_not_converged_count,
+            hard_not_converged_disagree_ci)
 
 
 def sanity_check_3_reused_decoder(num_samples=50, snr_db=2.0):
@@ -372,6 +396,100 @@ def make_equal_k_two_matrices_config(bias):
     return ccl.Ensemble_config(H, [path_m1, path_m2])
 
 
+# --- Generalized version, for repeating the equal-K check over several
+# independent splitter-row draws (per the expert's point that a single
+# matrix pair's result can be decided by matrix-to-matrix variance rather
+# than the patterns-vs-matrices trade itself). ---
+
+def make_soft_bp_config_for_row(row, pattern, bias):
+    H_l_row = np.vstack([H, row]).astype(int)
+    col_row = np.zeros((H_l_row.shape[0], 1), dtype=int)
+    col_row[-1, 0] = 1
+    H_soft_row = np.hstack([H_l_row, col_row]).astype(int)
+    cfg = ccl.BP_config(H_soft_row)
+    cfg.early_stopping = True
+    cfg.max_iterations = 32
+    cfg.cn_update_type = "msa"
+    cfg.scheduling_type = "flooding"
+    cfg.norm_factor = 0.75
+    cfg.use_avns = True
+    cfg.num_syndrome_vns = 1
+    cfg.syndrome_vn_pattern = [pattern]
+    cfg.syndrome_vn_bias = float(bias)
+    cfg.set_H0(H)
+    return cfg
+
+
+def make_two_patterns_config_for_row(row, bias):
+    return ccl.Ensemble_config(H, [
+        make_soft_bp_config_for_row(row, 0, bias),
+        make_soft_bp_config_for_row(row, 1, bias),
+    ])
+
+
+def make_pattern0_two_matrices_config(row_a, row_b, bias):
+    return ccl.Ensemble_config(H, [
+        make_soft_bp_config_for_row(row_a, 0, bias),
+        make_soft_bp_config_for_row(row_b, 0, bias),
+    ])
+
+
+def equal_k_multi_pair_check(num_pairs=6, bias=10.0, snr_points=(2.0, 3.0),
+                              target_errors=100, results_root="RESULTS/soft_asced_prototype_n132"):
+    """Repeat the K=2 'patterns vs. matrices' comparison over several
+    independent splitter-row draws (disjoint across pairs, drawn from the
+    374-row candidate pool). Addresses the expert's point #3: a single pair
+    can be decided by matrix-to-matrix variance, not the trade itself."""
+    print("\n" + "=" * 70)
+    print(f"Equal-K multi-pair check: {num_pairs} independent splitter-row draws, bias={bias}")
+    print("=" * 70)
+    rng = np.random.default_rng(5)
+    idx_pool = rng.permutation(candidate_rows.shape[0])
+    results = []
+    for pair_i in range(num_pairs):
+        r1_idx, r2_idx = int(idx_pool[2 * pair_i]), int(idx_pool[2 * pair_i + 1])
+        row1 = candidate_rows[r1_idx:r1_idx + 1, :]
+        row2 = candidate_rows[r2_idx:r2_idx + 1, :]
+
+        tp_cfg = make_two_patterns_config_for_row(row1, bias)
+        tp_fer, _, _, tp_counts = run_sim(
+            tp_cfg, snr_points, os.path.join(results_root, f"mp_{pair_i}_2pat"),
+            target_errors=target_errors,
+        )
+        tm_cfg = make_pattern0_two_matrices_config(row1, row2, bias)
+        tm_fer, _, _, tm_counts = run_sim(
+            tm_cfg, snr_points, os.path.join(results_root, f"mp_{pair_i}_2mat"),
+            target_errors=target_errors,
+        )
+
+        row_result = {"row_indices": (r1_idx, r2_idx), "two_patterns": {"fer": tp_fer, "counts": tp_counts},
+                      "pattern0_two_matrices": {"fer": tm_fer, "counts": tm_counts}}
+        results.append(row_result)
+        for snr in snr_points:
+            print(f"  pair {pair_i} (rows {r1_idx},{r2_idx}) @ {snr}dB: "
+                  f"2pat/1mat={_fer_ci_str(tp_fer, tp_counts, snr)}  |  "
+                  f"pat0/2mat={_fer_ci_str(tm_fer, tm_counts, snr)}")
+
+    wins_2pat = 0
+    wins_2mat = 0
+    ties = 0
+    for r in results:
+        for snr in snr_points:
+            tp = r["two_patterns"]["fer"].get(snr) or r["two_patterns"]["fer"].get(str(snr))
+            tm = r["pattern0_two_matrices"]["fer"].get(snr) or r["pattern0_two_matrices"]["fer"].get(str(snr))
+            if tp is None or tm is None:
+                continue
+            if tp < tm:
+                wins_2pat += 1
+            elif tm < tp:
+                wins_2mat += 1
+            else:
+                ties += 1
+    print(f"\n  Across {num_pairs} pairs x {len(snr_points)} SNRs: "
+          f"2-patterns/1-matrix better in {wins_2pat}, pattern0/2-matrices better in {wins_2mat}, ties {ties}")
+    return results
+
+
 # --------------------------------------------------------------------------
 # Main bias sweep / hard-vs-soft FER comparison
 # --------------------------------------------------------------------------
@@ -455,7 +573,8 @@ def main():
     print("Soft-aSCED single-row (Delta=1) prototype -- sanity checks")
     print("=" * 70)
     b0_ok, bchange_ok = sanity_check_1_bias_applied()
-    agree_rate, cond_agree_rate, disagree_ci, hard_limit_n = sanity_check_2_hard_limit_equivalence()
+    (agree_rate, cond_agree_rate, disagree_ci, hard_limit_n,
+     hnc_agree_rate, hnc_count, hnc_disagree_ci) = sanity_check_2_hard_limit_equivalence()
     reuse_ok = sanity_check_3_reused_decoder()
     effort_mechanism = sanity_check_4_effort_mechanism()
 
@@ -511,6 +630,10 @@ def main():
         print(f"  2-patterns/1-matrix  FER @ {snr}dB: {_fer_ci_str(tp_fer, tp_counts, snr)}")
         print(f"  pattern0/2-matrices  FER @ {snr}dB: {_fer_ci_str(tm_fer, tm_counts, snr)}")
 
+    multi_pair_results = equal_k_multi_pair_check(
+        num_pairs=6, bias=equal_k_bias, snr_points=snr_points, results_root=results_root,
+    )
+
     summary = {
         "sanity_checks": {
             "bias0_collapses_patterns": bool(b0_ok),
@@ -519,6 +642,9 @@ def main():
             "hard_limit_conditional_agreement_rate": cond_agree_rate,
             "hard_limit_disagreement_rate_95ci": list(disagree_ci),
             "hard_limit_num_samples": hard_limit_n,
+            "hard_limit_hard_not_converged_count": hnc_count,
+            "hard_limit_hard_not_converged_agreement_rate": hnc_agree_rate,
+            "hard_limit_hard_not_converged_disagreement_rate_95ci": list(hnc_disagree_ci),
             "reused_decoder_matches_fresh": bool(reuse_ok),
             "effort_mechanism_by_guess_correctness": effort_mechanism,
         },
@@ -529,6 +655,7 @@ def main():
             "bias": equal_k_bias,
             "two_patterns_one_matrix": {"fer": tp_fer, "effort": tp_effort, "latency": tp_latency, "counts": tp_counts},
             "pattern0_two_matrices": {"fer": tm_fer, "effort": tm_effort, "latency": tm_latency, "counts": tm_counts},
+            "multi_pair_check": multi_pair_results,
         },
         "splitter_row_weight": int(s.sum()),
         "syndrome_vn_degree": 1,  # see design-decision note: M_l = identity for this Delta=1 prototype
