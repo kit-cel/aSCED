@@ -914,3 +914,26 @@ separate, opt-in exploratory branch until/unless the user decides
 otherwise. Next step (generalizing to Delta>1) is scoped in
 `sweeps/soft_asced_single_row_results.md`'s final section; the
 RL-codebit-derived-bias idea remains a separate, later TODO item.
+
+## target_num_converged recalibration sweep, mpg=8 (job 545344, 2026-10-10)
+
+Sweep A (above the earlier n_simul fix) reused `target_num_converged={2,6}`
+as-is from an old, wrong-code calibration, flagged as "not re-derived yet."
+Read the corrected code's actual measured `average_number_converged_path`
+from Sweep A's own `full_parallel` baseline data
+(`RESULTS/fig_x_zc11_r4_seq_full_parallel_mpg8_n132/<variant>_full_parallel/
+snr_*/decoder_stats.json`): asced48 ranges 4.66 (1.0dB) -> 10.02 (4.0dB),
+asced384 ranges 5.76 (1.0dB) -> 8.73 (3.5dB, slightly down to 8.68 at
+4.0dB).
+
+Submitted a proper recalibration sweep bracketing this range:
+`target_num_converged in {1,2,3,4,6,8,10,12,16,24}` (includes the original
+2/6 for direct comparability) x `members_per_group=8` (fixed, not
+resweeping mpg — that's Sweep B's job) x selectors {fixed_sequential,
+syndrome_sequential} (full_parallel ignores target, already have that data,
+not regenerated) x variants {asced48, asced384} x SNR 1.0-4.0dB step 0.5 =
+280 tasks. New files: `sweeps/generate_target_converged_recalibration_manifest.py`,
+`sweeps/target_converged_recalibration_manifest.csv` (reuses the existing
+generic `sweeps/run_manifest_array.sbatch` runner unmodified). Submitted as
+job 545344, `--array=1-280%20` (11+ idle cluster nodes available at submit
+time). Per the user: no rush, this can run over multiple days unattended.
