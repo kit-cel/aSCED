@@ -148,6 +148,72 @@ if path 0 fails" -- saves at most the second path, costs FER whenever path
 1 would've been the better codeword. Worth testing only once K>=8 (i.e.
 once we've generalized past Delta=1 or run multiple matrices).
 
+## Delta>1 generalization: scoping (2026-10-10)
+
+Read the actual existing hard-aSCED Delta>1 machinery directly
+(`create_asced_config` in `reproduce_fig3_RL_zc11_asced_5G_LDPC.py`)
+rather than assuming the QEC side's general overcomplete-PCM construction
+was needed. Key finding: **it isn't**. Hard aSCED on this project's
+codebase already uses the simplest possible construction — `M_l =
+identity` (`H_aux = [H; rows]`, the literal appended candidate rows
+vstacked onto `H`, no row-combination at all) — exactly the same
+simplification the Delta=1 prototype already used. Concretely:
+
+- `candidate_rows` is organized in Zc-row (=11) "blocks" (the RL/QC-block
+  pool from the greedy-search work). `num_used_blocks` picks how many
+  blocks get appended; within each used block, `split_pattern` (e.g.
+  `[2,4,6,8]`) cuts the 11 rows into `row_segments` via `np.split`.
+- Each segment of `Delta_seg` rows becomes its OWN independent
+  `H_aux = [H; segment_rows]`, run as a full `2**Delta_seg`-path hard
+  sub-ensemble (`binary_vectors_in_suffix` enumerates every non-zero
+  suffix pattern + the separately-added all-zero one).
+- "asced48" = `splitting_pattern[1]=[2,4,6,8]` x 2 blocks = 2 x (4 segments
+  of Delta=2 + 1 segment of Delta=3) = 2 x (4x4 + 8) = 2x24 = **48**.
+  "asced384" = `splitting_pattern[2]=[5]` x 4 blocks = 4 x (1 segment of
+  Delta=5 + 1 of Delta=6) = 4 x (32+64) = **384**. (Confirms these labels
+  are total path COUNTS across multiple independent small-Delta segments,
+  not one single flat Delta value.)
+
+**Implication**: the C++ side already needs zero changes (confirmed
+independently, not just taking the Delta=1 agent's word for it — 
+`BP_Decoder::init` only checks `H0.cols() == H.cols() - num_syndrome_vns`,
+nothing about connectivity structure, so arbitrary degree-1-per-row
+syndrome VNs already work). The Delta>1 generalization is a **near-direct
+port of `create_asced_config`**: write `create_soft_asced_config(...)`
+with the identical block/segment loop, swapping the per-pattern path
+construction from hard (`affine_offset` on `H_aux`) to soft
+(`H_soft = [H_aux | Delta_seg-column identity block]`,
+`num_syndrome_vns=Delta_seg`, `syndrome_vn_pattern=pattern bits`,
+`syndrome_vn_bias=bias`, `H0=H`) — same segment sizes, same per-segment
+`2**Delta_seg` path count as hard, for direct comparability. The general
+overcomplete-row/`M_l` construction (raising syndrome-VN degree above 1,
+as on the QEC side) is NOT required for this and is deferred as a later,
+separate enhancement, not a precondition.
+
+**Recommended plan** (to confirm with the user before implementing):
+1. Validate first on **asced48** (Delta_seg in {2,3}, 2**Delta_seg in
+   {4,8} -- small, tractable, matches the project's primary already-
+   characterized baseline), then **asced384** (Delta_seg in {5,6},
+   2**Delta_seg in {32,64} -- still tractable, no combinatorial blowup).
+   Match hard's exact `2**Delta_seg` path count per segment (apples-to-
+   apples with existing hard baselines) rather than a sampled subset —
+   tractable at this scale; a sampled-subset option only becomes relevant
+   for much larger segments (e.g. the unused "no split" Delta=10 variant,
+   2**10=1024 — out of scope here).
+2. Bias: keep as one shared swept free hyperparameter across all segments
+   in this first pass (same scope as Delta=1), not yet per-segment-size-
+   tuned, even though the expert noted best bias drifts with Delta on
+   their side — a refinement to consider later if results suggest it
+   matters, not a blocker now.
+3. Re-run the Delta=1 sanity-check suite, generalized: bias-applied,
+   hard-limit equivalence (now pattern = the full Delta_seg-bit true
+   vector, bias saturated), reused-decoder determinism, and the per-path
+   effort-mechanism check (now split by Hamming distance of the guess from
+   the true pattern, not just correct/wrong, since a partially-wrong
+   multi-bit guess is a new regime Delta=1 couldn't exercise).
+4. RL-codebit-derived-bias and soft+mpg/MConverged compounding remain
+   separate, later, deferred items (unaffected by this).
+
 ## Reference
 
 - Quantum analog repo granted read access 2026-10-09:
