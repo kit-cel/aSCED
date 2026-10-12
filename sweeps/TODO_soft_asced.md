@@ -42,7 +42,21 @@ user, for implementation details before starting.
       verified (reran tests + sanity checks + a spot-check sweep). Full
       results: `sweeps/soft_asced_single_row_results.md`. Not merged into
       `claude_sequential` — stays a separate exploratory branch.
-- [ ] Generalize to Delta>1 splitters.
+- [x] Generalize to Delta>1 splitters -- done 2026-10-12, validated
+      directly on asced48 (48 paths, `Delta_seg` in {2,3}) and asced384
+      (384 paths, `Delta_seg` in {5,6}), see
+      `sweeps/soft_asced_delta_gt1_results.md`. Key finding: hard aSCED's
+      existing Delta>1 machinery is `M_l = identity` (no general
+      overcomplete-PCM construction), so the soft generalization is a
+      near-direct port of `create_asced_config` -- no C++ changes needed.
+      All sanity checks pass (generalized to multi-bit patterns / Hamming
+      distance). New finding not predicted by Delta=1: low bias (1-3)
+      measurably underperforms hard's FER at Delta>1 (needs bias>=5); and
+      at asced384 scale, effort savings persist (12-40% at FER-matching
+      bias) but full-parallel "latency" (max-over-paths) savings nearly
+      vanish as `Delta_seg` grows, strengthening the case for combining
+      soft-aSCED with `members_per_group`/`MConvergedPolicy` (open
+      question below) rather than full-parallel.
 - [ ] Once soft-aSCED is implemented: interpret the RL (raptor-like)
       codebits as syndrome VNs (variable nodes), per the soft idea above —
       i.e. derive the syndrome-VN bias from real per-codeword information
