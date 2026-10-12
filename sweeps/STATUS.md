@@ -972,6 +972,73 @@ reproduced the core finding below).
 Not merged into `claude_sequential` — stays on the separate
 `soft_asced_wireless` branch, same as Delta=1.
 
+## Soft-aSCED + members_per_group/MConvergedPolicy (2026-10-12/13)
+
+Resolved the open question above. Full details:
+`sweeps/soft_asced_mpg_combo_results.md`, new script
+`soft_asced_mpg_combo.py` on `soft_asced_wireless` (`aSCED` @ `fe1476e`).
+Independently re-verified: the asced384 target=4@2.0dB headline point
+reproduced almost exactly (FER 0.0300 vs. 0.0306, effort 1398 vs. 1412,
+latency 169.8 vs. 171.5), and a real segfault (see below) was independently
+confirmed by directly triggering it.
+
+**`fixed_sequential` + `MConvergedPolicy` works on soft paths out of the
+box** — confirmed empirically, no C++ changes needed. **`syndrome_sequential`
+does not**: its no-mapping overload correctly throws (soft's wider PCM needs
+an explicit mapping), but the documented two-argument mappings overload
+**segfaults** — root cause is a pybind11 dangling-reference bug in
+`src/bindings.cpp` (`item.cast<const py::array_t<int>&>()` binds a reference
+to a temporary that doesn't outlive the call), pre-existing and never
+exercised before since every existing call site uses the no-mapping form.
+Independently reproduced (clean SIGSEGV, exit 139). A correct fix + a new
+regression test already exist, stashed (not committed — out of scope for
+this task) in the `channel-code-lib2` `soft_asced_wireless` worktree as
+`stash@{0}` ("verify-fix-tmp-bindings-..."); flagged as background task
+`task_f1f49ab5` for someone to land properly. `fixed_sequential` was used
+as the sole selector for all comparisons below.
+
+**Step 1 (measured, not assumed)**: soft converges far more readily than
+hard at the ensemble level, not just per-path — asced48 natural
+`average_number_converged_path` 13.8→44.3/48 paths (vs. hard's 4.7→10/48);
+asced384 45.5→140.8/384 (vs. hard's 5.8→8.7/384). Hard's recalibrated
+targets (2, 4) are far too low for soft's own natural regime — confirmed
+soft needs its own, much higher target sweep.
+
+**FER parity preserved**: 52/54 CI-overlap checks pass across both
+variants' full target sweeps; the one exception traces to a pre-existing
+outlier in hard's *own* original recalibration data at that one point
+(also fails to overlap hard's own full-parallel reference there) — not a
+soft-aSCED effect.
+
+**Effort compounds, clearly**: at asced384 target=4, soft+mpg's effort is
+85% lower than soft-full-parallel's own effort AND 75% lower than
+hard+mpg's at the identical target AND 89% lower than hard-full-parallel's
+— two independently-stacking savings (soft's per-path cheapness, already
+present in full-parallel; soft's much higher natural convergence rate
+reaching MConverged's threshold with fewer sequential groups, which only
+exists once mpg/MConverged is in the picture). Rejects the "redundant
+mechanisms" hypothesis on this axis.
+
+**Latency needs a two-part answer** (a genuinely useful clarification,
+not soft-specific but not previously stated explicitly): `mpg`'s
+`average_ensemble_latency` is additive over sequential groups (limited-
+hardware model) while `full_parallel`'s is a single max (unlimited-
+hardware model) — so mpg's number can *structurally never* beat
+full_parallel's ~33 floor once more than one group runs, true for hard
+too. Judged against full-parallel's own number: no, mpg doesn't "fix"
+asced384's latency problem. Judged within mpg's own hardware model (the
+fair comparison): yes, substantially — soft recovers 57-89% of mpg's own
+no-stopping ceiling at target=4 (1/1.5/2dB) vs. hard's 38-56% at the same
+target. asced48 sanity check: no regression, and (bonus) small enough
+ensembles (6 groups at mpg=8) let soft+mpg beat even full-parallel's own
+latency floor at high SNR — something asced384 never achieves in this
+budget.
+
+Not merged into `claude_sequential` — stays on `soft_asced_wireless`.
+Next open items: land the `syndrome_sequential` segfault fix (background
+task), a genuine mpg sweep for soft (held fixed at 8 here), and the
+RL-codebit-derived-bias idea (unaffected, still deferred).
+
 ## target_num_converged recalibration sweep, mpg=8 (job 545344, 2026-10-10)
 
 Sweep A (above the earlier n_simul fix) reused `target_num_converged={2,6}`
