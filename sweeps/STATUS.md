@@ -138,6 +138,20 @@ calibration — not re-derived yet; if mconverged doesn't trigger on the
 corrected code, recalibrate the same way as last time (read measured
 `average_number_converged_path` from this run, pick new targets, re-run).
 
+**Recalibrated 2026-10-10/12 (job 545344, `sweeps/target_converged_recalibration_results.md`)**:
+`target_num_converged=2` is fine for asced48 (FER matches full_parallel
+within noise even at target=1), but **measurably degrades asced384's FER
+at high SNR** — e.g. fixed_sequential @ 4.0dB: 2.3e-04 vs. full_parallel's
+~1.1e-05 (~21x worse, 332 frame errors — not a sampling artifact).
+asced384 only recovers to matching full_parallel at `target>=3/4`. **Any
+conclusion drawn from this Sweep A data at `target_num_converged=2` for
+asced384 specifically should be treated as FER-pessimistic relative to
+full_parallel** — `target=6` (also run here) is fine. Recommended go-forward
+values: asced48 target=2, asced384 target=4. See the results doc for the
+full table and the ensemble-size-dependent explanation (384 paths need more
+converged candidates collected before the true codeword reliably beats a
+spurious-but-valid low-weight one).
+
 ### Sweep B — parallelism + ordering (job 532496, `sweeps/parallelism_ordering_manifest.csv`, 56 tasks) — SUBMITTED, pending/running
 asced48 only, `n_simul=132`. Same structure as before:
 - Parallelism/group-size trade-off: `members_per_group in {1,2,4,8,16,24}`,
