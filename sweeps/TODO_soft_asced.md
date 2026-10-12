@@ -57,6 +57,41 @@ user, for implementation details before starting.
       vanish as `Delta_seg` grows, strengthening the case for combining
       soft-aSCED with `members_per_group`/`MConvergedPolicy` (open
       question below) rather than full-parallel.
+- [x] Combine soft-aSCED with `members_per_group`/`MConvergedPolicy`
+      sequential early-stopping -- done 2026-10-13, see
+      `sweeps/soft_asced_mpg_combo_results.md`. Confirmed the
+      selector/stopping machinery is construction-agnostic for
+      `fixed_sequential` (no C++ changes needed), but found and reported a
+      real, pre-existing (latent, never-before-exercised) segfault in
+      `set_syndrome_sequential`'s explicit-mapping overload when combined
+      with soft's wider (syndrome-VN-extended) PCM -- flagged as background
+      task `task_f1f49ab5` for a separate C++ fix, not attempted here;
+      `syndrome_sequential` not evaluated for soft as a result (it was a
+      nice-to-have, not required). Measured soft's natural
+      `average_number_converged_path` (bias=10, full-parallel) first, per
+      instruction not to assume hard's recalibrated targets transfer:
+      dramatically higher than hard's at the same ensemble (asced48:
+      13.8->44.3/48 vs. hard's 4.7->10/48; asced384: 45.5->140.8/384 vs.
+      hard's 5.8->8.7/384), confirming guess-correction's effect compounds
+      at the aggregate-ensemble level, not just per-path. Core finding: at
+      mpg=8/fixed_sequential/bias=10, soft+mpg preserves FER parity with
+      hard (52/54 Wilson-CI-overlap checks across both variants' full
+      target sweeps; the one exception traces to a pre-existing hard-side
+      outlier, not a soft effect) and gives large, genuinely compounding
+      `effort` savings beyond either mechanism alone (e.g. asced384
+      target=4 @ 2.0dB: 85% lower effort than soft-full-parallel, 75% lower
+      than hard+mpg at the identical target, 89% lower than
+      hard-full-parallel) -- the "redundant mechanisms" hypothesis is
+      rejected on the effort axis. `latency` needs care: the project's own
+      `average_ensemble_latency` metric means something structurally
+      different for mpg (additive over sequential groups, limited-hardware
+      model) vs. full-parallel (single max, unlimited-hardware model), so
+      soft+mpg can *never* beat full-parallel soft's own already-low
+      latency number on that metric (true for hard too, not soft-specific)
+      -- but *within* the mpg/limited-hardware model's own terms, soft
+      recovers a much larger share of mpg's available latency reduction
+      than hard does at every matched target (e.g. 89% vs. 56% of the
+      "no-stopping" ceiling recovered at asced384 target=4, 2.0dB).
 - [ ] Once soft-aSCED is implemented: interpret the RL (raptor-like)
       codebits as syndrome VNs (variable nodes), per the soft idea above —
       i.e. derive the syndrome-VN bias from real per-codeword information
