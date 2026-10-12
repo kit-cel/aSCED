@@ -929,6 +929,49 @@ otherwise. Next step (generalizing to Delta>1) is scoped in
 `sweeps/soft_asced_single_row_results.md`'s final section; the
 RL-codebit-derived-bias idea remains a separate, later TODO item.
 
+## Soft-aSCED, Delta>1 generalization (2026-10-12)
+
+Generalized the validated Delta=1 prototype to real multi-row segments,
+validated directly on this project's primary paper-reproduction ensembles
+(asced48, asced384) — not a toy case. Full details:
+`sweeps/soft_asced_delta_gt1_results.md`, new script
+`soft_asced_delta_gt1.py` on the `soft_asced_wireless` branch (both
+`aSCED` @ `9f18984` and `channel-code-lib2`, unchanged, reused as-is).
+
+**Key scoping finding**: hard aSCED's existing Delta>1 machinery
+(`create_asced_config`) uses `M_l = identity` — no general
+overcomplete-PCM row-combination — so the soft generalization is a
+near-direct port of that function (same block/segment loop, same
+`2**Delta_seg` path count per segment), requiring **zero C++ changes**.
+"asced48" = 2 blocks x (4 segments Delta=2 + 1 of Delta=3) = 48 paths;
+"asced384" = 4 blocks x (1 of Delta=5 + 1 of Delta=6) = 384 paths.
+
+All four sanity checks (generalized to multi-bit patterns/Hamming
+distance) pass on both variants — independently re-verified (path counts,
+full asced48 sanity suite reproduced exactly, asced384 spot-check
+reproduced the core finding below).
+
+**Two new findings not predicted by Delta=1**:
+1. Low bias (1-3) measurably underperforms hard's FER once segments have
+   multiple rows (`Delta_seg>=2`) — unlike Delta=1 where even bias=1
+   matched. Needs `bias>=5` to match hard's FER at every SNR tested, on
+   both variants.
+2. At asced384 scale (`Delta_seg` up to 6): decoding **effort** savings
+   persist at FER-matching bias (12-40%, same direction as asced48), but
+   full-parallel **latency** (max-over-paths) savings nearly vanish
+   (~0-3% at bias=5, vs. asced48's 3-62%) — because among 384 paths
+   there's almost always at least one high-Hamming-distance wrong-guess
+   path still burning near the full iteration budget, and latency is
+   dominated by the ensemble's single worst path. Independently
+   reproduced (bias=10 @ 2.0dB: effort 12474->9365 (-25%), latency
+   33.0->32.99 (~0%) — matches the agent's reported figures almost
+   exactly). This strengthens the case for testing soft-aSCED combined
+   with `members_per_group`/`MConvergedPolicy` (so the ensemble doesn't
+   wait on its single worst path) — still an open, untested item.
+
+Not merged into `claude_sequential` — stays on the separate
+`soft_asced_wireless` branch, same as Delta=1.
+
 ## target_num_converged recalibration sweep, mpg=8 (job 545344, 2026-10-10)
 
 Sweep A (above the earlier n_simul fix) reused `target_num_converged={2,6}`
