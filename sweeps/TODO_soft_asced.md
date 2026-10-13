@@ -67,7 +67,38 @@ user, for implementation details before starting.
       with soft's wider (syndrome-VN-extended) PCM -- flagged as background
       task `task_f1f49ab5` for a separate C++ fix, not attempted here;
       `syndrome_sequential` not evaluated for soft as a result (it was a
-      nice-to-have, not required). Measured soft's natural
+      nice-to-have, not required).
+      **UPDATE 2026-10-13 (later same day): the segfault was fixed upstream
+      (`channel-code-lib2` `claude_sequential` commit `64884c1`), this
+      worktree rebased onto it, and `syndrome_sequential` re-tested for soft
+      as the deferred follow-up -- see
+      `sweeps/soft_asced_syndrome_sequential_results.md`.** Built the
+      already-identified all-zero `(Delta_seg, n)`-per-path mapping,
+      verified non-degenerate (real per-codeword reordering, confirmed both
+      at the source level and empirically), and ran the full comparison
+      (soft + hard, `syndrome_sequential`, both variants, same
+      bias=10/mpg=8/target grids as the `fixed_sequential` work -- hard
+      rerun fresh rather than assumed, per the task's instruction).
+      **Headline: `syndrome_sequential` does NOT outperform
+      `fixed_sequential` for soft.** FER parity is preserved (36/36
+      Wilson-CI overlap, both selector-vs-selector and soft-vs-hard), but
+      effort/latency are mildly *worse* for soft (mean +2.2%/+2.1%, growing
+      to a consistent ~+3.3-3.5% at the highest tested SNR per variant,
+      every target) and a wash for hard (median 0%, matching an independent
+      cross-check against the existing job-545344 recalibration data's own
+      fixed-vs-syndrome hard numbers, which show the same noisy,
+      no-clear-winner pattern). Root cause: the all-zero mapping (required
+      both to avoid the segfault's shape-validation path and to match
+      hard's own weight-ignores-the-guess convention) makes every pattern
+      within one segment tie in syndrome weight, so the selector can only
+      reorder at the segment granularity -- exactly removing the
+      intra-segment per-pattern signal a smarter reordering would need to
+      realize the hypothesized "most-likely-to-converge-first" benefit. The
+      effort-compounds/latency-capped conclusion from the `fixed_sequential`
+      work is otherwise unchanged (confirmed via the same
+      mpg-ceiling-recovery metric, within 0.5 percentage points of
+      `fixed_sequential`'s for both hard and soft at the shared headline
+      point, asced384 target=4/2.0dB). Measured soft's natural
       `average_number_converged_path` (bias=10, full-parallel) first, per
       instruction not to assume hard's recalibrated targets transfer:
       dramatically higher than hard's at the same ensemble (asced48:
