@@ -1085,3 +1085,67 @@ not regenerated) x variants {asced48, asced384} x SNR 1.0-4.0dB step 0.5 =
 generic `sweeps/run_manifest_array.sbatch` runner unmodified). Submitted as
 job 545344, `--array=1-280%20` (11+ idle cluster nodes available at submit
 time). Per the user: no rush, this can run over multiple days unattended.
+
+## `syndrome_sequential` re-test for soft-aSCED, now that the segfault is fixed (2026-10-13)
+
+Follow-up to the segfault-fix entry above: `soft_asced_wireless` (both
+repos) rebased onto the fixed `claude_sequential` and re-tested
+`syndrome_sequential` for soft paths with a real, non-empty mapping.
+`aSCED` `soft_asced_wireless` commit `792725a`; no `channel-code-lib2`
+changes needed (confirmed its `soft_asced_wireless` worktree, HEAD
+`452b949`, clean and has `64884c1` as an ancestor). Full writeup:
+`sweeps/soft_asced_syndrome_sequential_results.md`.
+
+**Mapping**: one all-zero `(Delta_seg, n)` matrix per path, mirroring
+`create_soft_asced_config`'s own segment loop index-for-index — the
+principled choice that makes soft's syndrome-weight ranking ignore the
+guess, exactly like hard's `compute_syndrome_weight` already does (hard
+needs no mapping at all: its per-path PCM has the same column count as the
+reference `H`). Verified non-degenerate both at the source level
+(`compute_syndrome_weight` genuinely varies per received codeword and per
+segment even with the guess zeroed out) and empirically (effort/latency
+measurably differ from `fixed_sequential`, not statistically
+indistinguishable).
+
+**FER parity holds** (36/36 Wilson-CI overlap checks, both selector-vs-
+selector and soft-vs-hard, across both variants' full target grids).
+
+**Headline finding — `syndrome_sequential` does NOT outperform
+`fixed_sequential` for soft; if anything, mildly worse.** Mean effort/
+latency delta +2.3%/+2.2%, growing to a consistent ~+3.3-3.5% at the
+highest tested SNR per variant (every target) — near-zero or slightly
+favorable at the lowest SNR. A wash for hard (median 0%, large swings only
+from small absolute denominators at low-target/high-SNR points, converging
+to exactly 0% once mpg saturation is reached) — this independently
+reproduces what the earlier target_num_converged recalibration sweep
+(job 545344) already found for hard. Root cause: the all-zero mapping
+required for hard-equivalence makes every pattern within one segment tie
+in syndrome weight, so the selector can only reorder *between* segments —
+exactly where `fixed_sequential`'s existing block/segment-ordered static
+index was already reasonably coherent, leaving little room to improve and,
+for soft specifically, a small but consistent disadvantage at high SNR
+(plausibly non-stable-sort tie-breaking noise, not confirmed at the C++
+level — small effect, not pursued further).
+
+The "effort compounds, latency capped by the mpg-vs-full-parallel metric
+asymmetry" conclusion from the `fixed_sequential` combo work is
+**unchanged** under `syndrome_sequential` — soft-vs-hard savings track the
+`fixed_sequential` doc's numbers closely at every matched point, and the
+mpg-ceiling-recovery metric is within 0.5 points of `fixed_sequential`'s
+for both mechanisms.
+
+**Practical takeaway: `fixed_sequential` remains the recommended selector**
+for soft-aSCED+mpg — `syndrome_sequential`'s dynamic reordering buys
+nothing (and mildly costs effort/latency at high SNR) once the mapping is
+forced to hard-equivalent all-zero, for the reason above.
+
+Independently re-verified before landing: inspected the actual diff (only
+`soft_asced_mpg_combo.py`, `sweeps/TODO_soft_asced.md`, and the new results
+doc changed — `sweeps/STATUS.md` untouched, per convention), confirmed the
+`channel-code-lib2` `soft_asced_wireless` worktree is clean with `64884c1`
+as an ancestor, and reproduced the most extreme claimed delta (asced48,
+target=8, 3.0dB: agent claimed effort +7.30%/latency +9.13%) via a fresh,
+independent reduced-budget rerun (target_errors=30 instead of 200): got
++7.85%/+9.71% — same direction and magnitude, consistent with the smaller
+sample. Commit was held unpushed pending this review; pushed after
+verification.
