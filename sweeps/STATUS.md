@@ -1035,9 +1035,33 @@ latency floor at high SNR — something asced384 never achieves in this
 budget.
 
 Not merged into `claude_sequential` — stays on `soft_asced_wireless`.
-Next open items: land the `syndrome_sequential` segfault fix (background
-task), a genuine mpg sweep for soft (held fixed at 8 here), and the
-RL-codebit-derived-bias idea (unaffected, still deferred).
+Next open items: a genuine mpg sweep for soft (held fixed at 8 here), and
+the RL-codebit-derived-bias idea (unaffected, still deferred). The
+`syndrome_sequential` segfault fix is now landed — see below.
+
+## `syndrome_sequential` segfault: fixed (2026-10-13, `channel-code-lib2` commit `64884c1`)
+
+Landed the fix flagged above (background task `task_f1f49ab5`): the other
+session's diagnosis and fix (found stashed in the `soft_asced_wireless`
+worktree, `stash@{0}`) were correct — applied as-is to `channel-code-lib2`'s
+`claude_sequential` (not the experimental branch, since this is a
+general-purpose, pre-existing bug unrelated to soft-aSCED specifically).
+Verified independently before and after: reproduced the raw segfault
+myself against the old commit (clean SIGSEGV, exit 139), confirmed the
+C++ regression test suite passes (265 assertions/7 cases, +1 new case),
+then confirmed end-to-end through a real `uv sync` + pybind11 rebuild
+against the new commit that both previously-crashing call sites
+(`SyndromeSequentialSelectorConfig(mpg, mappings)` directly, and
+`Ensemble_config.set_syndrome_sequential(mpg, mappings)`) now work cleanly
+with a non-trivial, non-empty mapping matrix.
+
+**Follow-up, not done here**: `soft_asced_wireless` (both repos) still
+predates this fix — `syndrome_sequential` for soft paths was never
+re-tried against the fixed code. Would need `soft_asced_wireless` to merge/
+rebase onto `claude_sequential`'s new commit, then re-run the
+`soft_asced_mpg_combo.py` comparison with `syndrome_sequential` as a second
+selector (the "nice-to-have" that was explicitly skipped above). Not
+attempted in this turn.
 
 ## target_num_converged recalibration sweep, mpg=8 (job 545344, 2026-10-10)
 
