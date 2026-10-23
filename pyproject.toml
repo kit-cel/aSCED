@@ -9,7 +9,7 @@ dependencies = [
 ]
 
 
-# use for sync with git 
+# use for sync with git
 [tool.uv.sources]
-channel-code-lib2 = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2",  branch = "v1.0.0"}
+channel-code-lib2 = { git = "https://github.com/kit-cel/channel_code_lib2", tag = "v1.0.0" }
 

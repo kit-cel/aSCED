@@ -13,7 +13,7 @@ resolution-markers = [
 [[package]]
 name = "channel-code-lib2"
 version = "0.1.0"
-source = { git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2?branch=v1.0.0#18faaa12886fb32e5f1cb2daeb6507080370d54a" }
+source = { git = "https://github.com/kit-cel/channel_code_lib2?tag=v1.0.0#24eb5b73efe23ab6de518b147de662d13f1cf0a8" }
 dependencies = [
     { name = "galois" },
     { name = "matplotlib" },
@@ -613,7 +613,7 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "channel-code-lib2", git = "ssh://git@gitlab.kit.edu/kit/cel/projects/cc/channel-code-lib2?branch=v1.0.0" }]
+requires-dist = [{ name = "channel-code-lib2", git = "https://github.com/kit-cel/channel_code_lib2?tag=v1.0.0" }]
 
 [[package]]
 name = "six"
