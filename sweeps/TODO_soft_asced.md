@@ -294,6 +294,63 @@ separate enhancement, not a precondition.
 4. RL-codebit-derived-bias and soft+mpg/MConverged compounding remain
    separate, later, deferred items (unaffected by this).
 
+## Expert consultation: M_l=identity sufficiency, bias-schedule idea, K terminology (2026-11-06)
+
+Follow-up exchange with the QEC expert session, after reporting the full
+status (Delta>1, mpg combo, segfault fix+re-test, recalibration -- all
+done, see `sweeps/STATUS.md`). Three items resolved:
+
+**"K>=8" terminology, clarified**: K = total ensemble path count (matrices
+x patterns on the QEC side; just the flat path count here -- 48/384). It
+referred to (a) early stopping only being worth testing once K>=8 (done,
+at 48/384 via the mpg/MConverged combo work), and (b) an optional equal-K
+"4 matrices x 2 patterns vs 8 matrices x pattern 0"-style test -- **now
+explicitly not needed**: the earlier 6-pair K=2 equal-K robustness check
+already settled the underlying question for this code family (C_5G).
+
+**M_l=identity sufficiency for Delta>1, confirmed correct by the expert**:
+with `M_l=identity`, `H_aux=[H; S]`, each syndrome VN `z_j` has degree 1 --
+attached only to its own appended row `S_j.c XOR z_j = 0`. This is a valid
+soft-aSCED graph, structurally identical to QEC soft-aSCED on `H0` without
+overcomplete rows. `M_l` (redundant/combined rows) only matters if you add
+rows that are low-weight combinations of rows of `H` and `S` -- on QEC,
+that mechanism is a general BP-strength lever, not soft-specific, and
+raising syndrome-VN degree above 1 (via redundant rows) has a real effect
+there: the bias needed to work *fell* with degree (~3 at degree 1, ~2 at
+9, no threshold needed at 13), and erasure (bias=0) only worked at high
+degree. With degree-1 syndrome VNs (our case), a single check is the only
+way to correct a wrong guess, which is exactly why Delta_seg>1 needs
+bias>=5 here (first-order consistent with the expert's own degree-1
+finding). **Conclusion: the general overcomplete/M_l machinery remains
+correctly out of scope for this project's Delta>1 work** -- not a
+shortcut that happened to work, but the structurally right choice for a
+degree-1 syndrome-VN graph.
+
+**Bias-schedule-with-Delta_seg idea (flagged as a next step above):
+expert recommends against expecting it to help, for this project's
+specific construction.** QEC's own data shows best bias *falling* as
+Delta grows, but only under *partial* pattern coverage (few patterns per
+matrix, so most paths have several wrong bits -- strong bias then locks in
+wrong bits). Under *full* `2**Delta_seg` coverage (which is what this
+project always runs -- every pattern enumerated, so one path always holds
+the correct guess), QEC's own low-Delta/full-coverage runs stayed fine at
+bias=10, consistent with this project's "bias>=5" finding. **Net: no
+rule that increases bias with Delta_seg is expected to recover savings at
+lower bias here -- not pursued, downgraded from "open idea" to "settled,
+won't revisit unless this project ever moves to partial pattern
+coverage"** (in which case the expert's finding reverses: expect to need
+*lower* bias at larger Delta, not higher).
+
+Also independently cross-confirmed by the expert's own QEC data: (1)
+`syndrome_sequential` not beating `fixed_sequential` -- same on QEC side,
+`fixed_sequential` is their default too; (2) full-parallel latency savings
+vanishing at 384 paths -- expected, since latency is a max-over-paths
+metric and one slow path sets the floor; (3) soft+stopping compounding in
+effort -- matches QEC's own further 2-9x saving from stopping on top of
+soft's own headline savings.
+
+No open questions remain on either side as of this exchange.
+
 ## Reference
 
 - Quantum analog repo granted read access 2026-10-09:
