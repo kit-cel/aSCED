@@ -179,3 +179,149 @@ is **completely untested** (zero real usages with non-empty `S`) and
 zc11/zc6), which has no shortening concept at all. Stage 2 should be scoped
 around answering the open questions above, not around redesigning the
 column-deletion mechanism.
+
+## Owner's answers to the open questions (2026-11-06)
+
+1. **Which script/variant** — owner found the question confusing as posed.
+   Inferring the narrowest reasonable scope from answer 2: this is about the
+   `generate_5G_LDPC.py` / `get_final_matrices_and_message_bit_pucturing`
+   construction path itself (the mechanism that already has shortening
+   wired up), made to work for **arbitrary** `(BG_no, K_target, N_target)`
+   — not about retrofitting the RL zc11/zc6 HARQ-style scripts, which use an
+   entirely separate precomputed-PCM construction with no shortening concept
+   at all. That family is **out of scope for this Stage 2** unless the owner
+   asks for it explicitly later (flagged as a possible follow-up at the end
+   of this roadmap).
+2. **Concrete target** — "I want to run for arbitrary 5G LDPC codes."
+   Confirms: generalize across the parameter space, don't hardcode or
+   validate only a single new target.
+3. **Interaction with aSCED/soft-aSCED ensemble work** — "Once you specify
+   shortening, all paths in the ensemble use the same knowledge, so no real
+   interaction required but rather already handled via passing correct LLRs
+   and adjusting the encoder." Confirmed: standalone code-construction
+   concern, no ensemble-specific handling needed.
+4. **C++ changes anticipated?** — owner asked back whether they might be
+   mistaken in expecting none. Structurally, shortened columns are deleted
+   from `H`/`G` before anything reaches `channel_code_lib2` (per this doc's
+   earlier finding), so the C++ side never sees a shortened bit — same as
+   just using a smaller code, and consistent with the owner's own prior
+   decision in `channel-code-lib2` commit `d367315`. But since this path has
+   never run with non-empty `S`, this must be **verified empirically, not
+   assumed** — see Step 3 below.
+5. **Stale `channel-code-lib2/examples/demo*.py` `sim.shortening(s)`
+   calls** — "Yes," fix/remove them as part of this work.
+6. **Reference FER curve to validate against** — owner will supply one
+   later; don't block on it. Tracked as a TODO (Step 7 below).
+
+## Stage 2 implementation roadmap (drafted 2026-11-06, not yet executed)
+
+Ordered so that each step is cheap/fast to run and fails fast before
+spending time on the next, expensive step. Nothing in this roadmap has been
+run yet — this is the plan for review, per the coordinator's instruction, not
+a report of results.
+
+**Step 1 — Python-only construction sweep (no decoder, no C++).**
+Call `generate_5G_LDPC(BG_no, K_target, N_target)` across a grid chosen to
+force non-trivial, varying `num_shortened_bits`, covering both base graphs:
+- `BG_no=2`: `K_target` values picked strictly *between* successive
+  `K_b*Z` boundaries (e.g. ~50, 70, 100, 150, 300, 600 — crossing all four
+  `K_b` brackets: 6, 8, 9, 10), so `num_shortened_bits` ranges from small to
+  close to `Z-1` (its structural maximum, since a larger gap would have
+  picked a smaller/different `Z`).
+- `BG_no=1`: same idea at the larger `K_b=22` scale (`K_target` in the
+  low-to-mid thousands, up to `K_max=8448`).
+- For each `K_target`, vary `N_target` to also force `num_punctured_bits`
+  to be zero in some combos and nonzero in others, so shortening and
+  puncturing interact both separately and simultaneously.
+- Edge cases to include explicitly: `num_shortened_bits=0` (today's only
+  exercised case, must still pass — regression), and the largest
+  `num_shortened_bits` achievable for a given `BG_no`/bracket.
+**Validates:** the generator itself (`S`/`P` index computation, `N_b`
+adjustment for excess bits) doesn't produce malformed or out-of-range
+indices for arbitrary inputs. Pure numpy/galois — fast, no decoder.
+
+**Step 2 — Validate `get_final_matrices_and_message_bit_pucturing` on every
+combo from Step 1.**
+For each: assert `k == K_target` exactly; assert resulting `n` matches
+`N_target` after puncturing; assert `H @ G.T == 0` (mod 2) i.e. G is a valid
+generator for the reduced H; check no unexpected rank deficiency (reduced H
+should still have full row rank `n-k`, or the code should explicitly handle
+redundant/all-zero rows if a check happens to touch only shortened
+variables); and confirm the existing assertions in that function
+(`parity_bit_puncturing[0] > s[-1]`, parity-puncturing-must-be-trailing-
+columns) hold generically rather than only by coincidence at `K_target=66`.
+**Validates:** the shortening+puncturing *interaction* logic for arbitrary
+inputs — this is the step most likely to surface an edge case that happens
+to be masked by the one combo exercised today.
+
+**Step 3 — End-to-end decode through `channel_code_lib2`, the empirical
+verification the owner asked for (answer 4).**
+For a representative subset of Step 1/2's combos (not the full grid — pick
+~4-6 that span small/large `num_shortened_bits`, BG1 and BG2, and
+shortening-with-puncturing vs. shortening-alone), run a real decode:
+- Construct `Simulation_Env(k, n, ...)` as in `bp_example.py`, with both
+  `PCM_Encoder_config` and `G_Encoder_config`, plus the all-zero-codeword
+  path, matching `bp_example.py`'s own cross-check pattern.
+- Call `sim.puncturing(message_bit_pucturing)` and run `get_error_rates`
+  at a couple of SNR points with a small frame count (e.g. 100-500 frames
+  — enough to confirm the pipeline runs and produces a sane, non-degenerate
+  FER, not a full-fidelity cluster-scale run).
+- Check: no crash/exception in either encoder path; `FER_AZ`, `FER_PCM`,
+  `FER_G` are all finite, non-degenerate, and consistent with each other
+  (large divergence between the three would indicate a hidden construction
+  bug, same cross-check `bp_example.py` already does for the non-shortened
+  case); no implicit minimum-code-length assumption in `Simulation_Env`/BP
+  config is violated for small shortened `k`.
+**Validates:** whether a C++ change is actually needed — concretely
+confirming or refuting the owner's (and this doc's) expectation of "no,"
+rather than assuming it.
+
+**Step 4 — Plausibility cross-check pending the real reference curve.**
+Until the owner supplies a reference FER curve (answer 6, tracked as Step 7
+TODO below), sanity-check each Step 3 result against a same-length/similar-
+rate code built *without* going through shortening (e.g. a `K_target`
+that happens to land exactly on a `K_b*Z` boundary with comparable `(k,n)`).
+This is not a strict equality check (the codes differ), just a check that
+FER magnitude/slope is in a plausible range for the rate/length — a
+stand-in sanity gate, not the final correctness bar.
+
+**Step 5 — Only if Step 3 surfaces a real break.**
+If something in Step 3 can't be resolved Python-side, stop, write up exactly
+what broke and why a C++ change would be needed, and take that back to the
+owner/coordinator before touching `channel-code-lib2` at all — whose
+`claude_sequential`/`main`/`sequential` branches remain off-limits without
+explicit instruction regardless of what Step 3 finds. Per the owner's own
+prior architectural decision (commit `d367315`) and this doc's analysis,
+the expectation is that this step is a no-op.
+
+**Step 6 — Fix the stale `channel-code-lib2/examples/demo*.py` files**
+(`demo.py`, `demo_FerVsSnr.py`, `demo_DecoderSweep.py`,
+`demo_decoder_comparison.py`, `demo_encdec_awgn.py`): replace each
+`sim.shortening(s)` call with the correct current pattern — i.e. construct
+the already-shortened `H`/`G` via `generate_5G_LDPC` +
+`get_final_matrices_and_message_bit_pucturing` *before* constructing
+`Simulation_Env`, matching how aSCED's own example scripts
+(`bp_example.py` et al.) already do it, and drop the dead
+`sim.shortening(...)` call entirely. Note: this lives in a different repo
+(`channel-code-lib2`) and its `claude_sequential`/`main`/`sequential`
+branches are off-limits per the hard constraint on this task — needs a
+non-default branch there (coordinate with the coordinating session on
+which one) before editing.
+
+**Step 7 — TODO (non-blocking).**
+Add an explicit TODO (here or wherever this project tracks open items) that
+the owner will supply a reference FER curve later; once available, wire it
+in as a concrete regression check (e.g. an assertion in a test/reproduce
+script comparing simulated FER against the reference within tolerance),
+rather than relying solely on the Step 4 plausibility check.
+
+**Step 8 — Deferred, not part of this Stage 2.**
+Once Steps 1-7 land cleanly, consider (separately, later, only if asked)
+whether the `generate_5G_LDPC`-based construction should also be made
+available to the RL zc11/zc6 family, which currently bypasses it entirely.
+Not pursued now per the narrowed scope in answer 1/this doc's Step-1
+inference.
+
+**Explicitly not in this roadmap:** no implementation has started. This is
+the plan for review before any code is touched, per the coordinator's
+instruction.
