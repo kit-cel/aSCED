@@ -319,12 +319,19 @@ raising syndrome-VN degree above 1 (via redundant rows) has a real effect
 there: the bias needed to work *fell* with degree (~3 at degree 1, ~2 at
 9, no threshold needed at 13), and erasure (bias=0) only worked at high
 degree. With degree-1 syndrome VNs (our case), a single check is the only
-way to correct a wrong guess, which is exactly why Delta_seg>1 needs
-bias>=5 here (first-order consistent with the expert's own degree-1
-finding). **Conclusion: the general overcomplete/M_l machinery remains
-correctly out of scope for this project's Delta>1 work** -- not a
-shortcut that happened to work, but the structurally right choice for a
-degree-1 syndrome-VN graph.
+way to correct a wrong guess -- **this is CONSISTENT WITH (not confirmed
+as the cause of) Delta_seg>1 needing bias>=5 here**; the expert flagged
+this explicitly as an unverified hypothesis, since neither side has
+tested it directly on this project's codes. A direct test, if ever
+pursued: add a few redundant combination rows so z_j gets degree>1 and
+check whether the bias threshold actually drops -- not attempted, no
+current plan to pursue it (flagged as a next step below, not a
+conclusion). The M_l=identity-sufficiency finding itself (previous
+paragraph) IS confirmed by the expert, independent of this bias
+explanation: **the general overcomplete/M_l machinery remains correctly
+out of scope for this project's Delta>1 work**, a structural fact about
+degree-1 syndrome-VN graphs, not contingent on the bias-threshold
+hypothesis above.
 
 **Bias-schedule-with-Delta_seg idea (flagged as a next step above):
 expert recommends against expecting it to help, for this project's
@@ -340,6 +347,12 @@ lower bias here -- not pursued, downgraded from "open idea" to "settled,
 won't revisit unless this project ever moves to partial pattern
 coverage"** (in which case the expert's finding reverses: expect to need
 *lower* bias at larger Delta, not higher).
+
+**Next step (optional, not scheduled)**: the direct degree>1 test
+described above (add redundant combination rows, check if the bias
+threshold drops) would turn the "consistent with" hypothesis into an
+actual confirmation or refutation -- not pursued now, no user request to
+do so.
 
 Also independently cross-confirmed by the expert's own QEC data: (1)
 `syndrome_sequential` not beating `fixed_sequential` -- same on QEC side,
