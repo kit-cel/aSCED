@@ -1,0 +1,143 @@
+<title>Beam-search IR-VN Splitting</title>
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--ink:#14171c;--ink-2:#4a505a;--ink-3:#737a85;--rule:#dfe2e7;--grid:#e7e9ed;
+      --c-a:#2a78d6;--c-b:#eb6834;--c-base:#1baf7a;--c-extra:#4a3aa7;--c-ref:#14171c}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#121417;--panel:#1a1d21;
+      --ink:#eef0f3;--ink-2:#b4bac3;--ink-3:#8a909a;--rule:#2c3036;--grid:#262a30;
+      --c-a:#3987e5;--c-b:#d95926;--c-base:#199e70;--c-extra:#9085e9;--c-ref:#eef0f3}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#121417;--panel:#1a1d21;
+      --ink:#eef0f3;--ink-2:#b4bac3;--ink-3:#8a909a;--rule:#2c3036;--grid:#262a30;
+      --c-a:#3987e5;--c-b:#d95926;--c-base:#199e70;--c-extra:#9085e9;--c-ref:#eef0f3}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);margin:0;font-family:system-ui,sans-serif;padding:0 16px 48px;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-size:1.5rem;font-weight:600;margin:28px 0 4px;letter-spacing:-.01em}
+h2{font-size:1.1rem;font-weight:600;margin:0 0 6px}
+.lede{color:var(--ink-2);max-width:72ch;margin:0 0 20px;font-size:.95rem}
+.mono{font-family:ui-monospace,'SF Mono',Consolas,monospace}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:20px 22px;margin-bottom:24px}
+.note{color:var(--ink-3);font-size:.85rem;margin-top:10px}
+.plot{width:100%;height:560px}
+.hist-plot{width:100%;height:420px}
+table{border-collapse:collapse;width:100%;font-size:.88rem;margin-top:8px}
+th,td{text-align:right;padding:4px 8px;border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--ink-2);font-weight:600}
+.small{font-size:.8rem;color:var(--ink-3)}
+</style>
+<div class="wrap">
+  <h1>Beam-search decoder: IR-VN splitting, first waterfall comparison</h1>
+  <p class="lede">
+    aSCED-48 TCOM-paper code family (5G BG2, Z<sub>c</sub>=11, k=66, base n=154).
+    Beam_Search_Decoder on an IR-VN-extended PCM (base H + 2 appended HARQ
+    candidate-row blocks, each with its own new degree-1 IR-VN column,
+    n_ext=176) with <b>all</b> columns eligible for splitting, vs. a fresh
+    NMSA-32 baseline (base H, no extension) and the project's existing
+    aSCED-48 reference curve (reused, not rerun). Click a legend entry to
+    hide/show a curve.
+  </p>
+  <div class="card">
+    <h2>FER vs. E<sub>b</sub>/N<sub>0</sub></h2>
+    <div class="plot" id="err-plot"></div>
+    <p class="note">Hollow markers = fewer than 300 frame errors at that point (preliminary budget: target_errors=200,
+      max_transmissions capped per SNR point -- see page note below). aSCED-48 reference (black, dash-dot) is the
+      project's existing target_errors=1000 run, NOT rerun here.</p>
+  </div>
+  <div class="card">
+    <h2>Split-location histogram (aggregate across all SNR points)</h2>
+    <div class="hist-plot" id="hist-plot"></div>
+    <table id="hist-table"></table>
+    <p class="note">Bucketed by VN column index: punctured state VNs = the leading 2&times;Z<sub>c</sub>=22 standard 5G
+      systematic-puncturing columns; other state VNs = the remaining, normally-transmitted base-code columns;
+      IR VNs = the 22 newly appended degree-1 columns.</p>
+  </div>
+  <div class="card">
+    <p class="small mono" id="meta-note"></p>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script>
+const DATA = {"setting": {"xlabel": "Eb/N0 [dB]", "xlog": false, "ylabel": "FER", "curves": [{"name": "beam_search bw=16 max_it=32", "group": "Beam search", "visible": true, "pts": [[2.0, 0.1288604898828541, 242, 1.7427501678466797], [2.5, 0.05253528489283847, 201, 1.651041030883789], [3.0, 0.012437810945273632, 75, 1.2304573059082031], [3.5, 0.0035644847699287103, 66, 2.216928482055664], [4.0, 0.00043915405061828265, 38, 6.928422927856445]]}, {"name": "beam_search bw=32 max_it=32", "group": "Beam search", "visible": true, "pts": [[2.0, 0.1048723897911833, 226, 2.6903724670410156], [2.5, 0.04260589546693089, 172, 2.0781288146972656], [3.0, 0.011793998165378064, 90, 1.8271007537841797], [3.5, 0.0020388700713604526, 62, 3.679109573364258], [4.0, 0.000290137400783371, 42, 11.596481323242188]]}, {"name": "beam_search bw=16 max_it=1000", "group": "Beam search", "visible": true, "pts": [[2.0, 0.12882787750791974, 244, 54.053009033203125], [2.5, 0.04477611940298507, 165, 37.013071060180664], [3.0, 0.013987192450286484, 83, 19.4382381439209], [3.5, 0.0022576952429407275, 71, 19.165390014648438], [4.0, 0.00034442699607119715, 59, 26.04642677307129]]}, {"name": "beam_search bw=32 max_it=1000", "group": "Beam search", "visible": true, "pts": [[2.0, 0.10887465690759378, 238, 100.08973693847656], [2.5, 0.040110998990918266, 159, 68.23786544799805], [3.0, 0.007913247362250879, 81, 35.63440132141113], [3.5, 0.0018319811567652448, 70, 35.60551834106445], [4.0, 0.00023200510411229048, 68, 51.906272888183594]]}, {"name": "NMSA-32 (fresh)", "group": "Baseline", "visible": true, "pts": [[2.0, 0.17106200997861726, 240, 0.236297607421875], [2.5, 0.07163053722902922, 228, 0.42681884765625], [3.0, 0.021863998517695014, 118, 0.51312255859375], [3.5, 0.005316473884618148, 74, 1.0039844512939453], [4.0, 0.0008067084173654602, 38, 2.7938194274902344]]}], "reference": {"name": "aSCED-48 (TCOM ref., target_errors=1000, NOT rerun)", "pts": [[1.0, 0.3571035747021082], [1.5, 0.18488151184881513], [2.0, 0.07217806041335453], [2.5, 0.01900787648010015], [3.0, 0.0037458227762859958], [3.5, 0.0004873602297237668], [4.0, 4.43381937864156e-05], [4.5, 2.791839949165659e-06], [5.0, 1.3379296624288492e-07]]}, "paper": {}}, "splitHistograms": {"beam16_capped32": {"per_snr": {"2.0": {"punctured_state_vns": 1941, "other_state_vns": 7856, "ir_vns": 4941, "total": 14738}, "2.5": {"punctured_state_vns": 1667, "other_state_vns": 7520, "ir_vns": 4800, "total": 13987}, "3.0": {"punctured_state_vns": 736, "other_state_vns": 3924, "ir_vns": 2842, "total": 7502}, "3.5": {"punctured_state_vns": 689, "other_state_vns": 4798, "ir_vns": 3780, "total": 9267}, "4.0": {"punctured_state_vns": 617, "other_state_vns": 7015, "ir_vns": 6748, "total": 14380}}, "aggregate": {"punctured_state_vns": 5650, "other_state_vns": 31113, "ir_vns": 23111, "total": 59874}}, "beam32_capped32": {"per_snr": {"2.0": {"punctured_state_vns": 2388, "other_state_vns": 9977, "ir_vns": 6271, "total": 18636}, "2.5": {"punctured_state_vns": 2005, "other_state_vns": 8744, "ir_vns": 5795, "total": 16544}, "3.0": {"punctured_state_vns": 1221, "other_state_vns": 6252, "ir_vns": 4201, "total": 11674}, "3.5": {"punctured_state_vns": 1115, "other_state_vns": 7746, "ir_vns": 6194, "total": 15055}, "4.0": {"punctured_state_vns": 1074, "other_state_vns": 11773, "ir_vns": 10971, "total": 23818}}, "aggregate": {"punctured_state_vns": 7803, "other_state_vns": 44492, "ir_vns": 33432, "total": 85727}}, "beam16_generous": {"per_snr": {"2.0": {"punctured_state_vns": 89785, "other_state_vns": 476823, "ir_vns": 66330, "total": 632938}, "2.5": {"punctured_state_vns": 59627, "other_state_vns": 323349, "ir_vns": 44890, "total": 427866}, "3.0": {"punctured_state_vns": 31095, "other_state_vns": 166630, "ir_vns": 24245, "total": 221970}, "3.5": {"punctured_state_vns": 24886, "other_state_vns": 141495, "ir_vns": 22752, "total": 189133}, "4.0": {"punctured_state_vns": 21329, "other_state_vns": 124569, "ir_vns": 28358, "total": 174256}}, "aggregate": {"punctured_state_vns": 226722, "other_state_vns": 1232866, "ir_vns": 186575, "total": 1646163}}, "beam32_generous": {"per_snr": {"2.0": {"punctured_state_vns": 165309, "other_state_vns": 857878, "ir_vns": 118318, "total": 1141505}, "2.5": {"punctured_state_vns": 112398, "other_state_vns": 574713, "ir_vns": 79523, "total": 766634}, "3.0": {"punctured_state_vns": 55823, "other_state_vns": 299126, "ir_vns": 41007, "total": 395956}, "3.5": {"punctured_state_vns": 49596, "other_state_vns": 266201, "ir_vns": 40517, "total": 356314}, "4.0": {"punctured_state_vns": 46955, "other_state_vns": 262673, "ir_vns": 52397, "total": 362025}}, "aggregate": {"punctured_state_vns": 430081, "other_state_vns": 2260591, "ir_vns": 331762, "total": 3022434}}}, "meta": {"note": "Preliminary/exploratory sweep: target_errors=200, max_transmissions=3000 per SNR point (NOT matched to the asced-48 reference's target_errors=1000 budget).", "Zc": 11, "number_vns": 154, "n_ext": 176, "Delta": 22, "k": 66, "num_ad_blocks": 2, "combined_puncturing": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175], "snr_grid": [2.0, 2.5, 3.0, 3.5, 4.0], "wall_clock_total_seconds": 63.901233196258545}};
+const tok = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function errTraces(d) {
+  const col = {"Beam search": tok('--c-a'), "Baseline": tok('--c-base')};
+  const dashes = ["solid", "dash", "dot", "dashdot"], syms = ["circle", "square", "diamond", "triangle-up"], cnt = {};
+  const tr = d.curves.map(c => {
+    const i = (cnt[c.group] = (cnt[c.group] || 0) + 1) - 1;
+    return {
+      name: c.name, x: c.pts.map(p => p[0]), y: c.pts.map(p => p[1]), mode: 'lines+markers',
+      line: {color: col[c.group], width: 2, dash: dashes[i % 4]},
+      marker: {size: 7, symbol: syms[i % 4],
+               color: c.pts.map(p => p[2] < 300 ? 'rgba(0,0,0,0)' : col[c.group]),
+               line: {width: 1.6, color: col[c.group]}},
+      customdata: c.pts.map(p => p[2]),
+      hovertemplate: '%{y:.3e} · %{customdata} err<extra>' + c.name + '</extra>',
+    };
+  });
+  const R = d.reference;
+  tr.push({name: R.name, x: R.pts.map(p => p[0]), y: R.pts.map(p => p[1]), mode: 'lines+markers',
+           line: {color: tok('--c-ref'), dash: 'dashdot', width: 2}, marker: {size: 5, color: tok('--c-ref')},
+           hovertemplate: '%{y:.3e}<extra>' + R.name + '</extra>'});
+  return tr;
+}
+
+function layout(d) {
+  const ax = {gridcolor: tok('--grid'), linecolor: tok('--rule'), zerolinecolor: tok('--rule'),
+              tickfont: {color: tok('--ink-2'), size: 11}};
+  return {paper_bgcolor: tok('--panel'), plot_bgcolor: tok('--panel'),
+          font: {family: 'system-ui, sans-serif', color: tok('--ink')}, margin: {l: 60, r: 10, t: 8, b: 44},
+          xaxis: Object.assign({title: {text: d.xlabel, font: {color: tok('--ink-2'), size: 12}}}, ax),
+          yaxis: Object.assign({title: {text: d.ylabel, font: {color: tok('--ink-2'), size: 12}}, type: 'log',
+                                 exponentformat: 'power'}, ax),
+          legend: {orientation: 'h', y: -0.2, font: {size: 11, color: tok('--ink-2')}, bgcolor: 'rgba(0,0,0,0)'},
+          hovermode: 'closest',
+          hoverlabel: {bgcolor: tok('--panel'), bordercolor: tok('--rule'), font: {color: tok('--ink'), size: 12}}};
+}
+const cfg = {responsive: true, displaylogo: false, modeBarButtonsToRemove: ['lasso2d', 'select2d']};
+
+function histTraces(sh) {
+  const names = Object.keys(sh);
+  const cats = ['punctured_state_vns', 'other_state_vns', 'ir_vns'];
+  const labels = {'punctured_state_vns': 'Punctured state VNs (2·Zc)', 'other_state_vns': 'Other state VNs',
+                  'ir_vns': 'IR VNs'};
+  const colors = {'punctured_state_vns': tok('--c-b'), 'other_state_vns': tok('--c-base'), 'ir_vns': tok('--c-extra')};
+  return cats.map(cat => ({
+    name: labels[cat], type: 'bar', x: names, y: names.map(n => 100 * sh[n].aggregate[cat] / sh[n].aggregate.total),
+    marker: {color: colors[cat]},
+    hovertemplate: '%{y:.2f}%<extra>' + labels[cat] + '</extra>',
+  }));
+}
+
+function histLayout() {
+  const ax = {gridcolor: tok('--grid'), linecolor: tok('--rule'), tickfont: {color: tok('--ink-2'), size: 11}};
+  return {barmode: 'stack', paper_bgcolor: tok('--panel'), plot_bgcolor: tok('--panel'),
+          font: {family: 'system-ui, sans-serif', color: tok('--ink')}, margin: {l: 50, r: 10, t: 8, b: 60},
+          xaxis: ax, yaxis: Object.assign({title: {text: '% of all splits', font: {color: tok('--ink-2'), size: 12}}}, ax),
+          legend: {orientation: 'h', y: -0.25, font: {size: 11, color: tok('--ink-2')}, bgcolor: 'rgba(0,0,0,0)'}};
+}
+
+function drawAll() {
+  Plotly.react('err-plot', errTraces(DATA.setting), layout(DATA.setting), cfg);
+  Plotly.react('hist-plot', histTraces(DATA.splitHistograms), histLayout(), cfg);
+
+  const rows = ['<tr><th>Config</th><th>Total splits</th><th>Punctured state</th><th>Other state</th><th>IR VNs</th></tr>'];
+  Object.entries(DATA.splitHistograms).forEach(([name, h]) => {
+    const a = h.aggregate, t = a.total;
+    const pct = x => (100 * x / t).toFixed(1) + '%';
+    rows.push(`<tr><td>${name}</td><td>${t}</td><td>${a.punctured_state_vns} (${pct(a.punctured_state_vns)})</td>` +
+              `<td>${a.other_state_vns} (${pct(a.other_state_vns)})</td><td>${a.ir_vns} (${pct(a.ir_vns)})</td></tr>`);
+  });
+  document.getElementById('hist-table').innerHTML = rows.join('');
+
+  const m = DATA.meta;
+  document.getElementById('meta-note').textContent =
+    `${m.note} Zc=${m.Zc}, base n=${m.number_vns}, n_ext=${m.n_ext}, Delta=${m.Delta}, k=${m.k}, ` +
+    `num_ad_blocks=${m.num_ad_blocks}, SNR grid=${m.snr_grid.join(', ')} dB. ` +
+    `Sweep wall-clock: ${m.wall_clock_total_seconds.toFixed(1)}s.`;
+}
+drawAll();
+try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawAll) } catch (e) {}
+new MutationObserver(drawAll).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+</script>
